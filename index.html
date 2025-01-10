@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme de gestion immobilière</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-database-compat.js"></script>
+
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Plateforme de gestion immobilière</h1>
+            <nav>
+                <ul>
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#apropos">À propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="accueil">
+            <div class="container">
+                <h2>Bienvenue sur notre plateforme</h2>
+                <p>Facilitateur de gestion immobilière, recherche de logements et bien plus.</p>
+                <img src="img/immo.jpeg" alt="Image de bienvenue" class="image-accueil">
+            </div>
+        </section>
+
+        <section id="services">
+            <div class="container">
+                <h2>Nos services</h2>
+                <ul>
+                    <li>Gestion immobilière</li>
+                    <li>Vente de parcelles</li>
+                    <li>Vente de maisons</li>
+                    <li>Location de maisons</li>
+                    <li>Location de véhicules</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="apropos">
+            <div class="container">
+                <h2>À propos de nous</h2>
+                <p>Nous sommes une entreprise de transport et de gestion immobilière.</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <h2>Contactez-nous</h2>
+                <p>Pour toute question, contactez-nous via :</p>
+                <ul>
+                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/22967565665">WhatsApp</a></li>
+                    <li><i class="fab fa-facebook"></i> <a href="https://www.facebook.com/fidapay">Facebook</a></li>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:contact@example.com">Email</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="recherche-logement">
+            <div class="container">
+                <h2>Rechercher un logement</h2>
+                <form id="form-recherche">
+                    <label for="budget">Budget :</label>
+                    <input type="number" id="budget" name="budget" min="0">
+
+                    <button type="submit">Rechercher</button>
+                </form>
+
+                <div id="resultats-recherche"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Plateforme de gestion immobilière</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
