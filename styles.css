@@ -5,9 +5,9 @@ body {
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 50px;
 }
 
 header {
@@ -27,11 +27,16 @@ nav li {
 }
 
 section {
-    padding: 1px 0;
+    padding: 3px 0;
 }
 
 h2 {
     margin-bottom: 20px;
+}
+
+/* Augmenter la taille du texte dans les paragraphes */
+p {
+    font-size: 1.1em; /* Augmentez la valeur pour une taille plus grande */
 }
 
 /* Image d'accueil */
@@ -47,6 +52,7 @@ h2 {
 #form-recherche {
     display: flex;
     margin-bottom: 20px;
+    flex-direction: column;
 }
 
 #form-recherche label {
@@ -71,7 +77,7 @@ h2 {
 
 .logement img {
     width: 100%;
-    height: 200px;
+    height: 500px;
     object-fit: cover;
     margin-bottom: 10px;
 }
@@ -150,4 +156,181 @@ h2 {
         width: 12px;
         height: 12px;
     }
+}
+
+/* Centrer le titre */
+.text-center {
+    text-align: center;
+}
+
+/* Dernières publications */
+#derniers-logements {
+    margin-bottom: 20px;
+    width: 100%;
+    height: 700px; /* Hauteur fixe pour le carrousel */
+    position: relative;
+    overflow: hidden;
+}
+
+.logement-carousel {
+    display: flex;
+    width: 300%; /* 3 logements x 100% */
+    transition: transform 0.5s ease-in-out;
+    position: relative;
+    height: 100%;
+}
+
+#derniers-logements .logement {
+    width: calc(100% / 3);
+    box-sizing: border-box;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Aligner les éléments en haut */
+    opacity: 0;
+    transition: opacity: 0.5s ease-in-out;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid #ccc; /* Ajout d'une bordure */
+    background-color: white; /* Fond blanc pour le contenu */
+}
+
+#derniers-logements .logement img {
+    width: 100%;
+    height: 500px; /* Hauteur fixe pour les images */
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+/* Styles pour le texte dans les logements */
+#derniers-logements .logement h3,
+#derniers-logements .logement p {
+    text-align: center; /* Centrer le texte */
+    margin: 5px 0; /* Réduire la marge */
+}
+
+/* Style du bouton "Réserver" */
+#derniers-logements .logement button {
+    margin-top: auto; /* Pousser le bouton vers le bas */
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Style the middle slide */
+#derniers-logements .logement:nth-child(2) {
+    left: calc(50% - calc(100% / 6));
+    z-index: 2; /* Ensure it's on top */
+    opacity: 1; /* Make it fully visible */
+}
+
+/* Style the left slide */
+#derniers-logements .logement:first-child {
+    left: 0;
+    z-index: 1; /* Place it behind the middle slide */
+    opacity: 0.7; /* Partially visible */
+}
+
+/* Style the right slide */
+#derniers-logements .logement:last-child {
+    left: calc(100% - calc(100% / 3));
+    z-index: 1; /* Place it behind the middle slide */
+    opacity: 0.7; /* Partially visible */
+}
+
+/* Style the middle slide */
+#derniers-logements .logement:nth-child(2) {
+    left: calc(50% - calc(100% / 6));
+    z-index: 2; /* Ensure it's on top */
+    opacity: 1; /* Make it fully visible */
+}
+
+/* Style the left slide */
+#derniers-logements .logement:first-child {
+    left: 0;
+    z-index: 1; /* Place it behind the middle slide */
+    opacity: 0.7; /* Partially visible */
+}
+
+/* Style the right slide */
+#derniers-logements .logement:last-child {
+    left: calc(100% - calc(100% / 3));
+    z-index: 1; /* Place it behind the middle slide */
+    opacity: 0.7; /* Partially visible */
+}
+
+#voir-plus {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Style pour la section "CHOISI TON LOGEMENT" */
+#recherche-logement .container {
+    background-color: #4CAF50; /* Fond vert */
+    color: white; /* Texte en blanc pour un meilleur contraste */
+}
+
+#recherche-logement .container h2,
+#recherche-logement .container p {
+    text-align: center; /* Centrer le titre et le paragraphe */
+}
+
+/* Styles pour le formulaire de recherche */
+#form-recherche {
+    display: flex;
+    flex-direction: line; /* Disposition verticale des éléments */
+    margin-bottom: 20px;
+}
+
+#form-recherche label {
+    margin-right: 0; /* Supprimer la marge à droite */
+    margin-bottom: 5px; /* Marge en bas pour espacer les labels */
+    font-weight: bold; /* Texte en gras */
+}
+
+#form-recherche input {
+    margin-right: 0; /* Supprimer la marge à droite */
+    margin-bottom: 15px; /* Marge en bas pour espacer les champs de saisie */
+    padding: 8px; /* Marge intérieure pour le texte */
+    border: 1px solid #ccc; /* Bordure */
+    border-radius: 3px; /* Coins arrondis */
+}
+
+#form-recherche button {
+    padding: 10px 20px; /* Marge intérieure */
+    background-color: #f0f0f0; /* Couleur de fond */
+    color: black; /* Couleur du texte */
+    border: none; /* Pas de bordure */
+    border-radius: 5px; /* Coins arrondis */
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre pour l'effet surélevé */
+    align-self: center; /* Centrer le bouton horizontalement */
+    width: 25%; /* ajuster la largeure du bouton  */
+}
+
+/* Style pour toutes les sections avec un bloc */
+#recherche-logement .container,
+#derniere-publication .container,
+#services .container,
+#contact .container,
+#apropos .container {
+    border: 1px solid #ccc;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre pour l'effet surélevé */
+    padding: 20px;
+    margin-bottom: 30px; /* Espace entre la section et les suivantes */
+}
+
+/* Centrer le texte du footer */
+footer .container {
+    text-align: center;
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plateforme de gestion immobilière</title>
+    <title>JAE - Entreprise : Gestion Immobilière</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Firebase SDK -->
@@ -14,13 +14,15 @@
 <body>
     <header>
         <div class="container">
-            <h1>Plateforme de gestion immobilière</h1>
+            <h1 class="text-center">JAE - Entreprise : Gestion Immobilière</h1>
             <nav>
                 <ul>
                     <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#recherche-logement">Rechercher</a></li>
+                    <li><a href="#derniere-publication">Dernières publications</a></li>
                     <li><a href="#services">Services</a></li>
-                    <li><a href="#apropos">À propos</a></li>
                     <li><a href="#contact">Contact</a></li>
+                    <li><a href="#apropos">À propos</a></li>
                 </ul>
             </nav>
         </div>
@@ -29,9 +31,36 @@
     <main>
         <section id="accueil">
             <div class="container">
-                <h2>Bienvenue sur notre plateforme</h2>
-                <p>Facilitateur de gestion immobilière, recherche de logements et bien plus.</p>
+                <h2>Bienvenue chez JAE - Entreprise</h2>
+                <p>Votre partenaire sûr de gestion immobilière au Bénin</p>
+                <p>J-A-E,Bénin ; Votre e/ses qui vous facilite l'accès aux services immobilier au Bénin. <br> Avec une gamme de service optimisé, JAE-Bénin toujours à proximité de vos bésoins</p>
                 <img src="img/immo.jpeg" alt="Image de bienvenue" class="image-accueil">
+            </div>
+        </section>
+
+        <section id="recherche-logement">
+            <div class="container">
+                <h2>CHOISI TON LOGEMENT</h2>
+                <p class="text-center">Et c'est parti</p>
+                <form id="form-recherche">
+                    <label for="budget">Inséré votre Budget :</label>
+                    <input type="number" id="budget" name="budget" min="0">
+
+                    <label for="quartier">Choisir la zone de recherche :</label>
+                    <input type="text" id="quartier" name="quartier">
+
+                    <button type="submit">Rechercher</button>
+                </form>
+
+                <div id="resultats-recherche"></div>
+            </div>
+        </section>
+
+        <section id="derniere-publication">
+            <div class="container">
+                <h2>Dernières publications</h2>
+                <div id="derniers-logements"></div>
+                <button id="voir-plus">Voir plus</button>
             </div>
         </section>
 
@@ -39,19 +68,12 @@
             <div class="container">
                 <h2>Nos services</h2>
                 <ul>
-                    <li>Gestion immobilière</li>
-                    <li>Vente de parcelles</li>
-                    <li>Vente de maisons</li>
-                    <li>Location de maisons</li>
+                    <li>Location de Maison ; Hôtel ; Motel ; Appartement</li>
+                    <li>Location des biens</li>
                     <li>Location de véhicules</li>
+                    <li>Vente de parcelles</li>
+                    <li>Constructions - Travaux BTP</li>
                 </ul>
-            </div>
-        </section>
-
-        <section id="apropos">
-            <div class="container">
-                <h2>À propos de nous</h2>
-                <p>Nous sommes une entreprise de transport et de gestion immobilière.</p>
             </div>
         </section>
 
@@ -60,24 +82,19 @@
                 <h2>Contactez-nous</h2>
                 <p>Pour toute question, contactez-nous via :</p>
                 <ul>
-                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/22967565665">WhatsApp</a></li>
+                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/+22951092429">WhatsApp</a></li>
                     <li><i class="fab fa-facebook"></i> <a href="https://www.facebook.com/fidapay">Facebook</a></li>
-                    <li><i class="fas fa-envelope"></i> <a href="mailto:contact@example.com">Email</a></li>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:65604738a@gmail.com">Email</a></li>
                 </ul>
+                <p>Sise : Banikanni, Parakou - Bénin</p>
             </div>
         </section>
 
-        <section id="recherche-logement">
+        <section id="apropos">
             <div class="container">
-                <h2>Rechercher un logement</h2>
-                <form id="form-recherche">
-                    <label for="budget">Budget :</label>
-                    <input type="number" id="budget" name="budget" min="0">
-
-                    <button type="submit">Rechercher</button>
-                </form>
-
-                <div id="resultats-recherche"></div>
+                <h2>Pourquoi choisir JAE - Entreprise</h2>
+                <p>JAE s'occupe de la gestion de tous vos biens, maisons et une assistance virtuelle permettant de rendre votre vie meilleur.</p>
+                <p> Elle vous facilite la recherche de chambre ordinaire, Motel, Salle de Conférence, Appartement en un clic et vous permet d'économiser votre temps.</p>
             </div>
         </section>
     </main>
