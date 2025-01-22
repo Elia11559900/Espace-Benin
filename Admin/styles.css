@@ -4,13 +4,22 @@ body {
 }
 
 .container {
-    max-width: 960px;
+    max-width: 1500px;
     margin: 20px auto;
     padding: 20px;
+    background-color: #929299;
 }
 
 h1, h2 {
     margin-bottom: 20px;
+}
+
+.form-container {
+    border: 3px solid black;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f2f2f2;
+    border-radius: 10px; /* Coins arrondis */
 }
 
 form div {
@@ -20,24 +29,43 @@ form div {
 label {
     display: block;
     margin-bottom: 5px;
+    font-weight: bold; /* Titres en gras */
 }
 
 input[type="text"],
 input[type="number"],
 input[type="url"],
+input[type="email"],
+input[type="file"],
 textarea {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #ccc; /* Bordure */
     box-sizing: border-box;
+    border-radius: 5px; /* Coins arrondis */
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc; /* Bordure */
+    box-sizing: border-box;
+    border-radius: 5px; /* Coins arrondis */
 }
 
 button {
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #3338e9;
     color: white;
     border: none;
     cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 5px; /* Coins arrondis */
+    font-weight: bold; /* Texte des boutons en gras */
+}
+
+.export-btn {
+    margin-right: 10px;
 }
 
 table {
@@ -60,8 +88,97 @@ th {
     margin: 0 5px;
     padding: 5px 10px;
     background-color: #f44336; /* Red for delete */
+    border-radius: 5px; /* Coins arrondis */
 }
 
 .action-buttons button:first-child {
     background-color: #008CBA; /* Blue for edit */
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #3338e9;
+    border-radius: 10px;
+    font-weight: bold; /* Texte du footer en gras */
+    color: white; /* Texte du footer en blanc */
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000; /* Pour s'assurer qu'elle est au-dessus de tout */
+    display: none; /* Masquée par défaut */
+}
+
+.notification.success {
+    background-color: #4CAF50; /* Vert pour le succès */
+}
+
+.notification.error {
+    background-color: #f44336; /* Rouge pour l'erreur */
+}
+
+/* Boutons d'affichage des formulaires */
+.form-toggle-buttons {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Styles pour le header */
+.header-content {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-content h1 {
+    margin-bottom: 10px;
+}
+
+#header-image {
+    max-width: 500px;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+/* Media queries pour les smartphones */
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .form-container {
+        border: none;
+        padding: 10px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 5px;
+    }
+
+    .action-buttons button {
+        margin: 0 2px;
+        padding: 3px 6px;
+    }
+
+    .export-btn {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    #header-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
 }

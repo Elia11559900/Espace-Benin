@@ -8,38 +8,98 @@
 </head>
 <body>
     <div class="container">
-        <h1>Administration - Gestion des logements</h1>
+        <div class="header-content">
+            <h1>Administration - Gestion des logements</h1>
+            <img src="img/Accueil.jpeg" alt="Image d'accueil" id="header-image">
+            <p id="header-text">Bienvenue dans l'interface d'administration. Gérez facilement les logements et les locataires.</p>
+        </div>
 
-        <form id="form-ajout-logement">
-            <h2>Ajouter un logement</h2>
-            <div>
-                <label for="titre">Titre :</label>
-                <input type="text" id="titre" name="titre" required>
-            </div>
-            <div>
-                <label for="description">Description :</label>
-                <textarea id="description" name="description" required></textarea>
-            </div>
-            <div>
-                <label for="prix">Prix (FCFA) :</label>
-                <input type="number" id="prix" name="prix" min="0" required>
-            </div>
-            <div>
-                <label for="image">Image (URL) :</label>
-                <input type="url" id="image" name="image" required>
-            </div>
-            <button type="submit">Ajouter</button>
-        </form>
+        <!-- Boutons pour afficher les formulaires -->
+        <div class="form-toggle-buttons">
+            <button id="afficher-form-logement-btn">Enregistrement des Logements</button>
+            <button id="afficher-form-locataire-btn">Enregistrement des Locataires</button>
+        </div>
 
-        <div id="liste-logements">
+        <!-- Formulaire d'ajout de logement (masqué par défaut) -->
+        <div class="form-container" id="form-logement" style="display: none;">
+            <form id="form-ajout-logement">
+                <h2>Enregistre ton Logement</h2>
+                <div>
+                    <label for="titre">Titre :</label>
+                    <input type="text" id="titre" name="titre" required>
+                </div>
+                <div>
+                    <label for="type">Type de Logement :</label>
+                    <select id="type" name="type">
+                        <option value="Appartement">Appartement</option>
+                        <option value="Chambre Hôtel">Chambre Hôtel</option>
+                        <option value="Motel">Motel</option>
+                        <option value="Maison Ordinaire">Maison Ordinaire</option>
+                        <option value="Boutique">Boutique</option>
+                        <option value="Salle de Conférence">Salle de Conférence</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="description">Description :</label>
+                    <textarea id="description" name="description" required></textarea>
+                </div>
+                <div>
+                    <label for="etat">Etat du Logement :</label>
+                    <select id="etat" name="etat">
+                        <option value="Passable">Passable</option>
+                        <option value="Satisfaisant">Satisfaisant</option>
+                        <option value="Propre">Propre</option>
+                        <option value="Très propre">Très propre</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="prix">Prix (FCFA) :</label>
+                    <input type="number" id="prix" name="prix" min="0" required>
+                </div>
+                <div>
+                    <label for="demarcheur">Démarcheur du Logement :</label>
+                    <select id="demarcheur" name="demarcheur">
+                        <option value="Oui">Oui</option>
+                        <option value="Non">Non</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="proprietaire">Propriétaire :</label>
+                    <input type="text" id="proprietaire" name="proprietaire">
+                </div>
+                <div>
+                    <label for="quartier">Quartier :</label>
+                    <input type="text" id="quartier" name="quartier">
+                </div>
+                <div>
+                    <label for="image">Image (URL) :</label>
+                    <input type="text" id="image" name="image">
+                </div>
+                <button type="submit">Ajouter</button>
+            </form>
+            <button id="afficher-logements-btn">Afficher les logements</button>
+        </div>
+
+        <!-- Liste des logements -->
+        <div id="liste-logements" style="display: none;">
             <h2>Liste des logements</h2>
+            <button class="export-btn" data-table="logements" data-format="xlsx">Exporter en Excel</button>
+            <button class="export-btn" data-table="logements" data-format="pdf">Exporter en PDF</button>
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Titre</th>
+                        <th>Type</th>
                         <th>Description</th>
+                        <th>Etat</th>
                         <th>Prix</th>
+                        <th>Démarcheur</th>
+                        <th>Propriétaire</th>
+                        <th>Quartier</th>
                         <th>Image</th>
                         <th>Actions</th>
                     </tr>
@@ -48,12 +108,81 @@
                     </tbody>
             </table>
         </div>
+
+        <div style="height: 50px;"></div>
+
+        <!-- Formulaire d'ajout de locataire (masqué par défaut) -->
+        <div class="form-container" id="form-locataire" style="display: none;">
+            <form id="form-ajout-locataire">
+                <h2>Enregistre le Locataire</h2>
+                <div>
+                    <label for="nom">Nom :</label>
+                    <input type="text" id="nom" name="nom" required>
+                </div>
+                <div>
+                    <label for="prenoms">Prénoms :</label>
+                    <input type="text" id="prenoms" name="prenoms" required>
+                </div>
+                <div>
+                    <label for="contact">Contact :</label>
+                    <input type="text" id="contact" name="contact" required>
+                </div>
+                <div>
+                    <label for="adresse">Adresse :</label>
+                    <input type="text" id="adresse" name="adresse">
+                </div>
+                <div>
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div>
+                    <label for="facebook">Facebook :</label>
+                    <input type="text" id="facebook" name="facebook">
+                </div>
+                <button type="submit">Ajouter</button>
+            </form>
+            <button id="afficher-locataires-btn">Afficher les locataires</button>
+        </div>
+
+        <!-- Liste des locataires -->
+        <div id="liste-locataires" style="display: none;">
+            <h2>Liste des locataires</h2>
+            <button class="export-btn" data-table="locataires" data-format="xlsx">Exporter en Excel</button>
+            <button class="export-btn" data-table="locataires" data-format="pdf">Exporter en PDF</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénoms</th>
+                        <th>Contact</th>
+                        <th>Adresse</th>
+                        <th>Email</th>
+                        <th>Facebook</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-locataires">
+                    </tbody>
+            </table>
+        </div>
+
+        <!-- Div pour les notifications -->
+        <div id="notification" class="notification"></div>
+
+        <footer>
+            <p>JAE - Entreprise : L'Assurance du résultat</p>
+        </footer>
     </div>
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <!-- Add Firebase products that you want to use -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
 
     <script src="script.js"></script>
 </body>
