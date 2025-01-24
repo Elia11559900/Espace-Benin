@@ -14,39 +14,45 @@
 <body>
     <header>
         <div class="container">
-            <h1 class="text-center">JAE - Entreprise : Gestion Immobilière</h1>
-            <nav>
-                <ul>
+            <button id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+             <h1 class="text-center">JAE - Entreprise : Gestion Immobilière</h1>
+             <nav>
+               <ul id="menu" class="hidden">
                     <li><a href="#accueil">Accueil</a></li>
                     <li><a href="#recherche-logement">Rechercher</a></li>
                     <li><a href="#derniere-publication">Dernières publications</a></li>
                     <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
                     <li><a href="#apropos">À propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
+
     <main>
         <section id="accueil">
             <div class="container">
-                <h2>Bienvenue chez JAE - Entreprise</h2>
-                <p>Votre partenaire sûr de gestion immobilière au Bénin</p>
-                <p>J-A-E,Bénin ; Votre e/ses qui vous facilite l'accès aux services immobilier au Bénin. <br> Avec une gamme de service optimisé, JAE-Bénin toujours à proximité de vos bésoins</p>
+                <div class="accueil-overlay">
+                    <h2>Bienvenue chez JAE - Entreprise</h2>
+                    <p>Votre partenaire sûr de gestion immobilière au Bénin</p>
+                    <p>J-A-E,Bénin ; Votre entreprise qui vous facilite l'accès aux services immobiliers au Bénin. <br> Avec une gamme de services optimisés, JAE-Bénin est toujours à proximité de vos besoins.</p>
+                </div>
                 <img src="img/immo.jpeg" alt="Image de bienvenue" class="image-accueil">
             </div>
         </section>
 
         <section id="recherche-logement">
             <div class="container">
-                <h2>CHOISI TON LOGEMENT</h2>
+                <h2>Choisissez votre logement</h2>
                 <p class="text-center">Et c'est parti</p>
                 <form id="form-recherche">
-                    <label for="budget">Inséré votre Budget :</label>
+                    <label for="budget">Insérez votre Budget :</label>
                     <input type="number" id="budget" name="budget" min="0">
 
-                    <label for="quartier">Choisir la zone de recherche :</label>
+                    <label for="quartier">Choisissez la zone de recherche :</label>
                     <input type="text" id="quartier" name="quartier">
 
                     <button type="submit">Rechercher</button>
@@ -68,12 +74,20 @@
             <div class="container">
                 <h2>Nos services</h2>
                 <ul>
-                    <li>Location de Maison ; Hôtel ; Motel ; Appartement</li>
-                    <li>Location des biens</li>
+                    <li>Location de Maison, Hôtel, Motel, Appartement</li>
+                    <li>Location de biens</li>
                     <li>Location de véhicules</li>
                     <li>Vente de parcelles</li>
                     <li>Constructions - Travaux BTP</li>
                 </ul>
+            </div>
+        </section>
+
+        <section id="apropos">
+            <div class="container">
+                <h2>Pourquoi choisir JAE - Entreprise</h2>
+                <p>JAE s'occupe de la gestion de tous vos biens, maisons et offre une assistance virtuelle pour améliorer votre vie.</p>
+                <p>Elle vous facilite la recherche de chambres ordinaires, motels, salles de conférence, appartements en un clic et vous permet d'économiser votre temps.</p>
             </div>
         </section>
 
@@ -89,18 +103,10 @@
                 <p>Sise : Banikanni, Parakou - Bénin</p>
             </div>
         </section>
-
-        <section id="apropos">
-            <div class="container">
-                <h2>Pourquoi choisir JAE - Entreprise</h2>
-                <p>JAE s'occupe de la gestion de tous vos biens, maisons et une assistance virtuelle permettant de rendre votre vie meilleur.</p>
-                <p> Elle vous facilite la recherche de chambre ordinaire, Motel, Salle de Conférence, Appartement en un clic et vous permet d'économiser votre temps.</p>
-            </div>
-        </section>
     </main>
 
     <footer>
-        <div class="container">
+         <div class="container footer-content">
             <p>© 2025 Plateforme de gestion immobilière</p>
         </div>
     </footer>

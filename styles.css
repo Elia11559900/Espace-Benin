@@ -1,29 +1,78 @@
-/* Basic styles */
+/* Styles de base */
 body {
     font-family: sans-serif;
+    background-color: #959a95;
     margin: 0;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 50px;
+    padding: 10px;
+    position: relative; /* Ajouté pour le positionnement */
 }
 
 header {
     background-color: #f0f0f0;
     padding: 20px 0;
 }
+.footer-content {
+    background-color: #f0f0f0;
+    padding: 20px 0;
+}
+
+/* Styles du menu */
+#menu-toggle {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    position: absolute; /* Position à gauche */
+    left: 10px; /* Espace depuis le bord gauche */
+    top: 50%; /* Centrer verticalement */
+    transform: translateY(-50%); /* Ajustement du centrage vertical */
+    z-index: 2;
+}
+nav {
+    position: absolute;
+    left: 10px;
+    top: 60px;
+    display: block;
+}
 
 nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    background-color: #fefefe;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    z-index: 1;
+    width: 200px; /* Ajuster selon besoin */
+    left: 0;
 }
 
 nav li {
-    display: inline-block;
-    margin-right: 20px;
+    display: block;
+    margin: 0;
+}
+
+nav a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+}
+
+nav a:hover {
+    background-color: #f0f0f0;
+}
+
+nav ul.hidden {
+    display: none;
 }
 
 section {
@@ -34,21 +83,42 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* Augmenter la taille du texte dans les paragraphes */
 p {
-    font-size: 1.1em; /* Augmentez la valeur pour une taille plus grande */
+    font-size: 1.1em;
 }
 
-/* Image d'accueil */
+/* Styles de la section d'accueil */
 .image-accueil {
     display: block;
-    margin: 20px auto;
-    max-width: 100%;
-    height: auto;
-    border-radius: 2%; /* Bords arrondis */
+    width: 100%;
+    height: 700px;
+    object-fit: cover;
+    position: relative;
 }
 
-/* Search form styles */
+.accueil-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    width: 80%;
+    max-width: 600px;
+    z-index: 1;
+}
+.accueil-overlay h2 {
+    font-size: 2.5em; /* Taille augmentée */
+    margin-bottom: 10px;
+}
+
+.accueil-overlay p {
+    font-size: 1.3em; /* Taille augmentée */
+}
+
+/* Styles du formulaire de recherche */
 #form-recherche {
     display: flex;
     margin-bottom: 20px;
@@ -56,14 +126,30 @@ p {
 }
 
 #form-recherche label {
-    margin-right: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 #form-recherche input {
-    margin-right: 10px;
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
 
-/* Search results styles */
+#form-recherche button {
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    align-self: center;
+    width: 35%;
+}
+
+/* Styles des résultats de recherche */
 #resultats-recherche {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -82,73 +168,80 @@ p {
     margin-bottom: 10px;
 }
 
-/* Section Services */
+/* Styles de la section des services */
 #services ul {
-    list-style: none; /* Supprimer les puces par défaut */
+    list-style: none;
     padding: 0;
-    margin: 0; /* Supprimer les marges par défaut */
+    margin: 0;
 }
 
 #services li {
-    margin-bottom: 25px; /* Augmenter l'espace entre les éléments */
-    text-align: left; /* Aligner le texte à gauche */
-    font-size: 1.2em; /* Augmenter la taille du texte */
-    font-weight: normal; /* Texte normal (non gras) */
-    padding-left: 30px; /* Décaler le texte vers la droite pour l'icône */
-    position: relative; /* Permettre le positionnement de l'icône */
+    margin-bottom: 25px;
+    text-align: left;
+    font-size: 1.2em;
+    font-weight: normal;
+    padding-left: 30px;
+    position: relative;
 }
 
-/* Cercle orange */
 #services li::before {
     content: "";
     display: block;
-    width: 15px; /* Largeur du cercle */
-    height: 15px; /* Hauteur du cercle */
-    background-color: #ff9800; /* Couleur orange (ajustez si besoin) */
-    border-radius: 50%; /* Rendre le cercle rond */
+    width: 15px;
+    height: 15px;
+    background-color: #ff9800;
+    border-radius: 50%;
     position: absolute;
-    left: 0; /* Positionner le cercle à gauche */
-    top: 50%; /* Centrer verticalement */
-    transform: translateY(-50%); /* Ajuster le centrage vertical */
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-/* Media queries pour la responsivité (ajustements) */
+/* Styles pour les écrans de petite taille (smartphones) */
 @media (max-width: 768px) {
     .container {
-        padding: 10px;
+        padding: 10px; /* Réduction du padding du conteneur */
     }
 
+    #menu-toggle {
+         padding: 8px 12px; /* Réduction du padding du bouton du menu */
+        font-size: 0.9rem;
+    }
     nav ul {
-        text-align: center;
+         width: 150px; /* Réduction de la largeur du menu */
     }
-
-    nav li {
-        display: block;
-        margin: 10px 0;
+    nav a {
+         padding: 8px 12px; /* Réduction du padding du menu */
+         font-size: 0.9rem;
     }
 
     #form-recherche {
-        flex-direction: column;
-    }
-
-    #form-recherche label,
-    #form-recherche input {
-        margin-right: 0;
-        margin-bottom: 10px;
+        flex-direction: column; /* Formulaire en colonne */
     }
 
     #resultats-recherche {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Une seule colonne pour les résultats */
     }
 
     .image-accueil {
-        width: 80%;
-        margin: 20px auto;
+       height: 400px; /* Réduction de la hauteur de l'image */
+         margin: 10px auto;
+    }
+    .accueil-overlay {
+        padding: 10px; /* Réduction du padding de l'overlay */
+    }
+    .accueil-overlay h2 {
+        font-size: 1.8em; /* Réduction de la taille du titre */
+        margin-bottom: 5px;
+    }
+
+    .accueil-overlay p {
+        font-size: 1em; /* Réduction de la taille du texte */
     }
 
     #services li {
         flex: 0 0 100%;
-        font-size: 1em; /* Réduire la taille du texte sur les petits écrans */
+        font-size: 1em; /* Réduction de la taille de la police */
         margin-bottom: 15px;
         padding-left: 25px;
     }
@@ -156,9 +249,11 @@ p {
         width: 12px;
         height: 12px;
     }
+    .logement img {
+      height: 300px; /* Réduction de la hauteur de l'image du logement */
+    }
 }
 
-/* Centrer le titre */
 .text-center {
     text-align: center;
 }
@@ -167,7 +262,7 @@ p {
 #derniers-logements {
     margin-bottom: 20px;
     width: 100%;
-    height: 700px; /* Hauteur fixe pour le carrousel */
+    height: 700px;
     position: relative;
     overflow: hidden;
 }
@@ -222,46 +317,25 @@ p {
     cursor: pointer;
 }
 
-/* Style the middle slide */
+/* Style pour la slide du milieu */
 #derniers-logements .logement:nth-child(2) {
     left: calc(50% - calc(100% / 6));
-    z-index: 2; /* Ensure it's on top */
-    opacity: 1; /* Make it fully visible */
+    z-index: 2; /* S'assurer qu'il est au-dessus */
+    opacity: 1; /* Le rendre entièrement visible */
 }
 
-/* Style the left slide */
+/* Style pour la slide de gauche */
 #derniers-logements .logement:first-child {
     left: 0;
-    z-index: 1; /* Place it behind the middle slide */
-    opacity: 0.7; /* Partially visible */
+    z-index: 1; /* Le placer derrière la slide du milieu */
+    opacity: 0.7; /* Partiellement visible */
 }
 
-/* Style the right slide */
+/* Style pour la slide de droite */
 #derniers-logements .logement:last-child {
     left: calc(100% - calc(100% / 3));
-    z-index: 1; /* Place it behind the middle slide */
-    opacity: 0.7; /* Partially visible */
-}
-
-/* Style the middle slide */
-#derniers-logements .logement:nth-child(2) {
-    left: calc(50% - calc(100% / 6));
-    z-index: 2; /* Ensure it's on top */
-    opacity: 1; /* Make it fully visible */
-}
-
-/* Style the left slide */
-#derniers-logements .logement:first-child {
-    left: 0;
-    z-index: 1; /* Place it behind the middle slide */
-    opacity: 0.7; /* Partially visible */
-}
-
-/* Style the right slide */
-#derniers-logements .logement:last-child {
-    left: calc(100% - calc(100% / 3));
-    z-index: 1; /* Place it behind the middle slide */
-    opacity: 0.7; /* Partially visible */
+    z-index: 1; /* Le placer derrière la slide du milieu */
+    opacity: 0.7; /* Partiellement visible */
 }
 
 #voir-plus {
@@ -274,50 +348,6 @@ p {
     cursor: pointer;
 }
 
-/* Style pour la section "CHOISI TON LOGEMENT" */
-#recherche-logement .container {
-    background-color: #4CAF50; /* Fond vert */
-    color: white; /* Texte en blanc pour un meilleur contraste */
-}
-
-#recherche-logement .container h2,
-#recherche-logement .container p {
-    text-align: center; /* Centrer le titre et le paragraphe */
-}
-
-/* Styles pour le formulaire de recherche */
-#form-recherche {
-    display: flex;
-    flex-direction: line; /* Disposition verticale des éléments */
-    margin-bottom: 20px;
-}
-
-#form-recherche label {
-    margin-right: 0; /* Supprimer la marge à droite */
-    margin-bottom: 5px; /* Marge en bas pour espacer les labels */
-    font-weight: bold; /* Texte en gras */
-}
-
-#form-recherche input {
-    margin-right: 0; /* Supprimer la marge à droite */
-    margin-bottom: 15px; /* Marge en bas pour espacer les champs de saisie */
-    padding: 8px; /* Marge intérieure pour le texte */
-    border: 1px solid #ccc; /* Bordure */
-    border-radius: 3px; /* Coins arrondis */
-}
-
-#form-recherche button {
-    padding: 10px 20px; /* Marge intérieure */
-    background-color: #f0f0f0; /* Couleur de fond */
-    color: black; /* Couleur du texte */
-    border: none; /* Pas de bordure */
-    border-radius: 5px; /* Coins arrondis */
-    cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre pour l'effet surélevé */
-    align-self: center; /* Centrer le bouton horizontalement */
-    width: 25%; /* ajuster la largeure du bouton  */
-}
-
 /* Style pour toutes les sections avec un bloc */
 #recherche-logement .container,
 #derniere-publication .container,
@@ -325,12 +355,56 @@ p {
 #contact .container,
 #apropos .container {
     border: 1px solid #ccc;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Ombre pour l'effet surélevé */
+    background-color: #39676a;
+    color: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9); /* Ombre pour l'effet surélevé */
     padding: 20px;
-    margin-bottom: 30px; /* Espace entre la section et les suivantes */
+    margin-bottom: 30px; /* Espace entre les sections */
 }
 
-/* Centrer le texte du footer */
+/* Style pour la section "CHOISI TON LOGEMENT" */
+#recherche-logement .container {
+    background-color: #4ca656; /* Fond vert */
+    color: white; /* Texte en blanc */
+}
+
+/* Centrer le texte du pied de page */
 footer .container {
     text-align: center;
+    max-width: 1500px;
+}
+
+/* Styles pour la fenêtre de réservation */
+.fenetre-reservation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  z-index: 10; /* S'assurer qu'il est au-dessus */
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3); /* Ombre */
+}
+
+.fenetre-reservation img {
+  width: 250px;
+  height: 200px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.fenetre-reservation .bouton-discussion,
+.fenetre-reservation .bouton-payer,
+.fenetre-reservation .bouton-fermer {
+  padding: 8px 15px;
+  margin: 5px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.fenetre-reservation .bouton-fermer {
+  background-color: #f44336; /* Rouge pour le bouton de fermeture */
 }
