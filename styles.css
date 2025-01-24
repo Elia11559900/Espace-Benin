@@ -304,6 +304,7 @@ p {
 #derniers-logements .logement h3,
 #derniers-logements .logement p {
     text-align: center; /* Centrer le texte */
+    color: black;
     margin: 5px 0; /* Réduire la marge */
 }
 
