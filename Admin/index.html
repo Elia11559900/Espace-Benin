@@ -8,182 +8,269 @@
 </head>
 <body>
     <div class="container">
-        <div class="header-content">
-            <h1>Administration - Gestion des logements</h1>
-            <img src="img/Accueil.jpeg" alt="Image d'accueil" id="header-image">
-            <p id="header-text">Bienvenue dans l'interface d'administration. Gérez facilement les logements et les locataires.</p>
-        </div>
 
-        <!-- Boutons pour afficher les formulaires -->
-        <div class="form-toggle-buttons">
-            <button id="afficher-form-logement-btn">Enregistrement des Logements</button>
-            <button id="afficher-form-locataire-btn">Enregistrement des Locataires</button>
-        </div>
-
-        <!-- Formulaire d'ajout de logement (masqué par défaut) -->
-        <div class="form-container" id="form-logement" style="display: none;">
-            <form id="form-ajout-logement">
-                <h2>Enregistre ton Logement</h2>
+        <!-- Section de Connexion (visible par défaut) -->
+        <div id="login-section">
+            <h1>Connexion</h1>
+            <form id="login-form">
                 <div>
-                    <label for="titre">Titre :</label>
-                    <input type="text" id="titre" name="titre" required>
+                    <label for="login-email">Email :</label>
+                    <input type="email" id="login-email" required>
                 </div>
                 <div>
-                    <label for="type">Type de Logement :</label>
-                    <select id="type" name="type">
-                        <option value="Appartement">Appartement</option>
-                        <option value="Chambre Hôtel">Chambre Hôtel</option>
-                        <option value="Motel">Motel</option>
-                        <option value="Maison Ordinaire">Maison Ordinaire</option>
-                        <option value="Boutique">Boutique</option>
-                        <option value="Salle de Conférence">Salle de Conférence</option>
-                        <option value="Autre">Autre</option>
-                    </select>
+                    <label for="login-password">Mot de passe :</label>
+                    <input type="password" id="login-password" required>
                 </div>
-                <div>
-                    <label for="description">Description :</label>
-                    <textarea id="description" name="description" required></textarea>
-                </div>
-                <div>
-                    <label for="etat">Etat du Logement :</label>
-                    <select id="etat" name="etat">
-                        <option value="Passable">Passable</option>
-                        <option value="Satisfaisant">Satisfaisant</option>
-                        <option value="Propre">Propre</option>
-                        <option value="Très propre">Très propre</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="prix">Prix (FCFA) :</label>
-                    <input type="number" id="prix" name="prix" min="0" required>
-                </div>
-                <div>
-                    <label for="demarcheur">Démarcheur du Logement :</label>
-                    <select id="demarcheur" name="demarcheur">
-                        <option value="Oui">Oui</option>
-                        <option value="Non">Non</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="proprietaire">Propriétaire :</label>
-                    <input type="text" id="proprietaire" name="proprietaire">
-                </div>
-                <div>
-                    <label for="quartier">Quartier :</label>
-                    <input type="text" id="quartier" name="quartier">
-                </div>
-                <div>
-                    <label for="image">Image (URL) :</label>
-                    <input type="text" id="image" name="image">
-                </div>
-                <button type="submit">Ajouter</button>
+                <button type="submit">Se connecter</button>
             </form>
-            <button id="afficher-logements-btn">Afficher les logements</button>
+            <p>Pas encore de compte ? <a href="#" id="show-signup">Inscrivez-vous</a></p>
+            <div id="notification" class="notification"></div>
         </div>
 
-        <!-- Liste des logements -->
-        <div id="liste-logements" style="display: none;">
-            <h2>Liste des logements</h2>
-            <button class="export-btn" data-table="logements" data-format="xlsx">Exporter en Excel</button>
-            <button class="export-btn" data-table="logements" data-format="pdf">Exporter en PDF</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Titre</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Etat</th>
-                        <th>Prix</th>
-                        <th>Démarcheur</th>
-                        <th>Propriétaire</th>
-                        <th>Quartier</th>
-                        <th>Image</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-logements">
-                    </tbody>
-            </table>
-        </div>
-
-        <div style="height: 50px;"></div>
-
-        <!-- Formulaire d'ajout de locataire (masqué par défaut) -->
-        <div class="form-container" id="form-locataire" style="display: none;">
-            <form id="form-ajout-locataire">
-                <h2>Enregistre le Locataire</h2>
+        <!-- Section d'Inscription -->
+        <div id="signup-section" style="display: none;">
+            <h1>Inscription</h1>
+            <form id="signup-form">
                 <div>
-                    <label for="nom">Nom :</label>
-                    <input type="text" id="nom" name="nom" required>
+                    <label for="entrepriseName">Nom de l'entreprise :</label>
+                    <input type="text" id="entrepriseName" required>
                 </div>
                 <div>
-                    <label for="prenoms">Prénoms :</label>
-                    <input type="text" id="prenoms" name="prenoms" required>
+                    <label for="signup-email">Email :</label>
+                    <input type="email" id="signup-email" required>
                 </div>
                 <div>
                     <label for="contact">Contact :</label>
-                    <input type="text" id="contact" name="contact" required>
+                    <input type="text" id="contact" required>
                 </div>
                 <div>
-                    <label for="adresse">Adresse :</label>
-                    <input type="text" id="adresse" name="adresse">
+                    <label for="signup-password">Mot de passe :</label>
+                    <input type="password" id="signup-password" required>
                 </div>
                 <div>
-                    <label for="email">Email :</label>
-                    <input type="email" id="email" name="email">
+                    <label for="confirmPassword">Confirmer le mot de passe :</label>
+                    <input type="password" id="confirmPassword" required>
                 </div>
-                <div>
-                    <label for="facebook">Facebook :</label>
-                    <input type="text" id="facebook" name="facebook">
-                </div>
-                <button type="submit">Ajouter</button>
+                <button type="submit">S'inscrire</button>
             </form>
-            <button id="afficher-locataires-btn">Afficher les locataires</button>
+            <p>Déjà un compte ? <a href="#" id="show-login">Connectez-vous</a></p>
+            <div id="signup-notification" class="notification"></div>
         </div>
 
-        <!-- Liste des locataires -->
-        <div id="liste-locataires" style="display: none;">
-            <h2>Liste des locataires</h2>
-            <button class="export-btn" data-table="locataires" data-format="xlsx">Exporter en Excel</button>
-            <button class="export-btn" data-table="locataires" data-format="pdf">Exporter en PDF</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Prénoms</th>
-                        <th>Contact</th>
-                        <th>Adresse</th>
-                        <th>Email</th>
-                        <th>Facebook</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-locataires">
-                    </tbody>
-            </table>
-        </div>
-
-        <!-- Div pour les notifications -->
-        <div id="notification" class="notification"></div>
-
-        <footer>
-            <p>JAE - Entreprise : L'Assurance du résultat</p>
-        </footer>
+      <!-- Section Contenu Principal (visible après connexion) -->
+<div id="main-content-section" style="display: none;">
+    <div class="header-content">
+        <h1>Administration - Gestion des logements</h1>
+        <img src="img/Accueil.jpeg" alt="Image d'accueil" id="header-image">
+        <p id="header-text">Bienvenue dans l'interface d'administration. <span id="entreprise-name"></span></p>
     </div>
 
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.0/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+    <!-- Menu (toujours visible après connexion) -->
+      <div class="menu">
+        <button id="afficher-form-logement-btn">Logements</button>
+        <button id="afficher-form-locataire-btn">Locataires</button>
+        <button id="afficher-form-bien-btn">Biens</button>
+        <button id="afficher-demandes-paiement-btn">Demandes de paiement</button>
+        <button id="logout-btn">Déconnexion</button>
+    </div>
 
-    <script src="script.js"></script>
+    <!-- Formulaire d'ajout de logement -->
+    <div class="form-container" id="form-logement" style="display: none;">
+        <form id="form-ajout-logement">
+            <h2>Enregistre ton Logement</h2>
+            <div><label for="titre">Titre :</label><input type="text" id="titre" name="titre" required></div>
+            <div><label for="type">Type de Logement :</label>
+                <select id="type" name="type">
+                    <option value="Appartement">Appartement</option><option value="Chambre Hôtel">Chambre Hôtel</option>
+                    <option value="Motel">Motel</option><option value="Maison Ordinaire">Maison Ordinaire</option>
+                    <option value="Boutique">Boutique</option><option value="Salle de Conférence">Salle de Conférence</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div><label for="description">Description :</label><textarea id="description" name="description" required></textarea></div>
+            <div><label for="etat">Etat du Logement :</label>
+                <select id="etat" name="etat">
+                    <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
+                    <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div><label for="prix">Prix (FCFA) :</label><input type="number" id="prix" name="prix" min="0" required></div>
+            <div><label for="demarcheur">Démarcheur du Logement :</label>
+                <select id="demarcheur" name="demarcheur">
+                    <option value="Oui">Oui</option><option value="Non">Non</option><option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div><label for="proprietaire">Propriétaire :</label><input type="text" id="proprietaire" name="proprietaire"></div>
+            <div><label for="quartier">Quartier :</label><input type="text" id="quartier" name="quartier"></div>
+            <div><label for="image">Image (URL) :</label><input type="text" id="image" name="image"></div>
+             <div> <!-- Ajout du champ statut -->
+                    <label for="statut">Statut :</label>
+                    <select id="statut" name="statut">
+                        <option value="Libre">Libre</option>
+                        <option value="Réservé">Réservé</option>
+                        <option value="Occupé">Occupé</option>
+                    </select>
+             </div>
+            <button type="submit">Ajouter</button>
+        </form>
+        <button id="afficher-logements-btn">Afficher les logements</button>
+    </div>
+
+   <!-- Liste des logements (modifiée) -->
+<div id="liste-logements" style="display: none;">
+    <h2>Liste des logements</h2>
+    <button class="export-btn" data-table="logements" data-format="xlsx">Exporter en Excel</button>
+    <button class="export-btn" data-table="logements" data-format="pdf">Exporter en PDF</button>
+
+    <!-- Statistiques des logements -->
+     <div class="statistiques">
+        <h3>Statistiques des logements</h3>
+        <div>
+            <span>Libres:</span>
+            <span id="stat-logements-libres">0</span>
+        </div>
+        <div>
+            <span>Réservés:</span>
+            <span id="stat-logements-reserves">0</span>
+        </div>
+        <div>
+            <span>Occupés:</span>
+            <span id="stat-logements-occupes">0</span>
+        </div>
+         <div>
+            <span>Total (Mensuel):</span>
+            <span id="stat-logements-total-mensuel">0</span>
+        </div>
+         <div>
+            <span>Total (Annuel):</span>
+            <span id="stat-logements-total-annuel">0</span>
+        </div>
+    </div>
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Etat</th>
+                <th>Prix</th>
+                <th>Démarcheur</th>
+                <th>Propriétaire</th>
+                <th>Quartier</th>
+                <th>Image</th>
+                <th>Statut</th> <!-- Nouvelle colonne -->
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-logements"></tbody>
+    </table>
+</div>
+
+    <div style="height: 50px;"></div>
+
+    <!-- Formulaire d'ajout de locataire -->
+    <div class="form-container" id="form-locataire" style="display: none;">
+        <form id="form-ajout-locataire">
+            <h2>Enregistre le Locataire</h2>
+            <div><label for="nom">Nom :</label><input type="text" id="nom" name="nom" required></div>
+            <div><label for="prenoms">Prénoms :</label><input type="text" id="prenoms" name="prenoms" required></div>
+            <div><label for="contact">Contact :</label><input type="text" id="contact" name="contact" required></div>
+            <div><label for="adresse">Adresse :</label><input type="text" id="adresse" name="adresse"></div>
+            <div><label for="email">Email :</label><input type="email" id="email" name="email"></div>
+            <div><label for="facebook">Facebook :</label><input type="text" id="facebook" name="facebook"></div>
+            <button type="submit">Ajouter</button>
+        </form>
+        <button id="afficher-locataires-btn">Afficher les locataires</button>
+    </div>
+
+    <!-- Liste des locataires -->
+    <div id="liste-locataires" style="display: none;">
+        <h2>Liste des locataires</h2>
+        <button class="export-btn" data-table="locataires" data-format="xlsx">Exporter en Excel</button>
+        <button class="export-btn" data-table="locataires" data-format="pdf">Exporter en PDF</button>
+        <table>
+            <thead><tr><th>ID</th><th>Nom</th><th>Prénoms</th><th>Contact</th><th>Adresse</th><th>Email</th><th>Facebook</th><th>Actions</th></tr></thead>
+            <tbody id="tbody-locataires"></tbody>
+        </table>
+    </div>
+
+    <!-- Formulaire d'ajout de bien -->
+    <div class="form-container" id="form-bien" style="display: none;">
+        <form id="form-ajout-bien">
+            <h2>Enregistre ton Bien</h2>
+            <div><label for="titreBien">Titre :</label><input type="text" id="titreBien" name="titreBien" required></div>
+            <div><label for="descriptionBien">Description :</label><textarea id="descriptionBien" name="descriptionBien" required></textarea></div>
+            <div>
+                <label for="etatBien">Etat du Bien :</label>
+                <select id="etatBien" name="etatBien">
+                    <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
+                    <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div><label for="prixBien">Prix (FCFA) :</label><input type="number" id="prixBien" name="prixBien" min="0" required></div>
+            <div><label for="proprietaireBien">Propriétaire :</label><input type="text" id="proprietaireBien" name="proprietaireBien" required></div>
+            <div><label for="imageBien">Image (URL) :</label><input type="text" id="imageBien" name="imageBien"></div>
+            <button type="submit">Ajouter</button>
+        </form>
+        <button id="afficher-biens-btn">Afficher les biens</button>
+    </div>
+
+    <!-- Liste des biens -->
+    <div id="liste-biens" style="display: none;">
+        <h2>Liste des biens</h2>
+        <button class="export-btn" data-table="biens" data-format="xlsx">Exporter en Excel</button>
+        <button class="export-btn" data-table="biens" data-format="pdf">Exporter en PDF</button>
+        <table>
+            <thead><tr><th>ID</th><th>Titre</th><th>Description</th><th>Etat</th><th>Prix</th><th>Propriétaire</th><th>Image</th><th>Actions</th></tr></thead>
+            <tbody id="tbody-biens"></tbody>
+        </table>
+    </div>
+
+    <!-- Formulaire de demande de paiement -->
+    <div class="form-container" id="form-demande-paiement" style="display: none;">
+        <form id="form-ajout-demande-paiement">
+            <h2>Demande de Paiement</h2>
+            <div>
+                <label for="demande-paiement-montant">Montant (FCFA) :</label>
+                <input type="number" id="demande-paiement-montant" name="demande-paiement-montant" min="0" required>
+            </div>
+            <button type="submit">Soumettre la Demande</button>
+        </form>
+    </div>
+
+    <!-- Liste des demandes de paiement -->
+    <div id="liste-demandes-paiement" style="display: none;">
+        <h2>Demandes de Paiement</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Montant (FCFA)</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-demandes-paiement"></tbody>
+        </table>
+    </div>
+
+</div>  <!-- Fin de main-content-section -->
+
+<footer>
+    <p>JAE - Entreprise : L'Assurance du résultat</p>
+</footer>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.0/xlsx.full.min.js"></script>
+
+
+<script src="script.js"></script>
 </body>
 </html>

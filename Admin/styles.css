@@ -1,6 +1,7 @@
 body {
     font-family: sans-serif;
     margin: 0;
+    background-color: #f0f0f5;
 }
 
 .container {
@@ -8,60 +9,69 @@ body {
     margin: 20px auto;
     padding: 20px;
     background-color: #929299;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1, h2 {
     margin-bottom: 20px;
+    color: #333;
 }
 
 .form-container {
     border: 3px solid black;
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     background-color: #f2f2f2;
-    border-radius: 10px; /* Coins arrondis */
+    border-radius: 10px;
+}
+
+/* Style spécifique pour le formulaire des biens (exemple) */
+#form-bien {
+    border-color: green;
 }
 
 form div {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold; /* Titres en gras */
+    font-weight: bold;
 }
 
 input[type="text"],
 input[type="number"],
 input[type="url"],
 input[type="email"],
+input[type="password"],
 input[type="file"],
-textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc; /* Bordure */
-    box-sizing: border-box;
-    border-radius: 5px; /* Coins arrondis */
-}
-
+textarea,
 select {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc; /* Bordure */
+    padding: 10px;
+    border: 1px solid #ccc;
     box-sizing: border-box;
-    border-radius: 5px; /* Coins arrondis */
+    border-radius: 5px;
+    font-size: 16px;
 }
 
 button {
-    padding: 10px 20px;
+    padding: 12px 24px;
     background-color: #3338e9;
     color: white;
     border: none;
     cursor: pointer;
     margin-bottom: 10px;
-    border-radius: 5px; /* Coins arrondis */
-    font-weight: bold; /* Texte des boutons en gras */
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #5c62ff;
 }
 
 .export-btn {
@@ -76,7 +86,7 @@ table {
 
 th, td {
     text-align: left;
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #ddd;
 }
 
@@ -87,22 +97,27 @@ th {
 .action-buttons button {
     margin: 0 5px;
     padding: 5px 10px;
-    background-color: #f44336; /* Red for delete */
-    border-radius: 5px; /* Coins arrondis */
+    background-color: #f44336;
+    border-radius: 5px;
 }
+.action-buttons button:hover{
+     background-color: #ddd;
+ }
 
 .action-buttons button:first-child {
-    background-color: #008CBA; /* Blue for edit */
+    background-color: #008CBA;
 }
-
+.action-buttons button:first-child:hover {
+    background-color: #66b5ce;
+}
 footer {
     text-align: center;
     margin-top: 20px;
     padding: 10px;
     background-color: #3338e9;
     border-radius: 10px;
-    font-weight: bold; /* Texte du footer en gras */
-    color: white; /* Texte du footer en blanc */
+    font-weight: bold;
+    color: white;
 }
 
 /* Notifications */
@@ -113,23 +128,18 @@ footer {
     padding: 15px 20px;
     border-radius: 5px;
     color: white;
-    z-index: 1000; /* Pour s'assurer qu'elle est au-dessus de tout */
-    display: none; /* Masquée par défaut */
+    z-index: 1000;
+    display: none;
 }
 
 .notification.success {
-    background-color: #4CAF50; /* Vert pour le succès */
+    background-color: #4CAF50;
 }
 
 .notification.error {
-    background-color: #f44336; /* Rouge pour l'erreur */
+    background-color: #f44336;
 }
 
-/* Boutons d'affichage des formulaires */
-.form-toggle-buttons {
-    text-align: center;
-    margin-bottom: 20px;
-}
 
 /* Styles pour le header */
 .header-content {
@@ -146,12 +156,40 @@ footer {
     height: auto;
     margin-bottom: 10px;
     border-radius: 5px;
+    /*display: none;  Supprimé : l'image s'affiche maintenant par défaut */
 }
+
+/* Styles pour le menu */
+.menu {
+    text-align: center; /* Centre les boutons horizontalement */
+    margin-bottom: 20px;
+}
+
+.menu button {
+    margin: 0 10px; /* Espacement horizontal entre les boutons */
+}
+/* Styles pour les statistiques */
+.statistiques {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.statistiques h3{
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.statistiques div{
+    margin-bottom: 5px;
+}
+
 /* Media queries pour les smartphones */
 @media (max-width: 768px) {
     .container {
         max-width: 100%;
         padding: 10px;
+        border-radius: 0; /* Enlever les coins arrondis sur mobile */
     }
 
     .form-container {
@@ -170,6 +208,7 @@ footer {
     .action-buttons button {
         margin: 0 2px;
         padding: 3px 6px;
+        font-size: 12px; /* Réduire la taille de la police des boutons */
     }
 
     .export-btn {
@@ -180,5 +219,10 @@ footer {
         max-width: 100%;
         height: auto;
         margin-bottom: 10px;
+    }
+     .menu button {
+        margin: 5px; /* Réduit l'espacement vertical sur mobile */
+        display: block; /* Affiche les boutons du menu comme des blocs */
+        width: 100%; /* Les boutons prennent toute la largeur */
     }
 }
