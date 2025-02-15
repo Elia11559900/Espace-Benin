@@ -8,223 +8,222 @@ const firebaseConfig = {
     messagingSenderId: "1050311955497",
     appId: "1:1050311955497:web:fdc94d20240387d1bdb838",
     measurementId: "G-54VG8HN5H8"
-  };
-  
-  // Initialiser Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-  
-  // Fonction pour afficher les résultats de la recherche
-  function afficherResultats(logements) {
+};
+
+// Initialiser Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+
+
+// Fonction pour afficher les résultats de la recherche.
+async function afficherResultats(budget, quartier) {
+    const logementsFiltres = {};
+
+    const entreprisesSnapshot = await database.ref('entreprises').once('value');
+
+    for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
+        const logementsRef = database.ref(`entreprises/${entrepriseKey}/logements`);
+        const logementsSnapshot = await logementsRef.once('value');
+
+        // Récupère le nom de l'entreprise AVANT de boucler sur les logements
+        const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
+
+
+        for (const logementKey of Object.keys(logementsSnapshot.val() || {})) {
+            const logement = logementsSnapshot.val()[logementKey];
+            // Ajoute le nom de l'entreprise ET le statut à l'objet logement
+            logementsFiltres[logementKey] = { ...logement, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: logement.statut || "Non spécifié" }; //Valeur par défaut au cas où
+        }
+    }
+
+    afficherResultatsDansLaPage(logementsFiltres);
+}
+
+// Fonction pour afficher les résultats DANS LA PAGE (séparée de la logique de récupération)
+function afficherResultatsDansLaPage(logements) {
     const resultatsRecherche = document.getElementById("resultats-recherche");
     resultatsRecherche.innerHTML = "";
-  
-    // Vérifier si la liste des logements est vide
+    resultatsRecherche.style.display = "grid";
+
     if (Object.keys(logements).length === 0) {
-      // Afficher le message "Aucun logement..."
-      const messageAucunLogement = document.createElement("p");
-      messageAucunLogement.textContent =
-        "Aucun logement n'est disponible correspondant à votre budget.";
-      resultatsRecherche.appendChild(messageAucunLogement);
+        const messageAucunLogement = document.createElement("p");
+        messageAucunLogement.textContent = "Aucun logement n'est disponible correspondant à votre budget.";
+        resultatsRecherche.appendChild(messageAucunLogement);
     } else {
-      // Afficher les logements
-      for (const logementId in logements) {
-        const logement = logements[logementId];
-        const divLogement = document.createElement("div");
-        divLogement.classList.add("logement");
-  
-        const imgLogement = document.createElement("img");
-        imgLogement.src = logement.image;
-        imgLogement.alt = logement.titre;
-        divLogement.appendChild(imgLogement);
-  
-        const titreLogement = document.createElement("h3");
-        titreLogement.textContent = logement.titre;
-        divLogement.appendChild(titreLogement);
-  
-        const descriptionLogement = document.createElement("p");
-        descriptionLogement.textContent = logement.description;
-        divLogement.appendChild(descriptionLogement);
-  
-        const prixLogement = document.createElement("p");
-        prixLogement.textContent = `${logement.prix} FCFA`;
-        divLogement.appendChild(prixLogement);
-  
-        const boutonReserver = document.createElement("button");
-        boutonReserver.textContent = "Réserver";
-        boutonReserver.addEventListener("click", () => {
-          afficherFenetreReservation(logement);
-        });
-        divLogement.appendChild(boutonReserver);
-  
-        resultatsRecherche.appendChild(divLogement);
-      }
+        for (const logementId in logements) {
+            const logement = logements[logementId];
+            const divLogement = creerDivLogement(logement); // Utilise la fonction de création de div
+            resultatsRecherche.appendChild(divLogement);
+        }
     }
-  }
-  
-  // Écouter la soumission du formulaire de recherche
-  const formRecherche = document.getElementById("form-recherche");
-  formRecherche.addEventListener("submit", (event) => {
-    event.preventDefault();
-  
-    const budget = parseInt(document.getElementById("budget").value);
-    const quartier = document.getElementById("quartier").value;
-  
-    // Référence à la base de données
-    const logementsRef = database.ref("logements");
-  
-    // Écoute des données et filtrage
-    logementsRef.on("value", (snapshot) => {
-      const logementsData = snapshot.val();
-      const logementsFiltres = {};
-  
-      for (const id in logementsData) {
-          if (budget && quartier) {
-              // Filtrage par budget et par quartier
-              if (logementsData[id].prix <= budget && logementsData[id].quartier.toLowerCase().includes(quartier.toLowerCase())) {
-                logementsFiltres[id] = logementsData[id];
-              }
-            } else if (budget) {
-              // Filtrage par budget uniquement
-              if (logementsData[id].prix <= budget) {
-                logementsFiltres[id] = logementsData[id];
-              }
-            } else if (quartier) {
-              // Filtrage par quartier uniquement
-              if (logementsData[id].quartier.toLowerCase().includes(quartier.toLowerCase())) {
-                logementsFiltres[id] = logementsData[id];
-              }
-            } else {
-              // Aucun filtre appliqué, afficher tous les logements
-              logementsFiltres[id] = logementsData[id];
-            }
-      }
-  
-      afficherResultats(logementsFiltres);
+}
+
+// Fonction pour créer un élément div pour un logement (réutilisable et améliorée)
+function creerDivLogement(logement) {
+    const divLogement = document.createElement("div");
+    divLogement.classList.add("logement");
+
+    // Supprime l'ancien paragraphe d'ID de l'entreprise
+    // const entrepriseIdParagraphe = document.createElement("p");
+    // entrepriseIdParagraphe.textContent = `Entreprise ID: ${logement.entrepriseId}`;
+    // divLogement.appendChild(entrepriseIdParagraphe);
+
+    // Ajout d'un paragraphe pour le *NOM* de l'entreprise
+    const entrepriseNomParagraphe = document.createElement("p");
+    entrepriseNomParagraphe.textContent = `Entreprise: ${logement.entrepriseNom}`; // Utilise entrepriseNom
+    divLogement.appendChild(entrepriseNomParagraphe);
+
+     // Ajout d'un paragraphe pour le *Statut* de l'entreprise
+    const statutLogement = document.createElement("p");
+    statutLogement.textContent = `Statut: ${logement.statut}`; // Utilise entrepriseNom
+    divLogement.appendChild(statutLogement);
+
+
+    const imgLogement = document.createElement("img");
+    imgLogement.src = logement.image;
+    imgLogement.alt = logement.titre;
+    divLogement.appendChild(imgLogement);
+
+    const titreLogement = document.createElement("h3");
+    titreLogement.textContent = logement.titre;
+    divLogement.appendChild(titreLogement);
+
+    const descriptionLogement = document.createElement("p");
+    descriptionLogement.textContent = logement.description;
+    divLogement.appendChild(descriptionLogement);
+
+    const prixLogement = document.createElement("p");
+    prixLogement.textContent = `${logement.prix} FCFA`;
+    divLogement.appendChild(prixLogement);
+
+    const etatLogement = document.createElement("p");
+    etatLogement.textContent = `État : ${logement.etat}`;
+    divLogement.appendChild(etatLogement);
+
+    const quartierLogement = document.createElement("p");
+    quartierLogement.textContent = `Quartier : ${logement.quartier}`;
+    divLogement.appendChild(quartierLogement);
+
+    const boutonReserver = document.createElement("button");
+    boutonReserver.textContent = "Réserver";
+    boutonReserver.addEventListener("click", () => {
+        afficherFenetreReservation(logement);
     });
-  });
-  
-  // Fonction pour afficher les dernières publications
-  async function afficherDernieresPublications() {
+    divLogement.appendChild(boutonReserver);
+
+    return divLogement;
+}
+
+
+// Écouter la soumission du formulaire de recherche
+const formRecherche = document.getElementById("form-recherche");
+formRecherche.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const budget = parseInt(document.getElementById("budget").value) || null; // Gère le cas où le champ est vide
+    const quartier = document.getElementById("quartier").value || null;      // Gère le cas où le champ est vide
+    afficherResultats(budget, quartier);
+});
+
+// Fonction pour afficher les dernières publications (version SIMPLIFIÉE)
+async function afficherDernieresPublications() {
     const derniersLogements = document.getElementById("derniers-logements");
     derniersLogements.innerHTML = "";
-  
-    const logementsRef = database.ref("logements");
-  
-    const snapshot = await logementsRef.orderByChild("datePublication").limitToLast(3).once("value");
-    const logementsData = snapshot.val();
-  
-    if (logementsData) {
-      const logements = Object.values(logementsData).reverse();
-      const logementCarousel = document.createElement("div");
-      logementCarousel.classList.add("logement-carousel");
-  
-      logements.forEach((logement) => {
-        const divLogement = document.createElement("div");
-        divLogement.classList.add("logement");
-  
-        const imgLogement = document.createElement("img");
-        imgLogement.src = logement.image;
-        imgLogement.alt = logement.titre;
-        divLogement.appendChild(imgLogement);
-  
-        const titreLogement = document.createElement("h3");
-        titreLogement.textContent = logement.titre;
-        divLogement.appendChild(titreLogement);
-  
-        const descriptionLogement = document.createElement("p");
-        descriptionLogement.textContent = logement.description;
-        divLogement.appendChild(descriptionLogement);
-  
-        const prixLogement = document.createElement("p");
-        prixLogement.textContent = `${logement.prix} FCFA`;
-        divLogement.appendChild(prixLogement);
-  
-        // Ajout du bouton "Réserver"
-        const boutonReserver = document.createElement("button");
-        boutonReserver.textContent = "Réserver";
-        boutonReserver.addEventListener("click", () => {
-          afficherFenetreReservation(logement);
-        });
-        divLogement.appendChild(boutonReserver);
-  
-        logementCarousel.appendChild(divLogement);
-      });
-  
-      derniersLogements.appendChild(logementCarousel);
-  
-      // Gérer le défilement automatique
-      // Logique du carousel
-      let currentLogementIndex = 0;
-      const slides = logementCarousel.querySelectorAll(".logement");
-      const numSlides = slides.length;
-  
-      setInterval(() => {
-          // Mettre à jour les positions et l'opacité des slides
-          slides.forEach((slide, index) => {
-            if (index === currentLogementIndex) {
-              // Slide du milieu (entièrement visible)
-              slide.style.left = `calc(50% - calc(100% / 6))`;
-              slide.style.zIndex = "2";
-              slide.style.opacity = "1";
-            } else if (
-              index === (currentLogementIndex + 1) % numSlides ||
-              (currentLogementIndex === numSlides - 1 && index === 0)
-            ) {
-              // Slide de droite (partiellement visible)
-              slide.style.left = `calc(100% - calc(100% / 3))`;
-              slide.style.zIndex = "1";
-              slide.style.opacity = "0.7";
-            } else {
-              // Slide de gauche (partiellement visible)
-              slide.style.left = `0`;
-              slide.style.zIndex = "1";
-              slide.style.opacity = "0.7";
-            }
-          });
-    
-          // Passer à la slide suivante
-          currentLogementIndex = (currentLogementIndex + 1) % numSlides;
-        }, 5000);
-    } else {
-      const messageAucunLogement = document.createElement("p");
-      messageAucunLogement.textContent = "Aucune publication récente.";
-      derniersLogements.appendChild(messageAucunLogement);
+
+    let allLogements = []; // Tableau pour stocker TOUS les logements
+
+    const entreprisesSnapshot = await database.ref('entreprises').once('value');
+    for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
+        const logementsRef = database.ref(`entreprises/${entrepriseKey}/logements`);
+        const logementsSnapshot = await logementsRef.once('value');
+
+         // Récupère le nom de l'entreprise AVANT de boucler sur les logements
+        const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
+
+
+        for (const logementKey of Object.keys(logementsSnapshot.val() || {})) {
+            const logement = logementsSnapshot.val()[logementKey];
+            // Ajoute l'ID de l'entreprise, le NOM, l'ID du logement et le STATUT
+            allLogements.push({ ...logement, entrepriseId: entrepriseKey,entrepriseNom: entrepriseNom, id: logementKey , statut: logement.statut || "Non spécifié" });
+        }
     }
-  }
-  
-  // Appeler la fonction pour afficher les dernières publications au chargement de la page
-  afficherDernieresPublications();
-  
-  // Fonction pour afficher tous les logements
-  function afficherTousLesLogements() {
-    const logementsRef = database.ref("logements");
-  
-    logementsRef.on("value", (snapshot) => {
-      const logementsData = snapshot.val();
-  
-      if (logementsData) {
-        afficherResultats(logementsData);
-      } else {
+
+    // Trie TOUS les logements par date de publication (décroissant)
+    allLogements.sort((a, b) => (b.datePublication || 0) - (a.datePublication || 0));
+
+    // Sélectionne les 3 premiers (les plus récents)
+    const logementsRecents = allLogements.slice(0, 3);
+
+
+    if (logementsRecents.length > 0) { //Utilisation de length sur le tableau
+
+        const logementCarousel = document.createElement("div");
+        logementCarousel.classList.add("logement-carousel");
+
+        logementsRecents.forEach((logement) => { //Utilisation du tableau logementsRecents
+            const divLogement = creerDivLogement(logement);
+            logementCarousel.appendChild(divLogement);
+        });
+
+        derniersLogements.appendChild(logementCarousel);
+
+        // Carousel (logique inchangée)
+        let currentLogementIndex = 0;
+        const slides = logementCarousel.querySelectorAll(".logement");
+        const numSlides = slides.length;
+
+        setInterval(() => {
+            slides.forEach((slide, index) => {
+                if (index === currentLogementIndex) {
+                    slide.style.left = `calc(50% - calc(100% / 6))`;
+                    slide.style.zIndex = "2";
+                    slide.style.opacity = "1";
+                } else if (
+                    index === (currentLogementIndex + 1) % numSlides ||
+                    (currentLogementIndex === numSlides - 1 && index === 0)
+                ) {
+                    slide.style.left = `calc(100% - calc(100% / 3))`;
+                    slide.style.zIndex = "1";
+                    slide.style.opacity = "0.7";
+                } else {
+                    slide.style.left = `0`;
+                    slide.style.zIndex = "1";
+                    slide.style.opacity = "0.7";
+                }
+            });
+            currentLogementIndex = (currentLogementIndex + 1) % numSlides;
+        }, 5000);
+
+    } else {
         const messageAucunLogement = document.createElement("p");
-        messageAucunLogement.textContent = "Aucun logement disponible.";
-        document.getElementById("resultats-recherche").appendChild(messageAucunLogement);
-      }
-    });
-  }
-  
-  // Écouter le clic sur le bouton "Voir plus"
-  const voirPlusButton = document.getElementById("voir-plus");
-  voirPlusButton.addEventListener("click", () => {
+        messageAucunLogement.textContent = "Aucune publication récente.";
+        derniersLogements.appendChild(messageAucunLogement);
+    }
+}
+
+// Appeler la fonction pour afficher les dernières publications au chargement de la page
+afficherDernieresPublications();
+
+
+// Fonction pour afficher TOUS les logements (pour le bouton "Voir plus")
+async function afficherTousLesLogements() {
+    // Appelle afficherResultats sans filtre (budget et quartier à null)
+    afficherResultats(null, null);
+}
+
+
+// Écouter le clic sur le bouton "Voir plus"
+const voirPlusButton = document.getElementById("voir-plus");
+voirPlusButton.addEventListener("click", () => {
     afficherTousLesLogements();
-  });
-  
-  // Fonction pour afficher la fenêtre de réservation
-  function afficherFenetreReservation(logement) {
-      const fenetreReservation = document.createElement("div");
-      fenetreReservation.classList.add("fenetre-reservation");
-    
-      fenetreReservation.innerHTML = `
+});
+
+// Fonction pour afficher la fenêtre de réservation (inchangée)
+function afficherFenetreReservation(logement) {
+    const fenetreReservation = document.createElement("div");
+    fenetreReservation.classList.add("fenetre-reservation");
+
+    fenetreReservation.innerHTML = `
         <h3>${logement.titre}</h3>
         <img src="${logement.image}" alt="${logement.titre}">
         <p>${logement.description}</p>
@@ -232,36 +231,91 @@ const firebaseConfig = {
         <button class="bouton-discussion">Discussion</button>
         <button class="bouton-payer">Payer</button>
         <button class="bouton-fermer">Fermer</button>
-      `;
-    
-      document.body.appendChild(fenetreReservation);
-    
-      // Bouton Discussion
-      const boutonDiscussion = fenetreReservation.querySelector(".bouton-discussion");
-      boutonDiscussion.addEventListener("click", () => {
+    `;
+
+    document.body.appendChild(fenetreReservation);
+
+     // Bouton Discussion
+    const boutonDiscussion = fenetreReservation.querySelector(".bouton-discussion");
+    boutonDiscussion.addEventListener("click", () => {
         // Remplacer le numéro par le numéro WhatsApp de votre entreprise
         window.location.href = `https://wa.me/+22951092429?text=Je%20suis%20intéressé%20par%20le%20logement%20:%20${logement.titre}`;
-      });
-    
-      // Bouton Payer
-      const boutonPayer = fenetreReservation.querySelector(".bouton-payer");
-      boutonPayer.addEventListener("click", () => {
-        // Transaction via Fedapay (à implémenter)
-        alert(`Paiement de ${logement.prix} FCFA via Fedapay (à implémenter)`);
-      });
-    
-      // Bouton Fermer
-      const boutonFermer = fenetreReservation.querySelector(".bouton-fermer");
-      boutonFermer.addEventListener("click", (event) => {
-          event.preventDefault();
-          document.body.removeChild(fenetreReservation);
-      });
-  }
-  
-// Basculer la visibilité du menu
+    });
+
+    // Bouton Payer
+    const boutonPayer = fenetreReservation.querySelector(".bouton-payer");
+    boutonPayer.addEventListener("click", () => {
+    // Rediriger vers le lien de paiement Fedapay avec le montant
+    const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${logement.prix}`;
+    window.location.href = lienPaiement;
+    });
+
+    // Bouton Fermer
+    const boutonFermer = fenetreReservation.querySelector(".bouton-fermer");
+    boutonFermer.addEventListener("click", (event) => {
+        event.preventDefault();
+        document.body.removeChild(fenetreReservation);
+    });
+}
+
+
+// Basculer la visibilité du menu (inchangé)
 const menuToggle = document.getElementById("menu-toggle");
 const menu = document.getElementById("menu");
 
 menuToggle.addEventListener("click", () => {
-  menu.classList.toggle("hidden");
+    menu.classList.toggle("hidden");
 });
+
+// Afficher/masquer la section "Comment ça marche ?" (inchangé)
+const commentCaMarcheTrigger = document.getElementById("comment-ca-marche-trigger");
+const commentCaMarcheSection = document.getElementById("comment-ca-marche-section");
+let commentCaMarcheFenetreVisible = false;
+
+function basculerCommentCaMarcheFenetre() {
+    if (!commentCaMarcheFenetreVisible) {
+        commentCaMarcheSection.style.display = "block";
+        commentCaMarcheSection.classList.add('comment-marche-fenetre');
+        commentCaMarcheFenetreVisible = true;
+    } else {
+        commentCaMarcheSection.style.display = "none";
+        commentCaMarcheSection.classList.remove('comment-marche-fenetre');
+        commentCaMarcheFenetreVisible = false;
+    }
+}
+
+if (commentCaMarcheTrigger && commentCaMarcheSection) {
+    const commentCaMarcheContent = document.createElement('div');
+    commentCaMarcheContent.innerHTML = `
+        <button class="fermer-fenetre">X</button>
+        <h3>Comment ça marche ?</h3>
+        <div class="comment-ca-marche-item">
+            <h4>Insérer votre budget</h4>
+            <p>Plus besoin de te déplacer pour rechercher une maison à louer. Insérer juste votre budget et lance une recherche.</p>
+        </div>
+        <div class="comment-ca-marche-item">
+            <h4>Choisir votre zone de recherche</h4>
+            <p>Il vous suffit d'entrer la zone où vous désirez trouver votre logement.</p>
+        </div>
+        <div class="comment-ca-marche-item">
+            <h4>Faire une réservation</h4>
+            <p>Vous pouvez réserver immédiatement en cliquant sur le bouton RESERVER.</p>
+        </div>
+         <div class="comment-ca-marche-item">
+            <h4>Payez votre Loyer</h4>
+            <p>Vous pouvez aussi payer le loyer en un seul clique et obtenir une quittance en ligne immédiatement après paiement.</p>
+        </div>
+    `;
+    commentCaMarcheSection.prepend(commentCaMarcheContent);
+    commentCaMarcheSection.style.display = "none";
+
+    commentCaMarcheTrigger.addEventListener("click", (event) => {
+        event.preventDefault();
+        basculerCommentCaMarcheFenetre();
+    });
+
+    const boutonFermerCommentCaMarche = commentCaMarcheContent.querySelector(".fermer-fenetre");
+    boutonFermerCommentCaMarche.addEventListener("click", () => {
+        basculerCommentCaMarcheFenetre();
+    });
+}

@@ -1,45 +1,57 @@
-/* Styles de base */
 body {
     font-family: sans-serif;
-    background-color: #959a95;
     margin: 0;
+    background-color: white;
 }
 
 .container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 10px;
-    position: relative; /* Ajouté pour le positionnement */
+    position: relative; /* Pour le positionnement des éléments enfants */
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.1em;
+}
+
+.text-center {
+    text-align: center;
 }
 
 header {
-    background-color: #f0f0f0;
-    padding: 20px 0;
-}
-.footer-content {
-    background-color: #f0f0f0;
+    background-color: #fe0008;
     padding: 20px 0;
 }
 
-/* Styles du menu */
+.header-container {
+    display: flex;
+    justify-content: space-between; /* Logo à gauche, menu à droite */
+    align-items: center;
+}
+
+.logo img {
+    height: 50px;
+}
+
 #menu-toggle {
     display: inline-block;
     padding: 10px 15px;
-    background-color: #4CAF50;
+    background-color: black;
     color: white;
     border: none;
     cursor: pointer;
-    position: absolute; /* Position à gauche */
-    left: 10px; /* Espace depuis le bord gauche */
-    top: 50%; /* Centrer verticalement */
-    transform: translateY(-50%); /* Ajustement du centrage vertical */
-    z-index: 2;
 }
+
 nav {
     position: absolute;
-    left: 10px;
-    top: 60px;
-    display: block;
+    right: 0;
+    top: 100%; /* En dessous du bouton */
+    display: block; /* Important pour le positionnement absolu */
 }
 
 nav ul {
@@ -49,14 +61,15 @@ nav ul {
     background-color: #fefefe;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    position: absolute;
+    position: absolute; /* Position absolue par rapport au parent (nav) */
     z-index: 1;
-    width: 200px; /* Ajuster selon besoin */
-    left: 0;
+    width: 200px;
+    right: 0;
+    top: 0;
 }
 
 nav li {
-    display: block;
+    display: block; /* Les éléments de liste prennent toute la largeur */
     margin: 0;
 }
 
@@ -72,197 +85,153 @@ nav a:hover {
 }
 
 nav ul.hidden {
-    display: none;
+    display: none; /* Masquer le menu par défaut */
 }
 
-section {
-    padding: 3px 0;
+#accueil {
+    position: relative;
+    color: white;
+    text-align: center;
+    overflow: hidden;
 }
 
-h2 {
-    margin-bottom: 20px;
+#accueil .accueil-container {
+    position: relative;  /* Important pour le positionnement du texte */
+    padding-bottom: 0;  /* Réduit l'espace en bas */
 }
 
-p {
-    font-size: 1.1em;
-}
-
-/* Styles de la section d'accueil */
 .image-accueil {
     display: block;
     width: 100%;
     height: 700px;
     object-fit: cover;
-    position: relative;
+    position: relative; /* Permet d'assombrir l'image */
+    filter: brightness(80%); /* Assombrit l'image */
 }
 
-.accueil-overlay {
+.accueil-text {
     position: absolute;
-    top: 50%;
+    top: 15%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    transform: translateX(-50%);
+    z-index: 1; /* Au-dessus de l'image */
     width: 80%;
-    max-width: 600px;
-    z-index: 1;
+    max-width: 800px;
 }
-.accueil-overlay h2 {
-    font-size: 2.5em; /* Taille augmentée */
+
+.accueil-text h2 {
+    font-size: 2.5em;
     margin-bottom: 10px;
 }
 
-.accueil-overlay p {
-    font-size: 1.3em; /* Taille augmentée */
+.accueil-text p {
+    font-size: 1.3em;
 }
 
-/* Styles du formulaire de recherche */
-#form-recherche {
+#recherche-logement {
+    position: relative;
+    top: -100px;       /* Chevauche l'image */
+    margin-bottom: -100px; /* Compense le chevauchement */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1000px;
+    background-color: #fe0008;
+    color: black; /* Couleur du texte */
+    padding: 20px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
+}
+
+/* Style pour le conteneur interne de la recherche */
+#recherche-logement .recherche-container {
+    max-width: 100%;
+    padding: 0;
+}
+
+/* Centrer le titre et le texte dans la section recherche */
+#recherche-logement h2,
+#recherche-logement p {
+    text-align: center;
+}
+
+/* Style pour le formulaire de recherche */
+#recherche-logement #form-recherche {
     display: flex;
     margin-bottom: 20px;
-    flex-direction: column;
+    flex-direction: column; /* Disposition verticale */
 }
 
-#form-recherche label {
+#recherche-logement #form-recherche label {
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-#form-recherche input {
+#recherche-logement #form-recherche input {
     margin-bottom: 15px;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 3px;
+    color: black; /* Couleur du texte saisi */
 }
 
-#form-recherche button {
+#recherche-logement #form-recherche button {
     padding: 10px 20px;
-    background-color: #f0f0f0;
+    background-color: #f0f0f0; /* Gris clair */
     color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    align-self: center;
-    width: 35%;
+    align-self: center; /* Centrer le bouton */
+    width: 50%;
 }
 
-/* Styles des résultats de recherche */
+#recherche-logement .container {
+  background-color: #bf071e;
+  border-radius: 50px;
+  color: black;
+}
+
 #resultats-recherche {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    grid-gap: 20px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    color: black;
+    display: grid; /* Disposition en grille */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Colonnes flexibles */
+    grid-gap: 20px; /* Espacement entre les éléments */
 }
 
 .logement {
     border: 1px solid #ccc;
     padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .logement img {
     width: 100%;
-    height: 500px;
+    height: 200px; /* Hauteur fixe pour les images */
     object-fit: cover;
     margin-bottom: 10px;
 }
 
-/* Styles de la section des services */
-#services ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+
+#derniere-publication .container{
+  background-color: #767373; /* Fond rouge */
+  border-radius: 10px;
+  color: white; /* Texte en blanc */
 }
 
-#services li {
-    margin-bottom: 25px;
-    text-align: left;
-    font-size: 1.2em;
-    font-weight: normal;
-    padding-left: 30px;
-    position: relative;
-}
-
-#services li::before {
-    content: "";
-    display: block;
-    width: 15px;
-    height: 15px;
-    background-color: #ff9800;
-    border-radius: 50%;
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* Styles pour les écrans de petite taille (smartphones) */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px; /* Réduction du padding du conteneur */
-    }
-
-    #menu-toggle {
-         padding: 8px 12px; /* Réduction du padding du bouton du menu */
-        font-size: 0.9rem;
-    }
-    nav ul {
-         width: 150px; /* Réduction de la largeur du menu */
-    }
-    nav a {
-         padding: 8px 12px; /* Réduction du padding du menu */
-         font-size: 0.9rem;
-    }
-
-    #form-recherche {
-        flex-direction: column; /* Formulaire en colonne */
-    }
-
-    #resultats-recherche {
-        grid-template-columns: 1fr; /* Une seule colonne pour les résultats */
-    }
-
-    .image-accueil {
-       height: 400px; /* Réduction de la hauteur de l'image */
-         margin: 10px auto;
-    }
-    .accueil-overlay {
-        padding: 10px; /* Réduction du padding de l'overlay */
-    }
-    .accueil-overlay h2 {
-        font-size: 1.8em; /* Réduction de la taille du titre */
-        margin-bottom: 5px;
-    }
-
-    .accueil-overlay p {
-        font-size: 1em; /* Réduction de la taille du texte */
-    }
-
-    #services li {
-        flex: 0 0 100%;
-        font-size: 1em; /* Réduction de la taille de la police */
-        margin-bottom: 15px;
-        padding-left: 25px;
-    }
-    #services li::before {
-        width: 12px;
-        height: 12px;
-    }
-    .logement img {
-      height: 300px; /* Réduction de la hauteur de l'image du logement */
-    }
-}
-
-.text-center {
-    text-align: center;
-}
-
-/* Dernières publications */
 #derniers-logements {
     margin-bottom: 20px;
     width: 100%;
-    height: 700px;
+    height: 520px; /* Hauteur réduite */
     position: relative;
     overflow: hidden;
 }
@@ -284,128 +253,352 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Aligner les éléments en haut */
+    justify-content: flex-start;
     opacity: 0;
-    transition: opacity: 0.5s ease-in-out;
+    transition: opacity 0.5s ease-in-out; /* Transition d'opacité */
     height: 100%;
     padding: 10px;
-    border: 1px solid #ccc; /* Ajout d'une bordure */
-    background-color: white; /* Fond blanc pour le contenu */
+    border: 1px solid #ccc;
+    background-color: #bf071e; /* Fond blanc pour le contenu */
 }
 
 #derniers-logements .logement img {
     width: 100%;
-    height: 500px; /* Hauteur fixe pour les images */
+    height: 250px; /* Hauteur fixe pour les images */
     object-fit: cover;
     margin-bottom: 10px;
 }
 
-/* Styles pour le texte dans les logements */
 #derniers-logements .logement h3,
 #derniers-logements .logement p {
-    text-align: center; /* Centrer le texte */
+    text-align: center;
     color: black;
-    margin: 5px 0; /* Réduire la marge */
+    margin: 5px 0;
 }
 
-/* Style du bouton "Réserver" */
 #derniers-logements .logement button {
-    margin-top: auto; /* Pousser le bouton vers le bas */
+    margin-top: auto; /* Pousse le bouton vers le bas */
     padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
+    background-color: white;
+    color: black;
     border: none;
     cursor: pointer;
 }
 
-/* Style pour la slide du milieu */
-#derniers-logements .logement:nth-child(2) {
+/* Positionnement des slides du carousel */
+#derniers-logements .logement:nth-child(2) { /* Slide du milieu */
     left: calc(50% - calc(100% / 6));
-    z-index: 2; /* S'assurer qu'il est au-dessus */
-    opacity: 1; /* Le rendre entièrement visible */
+    z-index: 2;
+    opacity: 1;
 }
 
-/* Style pour la slide de gauche */
-#derniers-logements .logement:first-child {
+#derniers-logements .logement:first-child { /* Slide de gauche */
     left: 0;
-    z-index: 1; /* Le placer derrière la slide du milieu */
-    opacity: 0.7; /* Partiellement visible */
+    z-index: 1;
+    opacity: 0.7;
 }
 
-/* Style pour la slide de droite */
-#derniers-logements .logement:last-child {
+#derniers-logements .logement:last-child { /* Slide de droite */
     left: calc(100% - calc(100% / 3));
-    z-index: 1; /* Le placer derrière la slide du milieu */
-    opacity: 0.7; /* Partiellement visible */
+    z-index: 1;
+    opacity: 0.7;
 }
 
 #voir-plus {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: black;
     color: white;
     border: none;
     cursor: pointer;
 }
 
-/* Style pour toutes les sections avec un bloc */
-#recherche-logement .container,
-#derniere-publication .container,
-#services .container,
-#contact .container,
-#apropos .container {
-    border: 1px solid #ccc;
-    background-color: #39676a;
-    color: white;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9); /* Ombre pour l'effet surélevé */
-    padding: 20px;
-    margin-bottom: 30px; /* Espace entre les sections */
-}
-
-/* Style pour la section "CHOISI TON LOGEMENT" */
-#recherche-logement .container {
-    background-color: #4ca656; /* Fond vert */
+#services .container{
+    background-color: #767373; /* Fond rouge */
+    border-radius: 10px;
     color: white; /* Texte en blanc */
+
+}
+#services ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-/* Centrer le texte du pied de page */
+#services li {
+    margin-bottom: 25px;
+    text-align: left;
+    font-size: 1.2em;
+    font-weight: normal;
+    padding-left: 30px;
+    position: relative;
+}
+
+/* Cercle orange à côté de chaque service */
+#services li::before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-color: #fe0008;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#apropos .container{
+    background-color: #767373; /* Fond rouge */
+    border-radius: 10px;
+    color: white; /* Texte en blanc */
+
+}
+/* ==========================================================================
+   Pied de Page (Footer)
+   ========================================================================== */
+
+.footer-content {
+    background-color: #fe0008;
+    padding: 20px 0;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
 footer .container {
     text-align: center;
-    max-width: 1500px;
+     max-width: 1500px;
+    color: white;
 }
 
-/* Styles pour la fenêtre de réservation */
+/* Section Contact dans le footer */
+#contact {
+    margin-bottom: 15px; /* Espace avant le copyright */
+}
+
+#contact ul {
+    list-style: none; /* Pas de puces */
+    padding: 0;
+}
+
+#contact li {
+    margin-bottom: 8px;
+}
+
+#contact a {
+    color: white; /* Liens en blanc */
+    text-decoration: none; /* Pas de soulignement */
+}
+
+#contact i {
+    margin-right: 8px; /* Espace entre l'icône et le texte */
+}
+
+/* Section "Comment ça marche ?" */
+#comment-marche h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+#comment-marche a {
+    color: white;
+    text-decoration: none;
+}
+
+/* ==========================================================================
+   Fenêtre de Réservation
+   ========================================================================== */
+
 .fenetre-reservation {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 20px;
-  z-index: 10; /* S'assurer qu'il est au-dessus */
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3); /* Ombre */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 10;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .fenetre-reservation img {
-  width: 250px;
-  height: 200px;
-  object-fit: cover;
-  margin-bottom: 10px;
+    width: 250px;
+    height: 200px;
+    object-fit: cover;
+    margin-bottom: 10px;
 }
 
 .fenetre-reservation .bouton-discussion,
 .fenetre-reservation .bouton-payer,
 .fenetre-reservation .bouton-fermer {
-  padding: 8px 15px;
-  margin: 5px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
+    padding: 8px 15px;
+    margin: 5px;
+    background-color: white;
+    color: black;
+    border: none;
+    cursor: pointer;
 }
 
 .fenetre-reservation .bouton-fermer {
-  background-color: #f44336; /* Rouge pour le bouton de fermeture */
+    background-color: #f44336;
+    color: white;
+}
+
+.comment-marche-fenetre {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    color: black;
+    z-index: 20; /* Au-dessus de la fenêtre de réservation */
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto; /* Barre de défilement si nécessaire */
+}
+
+.comment-marche-fenetre h3 {
+    margin-top: 0;
+}
+
+.comment-ca-marche-item {
+    margin-bottom: 15px;
+}
+
+.comment-ca-marche-item h4 {
+    margin-bottom: 5px;
+}
+
+.comment-marche-fenetre .fermer-fenetre {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #f44336; /* Rouge */
+}
+
+#derniere-publication .container,
+#services .container,
+#contact .container,
+#apropos .container {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #767373;
+  color: white;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9); /* Ombre pour l'effet surélevé */
+  padding: 20px;
+  margin-bottom: 30px; /* Espace entre les sections */
+}
+
+#recherche-logement .container,
+background-color: #fe0008;
+}
+
+/* Styles pour les écrans de petite taille (smartphones) */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    /* Header */
+    #menu-toggle {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    nav ul {
+        width: 150px;
+        right: 0; /* Aligner le menu à droite */
+    }
+
+    nav a {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Accueil */
+    .image-accueil {
+        height: 400px;
+        margin: 10px auto;
+    }
+
+    .accueil-text {
+        top: 10%;
+        padding: 10px;
+    }
+
+    .accueil-text h2 {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+    }
+
+    .accueil-text p {
+        font-size: 1em;
+    }
+
+    /* Recherche de logement */
+    #form-recherche {
+        flex-direction: column;
+    }
+
+    #resultats-recherche {
+        grid-template-columns: 1fr; /* Une seule colonne */
+    }
+
+   #recherche-logement {
+        position: relative;
+        width: 95%;
+        max-width: none;
+        transform: translateX(0%);
+        margin: 20px auto;
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+        top: -50px;
+        margin-bottom: -50px;
+    }
+    /* Services */
+    #services li {
+        flex: 0 0 100%;
+        font-size: 1em;
+        margin-bottom: 15px;
+        padding-left: 25px;
+    }
+
+    #services li::before {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Carousel */
+     #derniers-logements .logement {
+        border: none; /*Pas de bordure sur l'image*/
+     }
+    .logement img {
+        height: 200px; /* Hauteur réduite des images */
+    }
+
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .footer-content #contact {
+        margin-bottom: 10px;
+    }
+
+    #resultats-recherche {
+        padding: 10px;
+        margin-top: 10px;
+    }
 }

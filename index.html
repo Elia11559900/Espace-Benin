@@ -13,11 +13,13 @@
 </head>
 <body>
     <header>
-        <div class="container">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="img/logo.png" alt="TVP Entreprise Logo">
+            </div>
             <button id="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-             <h1 class="text-center">JAE - Entreprise : Gestion Immobilière</h1>
              <nav>
                <ul id="menu" class="hidden">
                     <li><a href="#accueil">Accueil</a></li>
@@ -31,21 +33,21 @@
         </div>
     </header>
 
-
     <main>
         <section id="accueil">
-            <div class="container">
-                <div class="accueil-overlay">
+            <div class="container accueil-container">
+                <div class="accueil-text">
                     <h2>Bienvenue chez JAE - Entreprise</h2>
                     <p>Votre partenaire sûr de gestion immobilière au Bénin</p>
-                    <p>J-A-E,Bénin ; Votre entreprise qui vous facilite l'accès aux services immobiliers au Bénin. <br> Avec une gamme de services optimisés, JAE-Bénin est toujours à proximité de vos besoins.</p>
+                    <p>J-A-E,Bénin ; Votre entreprise qui vous facilite l'accès aux services immobiliers au Bénin.</p>
+                    <p>Avec une gamme de services optimisés, JAE-Bénin est toujours à proximité de vos besoins.</p>
                 </div>
                 <img src="img/immo.jpeg" alt="Image de bienvenue" class="image-accueil">
             </div>
         </section>
 
         <section id="recherche-logement">
-            <div class="container">
+            <div class="container recherche-container">
                 <h2>Choisissez votre logement</h2>
                 <p class="text-center">Et c'est parti</p>
                 <form id="form-recherche">
@@ -58,8 +60,8 @@
                     <button type="submit">Rechercher</button>
                 </form>
 
-                <div id="resultats-recherche"></div>
             </div>
+            <div id="resultats-recherche" style="display:none;"></div>
         </section>
 
         <section id="derniere-publication">
@@ -90,9 +92,11 @@
                 <p>Elle vous facilite la recherche de chambres ordinaires, motels, salles de conférence, appartements en un clic et vous permet d'économiser votre temps.</p>
             </div>
         </section>
+    </main>
 
-        <section id="contact">
-            <div class="container">
+    <footer>
+         <div class="container footer-content">
+            <section id="contact">
                 <h2>Contactez-nous</h2>
                 <p>Pour toute question, contactez-nous via :</p>
                 <ul>
@@ -101,12 +105,11 @@
                     <li><i class="fas fa-envelope"></i> <a href="mailto:65604738a@gmail.com">Email</a></li>
                 </ul>
                 <p>Sise : Banikanni, Parakou - Bénin</p>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-         <div class="container footer-content">
+            </section>
+            <section id="comment-marche">
+                <h2><a href="#" id="comment-ca-marche-trigger">Comment ça marche ?</a></h2>
+                <div id="comment-ca-marche-section"></div>
+            </section>
             <p>© 2025 Plateforme de gestion immobilière</p>
         </div>
     </footer>
