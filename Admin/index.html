@@ -80,7 +80,7 @@
             <h2>Enregistre ton Logement</h2>
             <div><label for="titre">Titre :</label><input type="text" id="titre" name="titre" required></div>
             <div><label for="type">Type de Logement :</label>
-                <select id="type" name="type">
+                <select id="type" name="type" required>
                     <option value="Appartement">Appartement</option><option value="Chambre Hôtel">Chambre Hôtel</option>
                     <option value="Motel">Motel</option><option value="Maison Ordinaire">Maison Ordinaire</option>
                     <option value="Boutique">Boutique</option><option value="Salle de Conférence">Salle de Conférence</option>
@@ -89,23 +89,23 @@
             </div>
             <div><label for="description">Description :</label><textarea id="description" name="description" required></textarea></div>
             <div><label for="etat">Etat du Logement :</label>
-                <select id="etat" name="etat">
+                <select id="etat" name="etat" required>
                     <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
                     <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
                 </select>
             </div>
             <div><label for="prix">Prix (FCFA) :</label><input type="number" id="prix" name="prix" min="0" required></div>
             <div><label for="demarcheur">Démarcheur du Logement :</label>
-                <select id="demarcheur" name="demarcheur">
+                <select id="demarcheur" name="demarcheur" required>
                     <option value="Oui">Oui</option><option value="Non">Non</option><option value="Autre">Autre</option>
                 </select>
             </div>
-            <div><label for="proprietaire">Propriétaire :</label><input type="text" id="proprietaire" name="proprietaire"></div>
-            <div><label for="quartier">Quartier :</label><input type="text" id="quartier" name="quartier"></div>
-            <div><label for="image">Image (URL) :</label><input type="text" id="image" name="image"></div>
+            <div><label for="proprietaire">Propriétaire :</label><input type="text" id="proprietaire" name="proprietaire" required></div>
+            <div><label for="quartier">Quartier :</label><input type="text" id="quartier" name="quartier" required></div>
+            <div><label for="image">Image (URL) :</label><input type="text" id="image" name="image" required></div>
              <div> <!-- Ajout du champ statut -->
                     <label for="statut">Statut :</label>
-                    <select id="statut" name="statut">
+                    <select id="statut" name="statut" required>
                         <option value="Libre">Libre</option>
                         <option value="Réservé">Réservé</option>
                         <option value="Occupé">Occupé</option>
@@ -177,10 +177,12 @@
             <h2>Enregistre le Locataire</h2>
             <div><label for="nom">Nom :</label><input type="text" id="nom" name="nom" required></div>
             <div><label for="prenoms">Prénoms :</label><input type="text" id="prenoms" name="prenoms" required></div>
-            <div><label for="contact">Contact :</label><input type="text" id="contact" name="contact" required></div>
-            <div><label for="adresse">Adresse :</label><input type="text" id="adresse" name="adresse"></div>
-            <div><label for="email">Email :</label><input type="email" id="email" name="email"></div>
-            <div><label for="facebook">Facebook :</label><input type="text" id="facebook" name="facebook"></div>
+            <div><label for="adresse">Adresse :</label><input type="text" id="adresse" name="adresse" required></div>
+            <div><label for="email">Email :</label><input type="email" id="email" name="email" required></div>
+            <div><label for="facebook">Facebook :</label><input type="text" id="facebook" name="facebook" required></div>
+            <!-- Ajout du champ contact -->
+            <div><label for="contactLocataire">Contact :</label><input type="text" id="contactLocataire" name="contactLocataire" required></div>
+
             <button type="submit">Ajouter</button>
         </form>
         <button id="afficher-locataires-btn">Afficher les locataires</button>
@@ -192,7 +194,7 @@
         <button class="export-btn" data-table="locataires" data-format="xlsx">Exporter en Excel</button>
         <button class="export-btn" data-table="locataires" data-format="pdf">Exporter en PDF</button>
         <table>
-            <thead><tr><th>ID</th><th>Nom</th><th>Prénoms</th><th>Contact</th><th>Adresse</th><th>Email</th><th>Facebook</th><th>Actions</th></tr></thead>
+            <thead><tr><th>ID</th><th>Nom</th><th>Prénoms</th><th>Adresse</th><th>Email</th><th>Facebook</th><th>Contact</th><th>Actions</th></tr></thead>
             <tbody id="tbody-locataires"></tbody>
         </table>
     </div>
@@ -205,14 +207,14 @@
             <div><label for="descriptionBien">Description :</label><textarea id="descriptionBien" name="descriptionBien" required></textarea></div>
             <div>
                 <label for="etatBien">Etat du Bien :</label>
-                <select id="etatBien" name="etatBien">
+                <select id="etatBien" name="etatBien" required>
                     <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
                     <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
                 </select>
             </div>
             <div><label for="prixBien">Prix (FCFA) :</label><input type="number" id="prixBien" name="prixBien" min="0" required></div>
             <div><label for="proprietaireBien">Propriétaire :</label><input type="text" id="proprietaireBien" name="proprietaireBien" required></div>
-            <div><label for="imageBien">Image (URL) :</label><input type="text" id="imageBien" name="imageBien"></div>
+            <div><label for="imageBien">Image (URL) :</label><input type="text" id="imageBien" name="imageBien" required></div>
             <button type="submit">Ajouter</button>
         </form>
         <button id="afficher-biens-btn">Afficher les biens</button>

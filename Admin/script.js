@@ -1,6 +1,6 @@
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDGOgJ_Lmtc---VE6Ty-l3FHFzaFh5rcO4",
+    apiKey: "AIzaSyDGOgJ_Lmtc---VE6Ty-l3FHFzaFh5rcO4",  // Remplacez par votre clé API
     authDomain: "immo-c41e6.firebaseapp.com",
     databaseURL: "https://immo-c41e6-default-rtdb.firebaseio.com",
     projectId: "immo-c41e6",
@@ -162,7 +162,7 @@ if (logoutBtn) {
             .catch((error) => {
                 console.error("Erreur lors de la déconnexion:", error);
                 afficherNotification("Erreur lors de la déconnexion", "error");
-            });
+        });
     });
 }
 
@@ -356,22 +356,19 @@ function ajouterLocataire(event) {
 
     const nom = document.getElementById("nom").value;
     const prenoms = document.getElementById("prenoms").value;
-    const contact = document.getElementById("contact").value;
     const adresse = document.getElementById("adresse").value;
     const email = document.getElementById("email").value;
     const facebook = document.getElementById("facebook").value;
-
-    console.log("Valeurs lues du formulaire (ajouterLocataire):", { nom, prenoms, contact, adresse, email, facebook }); // DÉBOGAGE: Vérifie les valeurs
+    const contact = document.getElementById("contactLocataire").value; // Récupération du contact
 
     if (editingLocataireId) {
-        mettreAJourLocataire(editingLocataireId, nom, prenoms, contact, adresse, email, facebook);
+        mettreAJourLocataire(editingLocataireId, nom, prenoms, adresse, email, facebook, contact); // Ajout contact
     } else {
         const nouveauLocataireRef = database.ref(`entreprises/${currentUser.uid}/locataires`).push();
 
-        const nouveauLocataire = {  // Créer un objet intermédiaire
-            nom, prenoms, contact, adresse, email, facebook
+        const nouveauLocataire = {
+            nom, prenoms, adresse, email, facebook, contact // Ajout contact
         };
-        console.log("Objet locataire à enregistrer (ajouterLocataire):", nouveauLocataire); // DÉBOGAGE
 
         nouveauLocataireRef.set(nouveauLocataire)
             .then(() => {
@@ -388,16 +385,12 @@ function ajouterLocataire(event) {
     }
 }
 
-function mettreAJourLocataire(id, nom, prenoms, contact, adresse, email, facebook) {
+function mettreAJourLocataire(id, nom, prenoms, adresse, email, facebook, contact) { // Ajout contact
     if (!currentUser) return;
 
-    console.log("Valeurs reçues par mettreAJourLocataire:", { id, nom, prenoms, contact, adresse, email, facebook }); // DÉBOGAGE
-
-    const locataireMisAJour = { // Créer un objet intermédiaire
-        nom, prenoms, contact, adresse, email, facebook
+    const locataireMisAJour = {
+        nom, prenoms, adresse, email, facebook, contact  // Ajout contact
     };
-    console.log("Objet locataire à mettre à jour (mettreAJourLocataire):", locataireMisAJour); // DÉBOGAGE
-
 
     database.ref(`entreprises/${currentUser.uid}/locataires/${id}`).update(locataireMisAJour)
         .then(() => {
@@ -419,15 +412,14 @@ function editerLocataire(id) {
 
     database.ref(`entreprises/${currentUser.uid}/locataires/${id}`).once('value', (snapshot) => {
         const locataire = snapshot.val();
-        console.log("Données du locataire lues depuis Firebase (editerLocataire):", locataire); // DÉBOGAGE
 
         if (locataire) {
             document.getElementById("nom").value = locataire.nom;
             document.getElementById("prenoms").value = locataire.prenoms;
-            document.getElementById("contact").value = locataire.contact;  // Vérifier que cette ligne fonctionne
             document.getElementById("adresse").value = locataire.adresse;
             document.getElementById("email").value = locataire.email;
             document.getElementById("facebook").value = locataire.facebook;
+            document.getElementById("contactLocataire").value = locataire.contact; // Remplissage contact
 
             const boutonAjouter = document.querySelector("#form-ajout-locataire button[type='submit']");
             boutonAjouter.textContent = "Modifier";
@@ -458,10 +450,10 @@ function afficherLocataires() {
                 <td>${id}</td>
                 <td>${locataire.nom}</td>
                 <td>${locataire.prenoms}</td>
-                <td>${locataire.contact}</td>  
                 <td>${locataire.adresse}</td>
                 <td>${locataire.email}</td>
                 <td>${locataire.facebook}</td>
+                <td>${locataire.contact}</td>  
                 <td class="action-buttons">
                     <button onclick="editerLocataire('${id}')">Éditer</button>
                     <button onclick="supprimerLocataire('${id}')">Supprimer</button>
@@ -678,7 +670,7 @@ function afficherDemandesPaiement() {
     tbody.innerHTML = "";
 
     database.ref(`entreprises/${currentUser.uid}/demandesPaiement`).on('value', (snapshot) => {
-        tbody.innerHTML = "";
+        tbody.innerHTML = "";  //Réinitialiser le tbody a chaque changement
         snapshot.forEach((childSnapshot) => {
             const demande = childSnapshot.val();
             const id = childSnapshot.key;
