@@ -349,15 +349,37 @@ nav ul.hidden {
     transform: translateY(-50%);
 }
 
+/* Styles pour la section "Comment ça marche ?" */
+#comment-fonctionne .container {
+    background-color: #767373;
+    border-radius: 10px;
+    color: white;
+    padding: 20px;
+    margin-bottom: 30px;
+     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+}
+
+#comment-fonctionne h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#comment-fonctionne .comment-ca-marche-item {
+    margin-bottom: 15px;
+}
+
+#comment-fonctionne .comment-ca-marche-item h4 {
+    margin-bottom: 5px;
+    color: black; /* Changement de couleur ici */
+    font-weight: bold;
+}
+
 #apropos .container{
     background-color: #767373; /* Fond rouge */
     border-radius: 10px;
     color: white; /* Texte en blanc */
 
 }
-/* ==========================================================================
-   Pied de Page (Footer)
-   ========================================================================== */
 
 .footer-content {
     background-color: #fe0008;
@@ -398,21 +420,6 @@ footer .container {
     margin-right: 8px; /* Espace entre l'icône et le texte */
 }
 
-/* Section "Comment ça marche ?" */
-#comment-marche h2 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-}
-
-#comment-marche a {
-    color: white;
-    text-decoration: none;
-}
-
-/* ==========================================================================
-   Fenêtre de Réservation
-   ========================================================================== */
-
 .fenetre-reservation {
     position: fixed;
     top: 50%;
@@ -448,44 +455,7 @@ footer .container {
     color: white;
 }
 
-.comment-marche-fenetre {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 20px;
-    color: black;
-    z-index: 20; /* Au-dessus de la fenêtre de réservation */
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-    max-width: 80%;
-    max-height: 80%;
-    overflow-y: auto; /* Barre de défilement si nécessaire */
-}
-
-.comment-marche-fenetre h3 {
-    margin-top: 0;
-}
-
-.comment-ca-marche-item {
-    margin-bottom: 15px;
-}
-
-.comment-ca-marche-item h4 {
-    margin-bottom: 5px;
-}
-
-.comment-marche-fenetre .fermer-fenetre {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: #f44336; /* Rouge */
-}
+/* Enlève la fenêtre modale "comment-marche-fenetre" du CSS */
 
 #derniere-publication .container,
 #services .container,
