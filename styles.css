@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 10px;
     position: relative; /* Pour le positionnement des éléments enfants */
@@ -24,35 +24,42 @@ p {
 }
 
 header {
-    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
+    background-color: #003366;
     padding: 20px 0;
+    position: relative;
 }
 
 .header-container {
     display: flex;
-    justify-content: space-between; /* Logo à gauche, menu à droite */
+    justify-content: space-between;
     align-items: center;
 }
 
 .logo img {
     height: 50px;
-    border-radius: 50%; /* Rend les bordures du logo rondes */
 }
 
 #menu-toggle {
     display: inline-block;
     padding: 10px 15px;
-    background-color: #FFA500; /* Orange - Couleur du logo (assumé) */
+    background-color: #FFA500;
     color: white;
     border: none;
     cursor: pointer;
+    z-index: 2;
 }
 
 nav {
     position: absolute;
     right: 0;
-    top: 100%; /* En dessous du bouton */
-    display: block; /* Important pour le positionnement absolu */
+    top: 100%;
+    display: block;
+    width: auto;
+    z-index: 1000;
+    height: 800px; /* 100% de la hauteur de la fenêtre (viewport height) */
+    width: 500px;    /* Largeur fixe, ajuste selon tes préférences */
+    max-width: 80%;  /* Pour éviter que le menu ne soit TROP large sur les grands écrans */
+    overflow-y: auto; /* Ajoute une barre de défilement verticale si le contenu dépasse */
 }
 
 nav ul {
@@ -62,23 +69,32 @@ nav ul {
     background-color: #fefefe;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    position: absolute; /* Position absolue par rapport au parent (nav) */
-    z-index: 1;
-    width: 200px;
-    right: 0;
-    top: 0;
+     width: 100%; /* Prend toute la largeur de son parent (nav) */
+    min-width: auto; /*Supprime la largeur minimal*/
+    text-align: left;
+     /* AJOUT: pour s'assurer que la liste remplisse le conteneur */
+     box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur/hauteur */
 }
 
 nav li {
-    display: block; /* Les éléments de liste prennent toute la largeur */
+    display: block;
     margin: 0;
+    border-bottom: 1px solid #eee;
 }
+
+nav li:last-child {
+    border-bottom: none;
+}
+
 
 nav a {
     display: block;
-    padding: 10px 15px;
+    padding: 15px 20px; /* Augmente le padding pour des éléments plus grands */
     text-decoration: none;
     color: #333;
+    /* AJOUTS pour le style du texte */
+    font-weight: bold;
+    font-size: 1.1em; /* Ajuste la taille de la police */
 }
 
 nav a:hover {
@@ -86,7 +102,7 @@ nav a:hover {
 }
 
 nav ul.hidden {
-    display: none; /* Masquer le menu par défaut */
+    display: none;
 }
 
 #accueil {
@@ -97,8 +113,8 @@ nav ul.hidden {
 }
 
 #accueil .accueil-container {
-    position: relative;  /* Important pour le positionnement du texte */
-    padding-bottom: 0;  /* Réduit l'espace en bas */
+    position: relative;
+    padding-bottom: 0;
 }
 
 .image-accueil {
@@ -106,8 +122,9 @@ nav ul.hidden {
     width: 100%;
     height: 700px;
     object-fit: cover;
-    position: relative; /* Permet d'assombrir l'image */
-    filter: brightness(80%); /* Assombrit l'image */
+    position: relative;
+    filter: brightness(80%);
+    border-radius: 1%;
 }
 
 .accueil-text {
@@ -115,7 +132,7 @@ nav ul.hidden {
     top: 15%;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1; /* Au-dessus de l'image */
+    z-index: 1;
     width: 80%;
     max-width: 800px;
 }
@@ -131,43 +148,40 @@ nav ul.hidden {
 
 #recherche-logement {
     position: relative;
-     top: -100px;       /* Chevauche l'image */
-    margin-bottom: -100px; /* Compense le chevauchement */
+    top: -100px;
+    margin-bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
     max-width: 1000px;
-    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
-    color: white; /* Couleur du texte */
+    background-color: #2d38bd;
+    color: white;
     padding: 20px;
     border-radius: 50px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
     margin-top: 20px;
 }
 
-/* Style pour le conteneur interne de la recherche */
 #recherche-logement .recherche-container {
     max-width: 100%;
     padding: 0;
 }
 
-/* Centrer le titre et le texte dans la section recherche */
 #recherche-logement h2,
 #recherche-logement p {
     text-align: center;
 }
 
-/* Style pour le formulaire de recherche */
 #recherche-logement #form-recherche {
     display: flex;
     margin-bottom: 20px;
-    flex-direction: column; /* Disposition verticale */
+    flex-direction: column;
 }
 
 #recherche-logement #form-recherche label {
     margin-bottom: 5px;
     font-weight: bold;
-    color: white; /* Label en blanc */
+    color: white;
 }
 
 #recherche-logement #form-recherche input {
@@ -175,27 +189,26 @@ nav ul.hidden {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 3px;
-    color: black; /* Couleur du texte saisi */
+    color: black;
 }
 
 #recherche-logement #form-recherche button {
     padding: 10px 20px;
-    background-color: #FFA500; /* Orange - Couleur du logo (assumé) */
+    background-color: #FFA500;
     color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    align-self: center; /* Centrer le bouton */
+    align-self: center;
     width: 50%;
 }
 
 #recherche-logement .container {
-  background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
-  border-radius: 50px;
-  color: white;
+    background-color: #2d38bd;
+    border-radius: 50px;
+    color: white;
 }
-
 
 #resultats-recherche {
     margin-top: 20px;
@@ -204,9 +217,9 @@ nav ul.hidden {
     border-radius: 10px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     color: black;
-    display: grid; /* Disposition en grille */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Colonnes flexibles */
-    grid-gap: 20px; /* Espacement entre les éléments */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 20px;
 }
 
 .logement {
@@ -219,28 +232,27 @@ nav ul.hidden {
 
 .logement img {
     width: 100%;
-    height: 200px; /* Hauteur fixe pour les images */
+    height: 200px;
     object-fit: cover;
     margin-bottom: 10px;
 }
 
-
-#derniere-publication .container{
-  border-radius: 10px;
-  color: black; /* Texte en noir */
+#derniere-publication .container {
+    border-radius: 10px;
+    color: black;
 }
 
 #derniers-logements {
     margin-bottom: 20px;
     width: 100%;
-    height: 550px; /* Hauteur réduite */
+    height: 550px;
     position: relative;
     overflow: hidden;
 }
 
 .logement-carousel {
     display: flex;
-     width: 300%; /* 3 logements x 100% */
+    width: 300%;
     transition: transform 0.5s ease-in-out;
     position: relative;
     height: 100%;
@@ -256,7 +268,7 @@ nav ul.hidden {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    transition: opacity 0.5s ease-in-out; /* Transition d'opacité */
+    transition: opacity 0.5s ease-in-out;
     height: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -264,7 +276,7 @@ nav ul.hidden {
 
 #derniers-logements .logement img {
     width: 100%;
-    height: 250px; /* Hauteur fixe pour les images */
+    height: 250px;
     object-fit: cover;
     margin-bottom: 10px;
 }
@@ -277,33 +289,32 @@ nav ul.hidden {
 }
 
 #derniers-logements .logement button {
-    margin-top: auto; /* Pousse le bouton vers le bas */
+    margin-top: auto;
     padding: 5px 10px;
-    background-color: #FFA500; /* Changement de couleur */
+    background-color: #FFA500;
     color: #333;
     border: none;
     cursor: pointer;
 }
 
 /* Positionnement des slides du carousel */
-#derniers-logements .logement:nth-child(2) { /* Slide du milieu */
+#derniers-logements .logement:nth-child(2) {
     left: calc(50% - calc(100% / 6));
     z-index: 2;
 }
 
-#derniers-logements .logement:first-child { /* Slide de gauche */
+#derniers-logements .logement:first-child {
     left: 0;
     z-index: 1;
 }
 
-#derniers-logements .logement:last-child { /* Slide de droite */
+#derniers-logements .logement:last-child {
     left: calc(100% - calc(100% / 3));
     z-index: 1;
 }
 
-
 #voir-plus {
-    display: inline-block; /* Pour centrer correctement avec margin auto */
+    display: inline-block;
     margin: 20px auto;
     padding: 10px 20px;
     background-color: #FFA500;
@@ -312,26 +323,25 @@ nav ul.hidden {
     cursor: pointer;
 }
 
-
-#services .container{
-    background-color: #f0f0f0; /* Light gray pour contraster avec le bleu */
+#services .container {
+    background-color: #f0f0f0;
     border-radius: 10px;
-    color: black; /* Texte en noir */
-
+    color: black;
 }
+
 #services ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    text-align: left; /* Aligner le texte à gauche */
+    text-align: left;
 }
 
 #services li {
     margin-bottom: 25px;
-    text-align: left; /* Aligner le texte à gauche */
+    text-align: left;
     font-size: 1.2em;
     font-weight: normal;
-    padding-left: 25px; /* Espacer le texte du point */
+    padding-left: 25px;
     position: relative;
 }
 
@@ -344,36 +354,35 @@ nav ul.hidden {
     background-color: #1f2ab0;
     border-radius: 50%;
     position: absolute;
-    left: 0; /* Positionner à gauche */
+    left: 0;
     top: 50%;
-    transform: translateY(-50%); /* Centrer verticalement */
+    transform: translateY(-50%);
 }
 
 /* Style pour les icônes de "Comment ça marche" */
 #comment-fonctionne .comment-ca-marche-item i {
     display: block;
     text-align: center;
-    font-size: 4em; /* Augmenter la taille des icônes */
+    font-size: 4em;
     margin-bottom: 10px;
-    color: #FFA500; /* Orange - Couleur du logo (assumé) */
+    color: #FFA500;
 }
 
 /* Ajustement du padding pour le texte "Comment ça marche" */
 #comment-fonctionne .comment-ca-marche-item p {
-    padding: 0 20px; /* Ajoute du padding à gauche et à droite */
+    padding: 0 20px;
     text-align: center;
-    font-size: 1.2em; /* Augmenter la taille de la description */
+    font-size: 1.2em;
 }
-
 
 /* Styles pour la section "Comment ça marche ?" */
 #comment-fonctionne .container {
-    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
+    background-color: #003366;
     border-radius: 10px;
     color: white;
     padding: 20px;
     margin-bottom: 30px;
-     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
 }
 
 #comment-fonctionne h2 {
@@ -384,83 +393,105 @@ nav ul.hidden {
 
 #comment-fonctionne .comment-ca-marche-item {
     margin-bottom: 15px;
-    display: flex; /* Utiliser flexbox pour aligner icône et texte */
-    align-items: center; /* Centrer verticalement */
-}
-/* Disposition alternée des icônes et du texte */
-#comment-fonctionne .comment-ca-marche-item:nth-child(odd) { /* Éléments impairs (1, 3) */
-    flex-direction: row; /* Icône à gauche, texte à droite */
+    display: flex;
+    align-items: center;
 }
 
-#comment-fonctionne .comment-ca-marche-item:nth-child(even) { /* Éléments pairs (2, 4) */
-    flex-direction: row-reverse; /* Texte à gauche, icône à droite */
+/* Disposition alternée des icônes et du texte */
+#comment-fonctionne .comment-ca-marche-item:nth-child(odd) {
+    flex-direction: row;
+}
+
+#comment-fonctionne .comment-ca-marche-item:nth-child(even) {
+    flex-direction: row-reverse;
 }
 
 /* Espacement entre l'icône et le texte */
 #comment-fonctionne .comment-ca-marche-item i {
-   margin: 0 20px;  /* Marge autour de l'icône */
-   flex-shrink: 0; /* Empêcher l'icône de rétrécir */
+    margin: 0 20px;
+    flex-shrink: 0;
 }
 
 #comment-fonctionne .comment-ca-marche-item h4 {
-   text-transform: uppercase;  /* Mettre le sous-titre en majuscules */
-    color: #FFA500;  /* Couleur différente pour le sous-titre */
-    font-size: 1.4em; /* Augmenter la taille du sous-titre */
+    text-transform: uppercase;
+    color: #FFA500;
+    font-size: 1.4em;
 }
 
 #comment-fonctionne .comment-ca-marche-item h4,
-#comment-fonctionne .comment-ca-marche-item p{
-    text-align: left; /* Aligner le texte à gauche */
+#comment-fonctionne .comment-ca-marche-item p {
+    text-align: left;
     font-size: 1.3em;
 }
 
-
-#apropos .container{
-    background-color: #f0f0f0; /* Light gray pour contraster avec le bleu */
+#apropos .container {
+    background-color: #f0f0f0;
     border-radius: 10px;
-    color: black; /* Texte en noir */
+    color: black;
 }
 
-
 .footer-content {
-    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
-    padding: 20px 0;
+    background-color: #003366;
+     padding: 20px 0 20px 20px; /* Ajout du padding à gauche */
     color: white;
-    display: flex; /* Utiliser flexbox pour centrer le contenu */
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+     text-align: left;
 }
 
 footer .container {
-    text-align: center;
-     max-width: 1500px;
+    max-width: 1500px;
     color: white;
+    text-align: left;
 }
 
 /* Section Contact dans le footer */
 #contact {
-    margin-bottom: 15px; /* Espace avant le copyright */
+    margin-bottom: 15px;
+    text-align: left;
 }
 
 #contact ul {
-    list-style: none; /* Pas de puces */
+    list-style: none;
     padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 #contact li {
-    margin-bottom: 8px;
+    margin: 5px 10px;
 }
-
-#contact a {
-    color: white; /* Liens en blanc */
-    text-decoration: none; /* Pas de soulignement */
+ #contact a {
+    color: white;
+    text-decoration: none;
+    display: flex; /* Pour aligner l'icône et le texte */
+    align-items: center; /* Centrer l'icône et le texte verticalement */
 }
 
 #contact i {
-    margin-right: 8px; /* Espace entre l'icône et le texte */
+    margin-right: 8px;
 }
 
+/* Styles pour les liens Termes et Conditions, Politique de Confidentialité */
+.footer-content .legal-links {
+    margin-bottom: 10px;
+      text-align: left;
+}
+
+.footer-content .legal-links a {
+    color: #ddd;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 0.9em;
+}
+
+.footer-content .legal-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-content p {
+    margin: 10px 0;
+    text-align: left;
+}
 
 .fenetre-reservation {
     position: fixed;
@@ -497,25 +528,23 @@ footer .container {
     color: black;
 }
 
-
 /* Enlève la fenêtre modale "comment-marche-fenetre" du CSS */
 
 #derniere-publication .container,
 #services .container,
 #contact .container,
 #apropos .container {
-  border: none; /* Enlever la bordure pour un look plus moderne */
-  border-radius: 10px;
-  color: black;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9); /* Ombre pour l'effet surélevé */
-  padding: 20px;
-  margin-bottom: 30px; /* Espace entre les sections */
+    border: none;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
 #recherche-logement .container,
-background-color: #003366;
+    background-color: #003366;
 }
-
 
 /* Styles pour les écrans de petite taille (smartphones) */
 @media (max-width: 768px) {
@@ -526,17 +555,17 @@ background-color: #003366;
     /* Header */
     #menu-toggle {
         padding: 8px 12px;
-        font-size: 0.9rem;
+        font-size: 1.2rem;
     }
 
-    nav ul {
-        width: 150px;
-        right: 0; /* Aligner le menu à droite */
-    }
+   nav {
+        width: 80%; /* Le menu prend 80% de la largeur sur mobile */
+        max-width: 300px; /* Limite la largeur maximale */
+        height: 100vh;    /* Garde la hauteur complète */
 
+    }
     nav a {
-        padding: 8px 12px;
-        font-size: 0.9rem;
+        font-size: 1em; /* Ajuste la taille si besoin */
     }
 
     /* Accueil */
@@ -565,85 +594,110 @@ background-color: #003366;
     }
 
     #resultats-recherche {
-        grid-template-columns: 1fr; /* Une seule colonne */
+        grid-template-columns: 1fr;
     }
 
-   #recherche-logement {
+    #recherche-logement {
         position: relative;
         width: 95%;
         max-width: none;
         transform: translateX(0%);
         margin: 20px auto;
-        box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
         top: -50px;
         margin-bottom: -50px;
     }
+
     /* Services */
     #services li {
-        /*flex: 0 0 100%;  Assurer que les éléments prennent toute la largeur */
-        text-align: left; /* Centrer le texte sur mobile */
+        text-align: left;
         font-size: 1em;
         margin-bottom: 15px;
-        padding-left: 25px; /* Pas de padding à gauche sur mobile car centré */
+        padding-left: 25px;
     }
+
     #services li::before {
-        left: 0; /* Centrer le point sur mobile */
-        margin-left: 0; /* Ajuster pour centrer parfaitement (rayon/2) */
+        left: 0;
+        margin-left: 0;
     }
+
     #services ul {
-        text-align: left; /* Centrer la liste des services */
+        text-align: left;
     }
 
-      /* Comment ça marche */
+    /* Comment ça marche */
     #comment-fonctionne .comment-ca-marche-item {
-        flex-direction: column; /* Disposition verticale sur mobile */
+        flex-direction: column;
     }
-      #comment-fonctionne .comment-ca-marche-item:nth-child(odd) { /* Éléments impairs (1, 3) */
-    flex-direction: column; /* Icône à gauche, texte à droite */
-}
 
-#comment-fonctionne .comment-ca-marche-item:nth-child(even) { /* Éléments pairs (2, 4) */
-    flex-direction: column; /* Texte à gauche, icône à droite */
-}
+    #comment-fonctionne .comment-ca-marche-item:nth-child(odd) {
+        flex-direction: column;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item:nth-child(even) {
+        flex-direction: column;
+    }
 
     #comment-fonctionne .comment-ca-marche-item i {
-        margin: 0 0 10px 0; /* Marge en bas de l'icône */
+        margin: 0 0 10px 0;
         text-align: center;
-        font-size: 3em; /* Réduire la taille sur mobile */
+        font-size: 3em;
     }
-      #comment-fonctionne .comment-ca-marche-item h4{
+
+    #comment-fonctionne .comment-ca-marche-item h4 {
         font-size: 1.1em;
-      }
-       /* Augmenter la taille du contenu des sous-titres */
-    #comment-fonctionne .comment-ca-marche-item p {
-        font-size: 1.1em; /* Augmenter à 1.1em sur mobile */
     }
+
+    #comment-fonctionne .comment-ca-marche-item p {
+        font-size: 0.9em;
+        text-align: center;
+    }
+
     #comment-fonctionne .comment-ca-marche-item h4,
-    #comment-fonctionne .comment-ca-marche-item p{
+    #comment-fonctionne .comment-ca-marche-item p {
         text-align: center;
     }
 
     /* Carousel */
-     #derniers-logements .logement {
-        border: none; /*Pas de bordure sur l'image*/
-     }
+    #derniers-logements .logement {
+        border: none;
+    }
+
     .logement img {
-        height: 200px; /* Hauteur réduite des images */
+        height: 200px;
     }
 
     /* Footer */
     .footer-content {
-        flex-direction: column;
-        text-align: center;
-        padding: 10px 0;
+        text-align: left;
+        margin-left: 0;
+        padding: 20px 0 20px 10px;
     }
 
-    .footer-content #contact {
-        margin-bottom: 10px;
+    #contact ul {
+         display: flex;  /* Remettre flexbox */
+        flex-wrap: wrap; /* Permettre le passage à la ligne au besoin*/
+        margin: 0;
+        padding: 0;
+        margin-left: 10px; /* Reduire la marge */
+    }
+
+    #contact li {
+         margin: 5px 10px;  /*Marge autour*/
     }
 
     #resultats-recherche {
         padding: 10px;
         margin-top: 10px;
     }
+
+    .footer-content p {
+        margin: 10px 0;
+        text-align: left;
+         margin-left: 10px; /* Reduire la marge */
+
+    }
+     .footer-content .legal-links a{
+          margin-left: 10px
+     }
 }
