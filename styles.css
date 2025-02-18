@@ -359,45 +359,29 @@ nav ul.hidden {
     transform: translateY(-50%);
 }
 
-/* Style pour les icônes de "Comment ça marche" */
-#comment-fonctionne .comment-ca-marche-item i {
-    display: block;
-    text-align: center;
-    font-size: 4em;
-    margin-bottom: 10px;
-    color: #FFA500;
-}
-
-/* Ajustement du padding pour le texte "Comment ça marche" */
-#comment-fonctionne .comment-ca-marche-item p {
-    padding: 0 20px;
-    text-align: center;
-    font-size: 1.2em;
-}
-
-/* Styles pour la section "Comment ça marche ?" */
+/* Styles généraux (écrans larges) pour "Comment ça marche ?" */
 #comment-fonctionne .container {
     background-color: #003366;
     border-radius: 10px;
     color: white;
-    padding: 20px;
-    margin-bottom: 30px;
+    padding: 20px;  /* Un peu de padding général */
+    margin-bottom: 10px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
 }
 
 #comment-fonctionne h2 {
     text-align: center;
-    font-size: 2.2em;
+    font-size: 2.0em; /* Conserve la taille sur les grands écrans */
     margin-bottom: 20px;
 }
 
 #comment-fonctionne .comment-ca-marche-item {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     display: flex;
-    align-items: center;
+    align-items: center; /* Important pour l'alignement vertical */
 }
 
-/* Disposition alternée des icônes et du texte */
+/* Disposition alternée (écrans larges) */
 #comment-fonctionne .comment-ca-marche-item:nth-child(odd) {
     flex-direction: row;
 }
@@ -406,23 +390,64 @@ nav ul.hidden {
     flex-direction: row-reverse;
 }
 
-/* Espacement entre l'icône et le texte */
+/* Espacement (écrans larges) */
 #comment-fonctionne .comment-ca-marche-item i {
-    margin: 0 20px;
-    flex-shrink: 0;
+    margin: 0 20px;  /* Marge autour de l'icône */
+    flex-shrink: 0; /* Empêche l'icône de rétrécir */
+    font-size: 3em; /* Taille de l'icône sur grand écran */
 }
 
 #comment-fonctionne .comment-ca-marche-item h4 {
     text-transform: uppercase;
     color: #FFA500;
-    font-size: 1.4em;
+    font-size: 1.2em; /* Conserve la taille sur les grands écrans */
+    margin-bottom: 5px; /* Un peu d'espace sous le titre */
 }
 
 #comment-fonctionne .comment-ca-marche-item h4,
 #comment-fonctionne .comment-ca-marche-item p {
-    text-align: left;
-    font-size: 1.3em;
+    text-align: left; /* Alignement du texte */
+     /* Supprimé font-size ici, géré par les media queries */
 }
+
+/* Styles spécifiques pour les petits écrans (smartphones) */
+@media (max-width: 768px) {
+
+    #comment-fonctionne .container {
+        padding: 15px; /* Réduit le padding */
+    }
+
+    #comment-fonctionne h2 {
+        font-size: 1.6em; /* Réduit la taille du titre */
+    }
+
+    #comment-fonctionne .comment-ca-marche-item {
+        flex-direction: column; /* Empile les éléments verticalement */
+        text-align: center; /* Centre le texte et l'icône */
+        margin-bottom: 20px; /* Plus d'espace entre les éléments */
+    }
+
+    /* Annule la disposition alternée sur mobile */
+    #comment-fonctionne .comment-ca-marche-item:nth-child(odd),
+    #comment-fonctionne .comment-ca-marche-item:nth-child(even) {
+        flex-direction: column; /* Toujours en colonne */
+    }
+
+    #comment-fonctionne .comment-ca-marche-item i {
+        margin: 0 0 10px 0; /* Marge en bas de l'icône */
+        font-size: 2.5em;  /* Réduit légèrement la taille de l'icône */
+    }
+
+    #comment-fonctionne .comment-ca-marche-item h4 {
+        font-size: 1em; /* Réduit la taille du titre */
+    }
+
+    #comment-fonctionne .comment-ca-marche-item p {
+        font-size: 0.9em; /* Réduit la taille du texte */
+        text-align: center; /* S'assure que le texte est centré */
+    }
+}
+
 
 #apropos .container {
     background-color: #f0f0f0;
@@ -625,38 +650,7 @@ footer .container {
         text-align: left;
     }
 
-    /* Comment ça marche */
-    #comment-fonctionne .comment-ca-marche-item {
-        flex-direction: column;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item:nth-child(odd) {
-        flex-direction: column;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item:nth-child(even) {
-        flex-direction: column;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item i {
-        margin: 0 0 10px 0;
-        text-align: center;
-        font-size: 3em;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item h4 {
-        font-size: 1.1em;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item p {
-        font-size: 0.9em;
-        text-align: center;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item h4,
-    #comment-fonctionne .comment-ca-marche-item p {
-        text-align: center;
-    }
+   /* Comment ça marche :  Les styles pour mobile sont déjà définis plus haut */
 
     /* Carousel */
     #derniers-logements .logement {
@@ -683,7 +677,7 @@ footer .container {
     }
 
     #contact li {
-         margin: 5px 10px;  /*Marge autour*/
+        margin: 5px 10px;  /*Marge autour*/
     }
 
     #resultats-recherche {
@@ -694,10 +688,10 @@ footer .container {
     .footer-content p {
         margin: 10px 0;
         text-align: left;
-         margin-left: 10px; /* Reduire la marge */
+        margin-left: 10px; /* Reduire la marge */
 
     }
      .footer-content .legal-links a{
-          margin-left: 10px
+        margin-left: 10px
      }
 }
