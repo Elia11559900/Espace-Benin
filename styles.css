@@ -16,7 +16,7 @@ h2 {
 }
 
 p {
-    font-size: 1.1em;
+    font-size: 1.2em;
 }
 
 .text-center {
@@ -24,7 +24,7 @@ p {
 }
 
 header {
-    background-color: #fe0008;
+    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
     padding: 20px 0;
 }
 
@@ -36,12 +36,13 @@ header {
 
 .logo img {
     height: 50px;
+    border-radius: 50%; /* Rend les bordures du logo rondes */
 }
 
 #menu-toggle {
     display: inline-block;
     padding: 10px 15px;
-    background-color: black;
+    background-color: #FFA500; /* Orange - Couleur du logo (assumé) */
     color: white;
     border: none;
     cursor: pointer;
@@ -130,14 +131,14 @@ nav ul.hidden {
 
 #recherche-logement {
     position: relative;
-    top: -100px;       /* Chevauche l'image */
+     top: -100px;       /* Chevauche l'image */
     margin-bottom: -100px; /* Compense le chevauchement */
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
     max-width: 1000px;
-    background-color: #fe0008;
-    color: black; /* Couleur du texte */
+    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
+    color: white; /* Couleur du texte */
     padding: 20px;
     border-radius: 50px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
@@ -166,6 +167,7 @@ nav ul.hidden {
 #recherche-logement #form-recherche label {
     margin-bottom: 5px;
     font-weight: bold;
+    color: white; /* Label en blanc */
 }
 
 #recherche-logement #form-recherche input {
@@ -178,7 +180,7 @@ nav ul.hidden {
 
 #recherche-logement #form-recherche button {
     padding: 10px 20px;
-    background-color: #f0f0f0; /* Gris clair */
+    background-color: #FFA500; /* Orange - Couleur du logo (assumé) */
     color: black;
     border: none;
     border-radius: 5px;
@@ -189,10 +191,11 @@ nav ul.hidden {
 }
 
 #recherche-logement .container {
-  background-color: #bf071e;
+  background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
   border-radius: 50px;
-  color: black;
+  color: white;
 }
+
 
 #resultats-recherche {
     margin-top: 20px;
@@ -223,22 +226,21 @@ nav ul.hidden {
 
 
 #derniere-publication .container{
-  background-color: #767373; /* Fond rouge */
   border-radius: 10px;
-  color: white; /* Texte en blanc */
+  color: black; /* Texte en noir */
 }
 
 #derniers-logements {
     margin-bottom: 20px;
     width: 100%;
-    height: 520px; /* Hauteur réduite */
+    height: 550px; /* Hauteur réduite */
     position: relative;
     overflow: hidden;
 }
 
 .logement-carousel {
     display: flex;
-    width: 300%; /* 3 logements x 100% */
+     width: 300%; /* 3 logements x 100% */
     transition: transform 0.5s ease-in-out;
     position: relative;
     height: 100%;
@@ -254,12 +256,10 @@ nav ul.hidden {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    opacity: 0;
     transition: opacity 0.5s ease-in-out; /* Transition d'opacité */
     height: 100%;
     padding: 10px;
     border: 1px solid #ccc;
-    background-color: #bf071e; /* Fond blanc pour le contenu */
 }
 
 #derniers-logements .logement img {
@@ -272,15 +272,15 @@ nav ul.hidden {
 #derniers-logements .logement h3,
 #derniers-logements .logement p {
     text-align: center;
-    color: black;
+    color: #333;
     margin: 5px 0;
 }
 
 #derniers-logements .logement button {
     margin-top: auto; /* Pousse le bouton vers le bas */
     padding: 5px 10px;
-    background-color: white;
-    color: black;
+    background-color: #FFA500; /* Changement de couleur */
+    color: #333;
     border: none;
     cursor: pointer;
 }
@@ -289,69 +289,86 @@ nav ul.hidden {
 #derniers-logements .logement:nth-child(2) { /* Slide du milieu */
     left: calc(50% - calc(100% / 6));
     z-index: 2;
-    opacity: 1;
 }
 
 #derniers-logements .logement:first-child { /* Slide de gauche */
     left: 0;
     z-index: 1;
-    opacity: 0.7;
 }
 
 #derniers-logements .logement:last-child { /* Slide de droite */
     left: calc(100% - calc(100% / 3));
     z-index: 1;
-    opacity: 0.7;
 }
 
+
 #voir-plus {
-    display: block;
+    display: inline-block; /* Pour centrer correctement avec margin auto */
     margin: 20px auto;
     padding: 10px 20px;
-    background-color: black;
+    background-color: #FFA500;
     color: white;
     border: none;
     cursor: pointer;
 }
 
+
 #services .container{
-    background-color: #767373; /* Fond rouge */
+    background-color: #f0f0f0; /* Light gray pour contraster avec le bleu */
     border-radius: 10px;
-    color: white; /* Texte en blanc */
+    color: black; /* Texte en noir */
 
 }
 #services ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    text-align: left; /* Aligner le texte à gauche */
 }
 
 #services li {
     margin-bottom: 25px;
-    text-align: left;
+    text-align: left; /* Aligner le texte à gauche */
     font-size: 1.2em;
     font-weight: normal;
-    padding-left: 30px;
+    padding-left: 25px; /* Espacer le texte du point */
     position: relative;
 }
 
-/* Cercle orange à côté de chaque service */
+/* Cercle bleu à côté de chaque service */
 #services li::before {
     content: "";
     display: block;
     width: 15px;
     height: 15px;
-    background-color: #fe0008;
+    background-color: #1f2ab0;
     border-radius: 50%;
     position: absolute;
-    left: 0;
+    left: 0; /* Positionner à gauche */
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%); /* Centrer verticalement */
 }
+
+/* Style pour les icônes de "Comment ça marche" */
+#comment-fonctionne .comment-ca-marche-item i {
+    display: block;
+    text-align: center;
+    font-size: 4em; /* Augmenter la taille des icônes */
+    margin-bottom: 10px;
+    color: #FFA500; /* Orange - Couleur du logo (assumé) */
+}
+
+/* Ajustement du padding pour le texte "Comment ça marche" */
+#comment-fonctionne .comment-ca-marche-item p {
+    padding: 0 20px; /* Ajoute du padding à gauche et à droite */
+    text-align: center;
+    font-size: 1.2em; /* Augmenter la taille de la description */
+}
+
 
 /* Styles pour la section "Comment ça marche ?" */
 #comment-fonctionne .container {
-    background-color: #767373;
+    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
     border-radius: 10px;
     color: white;
     padding: 20px;
@@ -361,31 +378,55 @@ nav ul.hidden {
 
 #comment-fonctionne h2 {
     text-align: center;
+    font-size: 2.2em;
     margin-bottom: 20px;
 }
 
 #comment-fonctionne .comment-ca-marche-item {
     margin-bottom: 15px;
+    display: flex; /* Utiliser flexbox pour aligner icône et texte */
+    align-items: center; /* Centrer verticalement */
+}
+/* Disposition alternée des icônes et du texte */
+#comment-fonctionne .comment-ca-marche-item:nth-child(odd) { /* Éléments impairs (1, 3) */
+    flex-direction: row; /* Icône à gauche, texte à droite */
+}
+
+#comment-fonctionne .comment-ca-marche-item:nth-child(even) { /* Éléments pairs (2, 4) */
+    flex-direction: row-reverse; /* Texte à gauche, icône à droite */
+}
+
+/* Espacement entre l'icône et le texte */
+#comment-fonctionne .comment-ca-marche-item i {
+   margin: 0 20px;  /* Marge autour de l'icône */
+   flex-shrink: 0; /* Empêcher l'icône de rétrécir */
 }
 
 #comment-fonctionne .comment-ca-marche-item h4 {
-    margin-bottom: 5px;
-    color: black; /* Changement de couleur ici */
-    font-weight: bold;
+   text-transform: uppercase;  /* Mettre le sous-titre en majuscules */
+    color: #FFA500;  /* Couleur différente pour le sous-titre */
+    font-size: 1.4em; /* Augmenter la taille du sous-titre */
 }
+
+#comment-fonctionne .comment-ca-marche-item h4,
+#comment-fonctionne .comment-ca-marche-item p{
+    text-align: left; /* Aligner le texte à gauche */
+    font-size: 1.3em;
+}
+
 
 #apropos .container{
-    background-color: #767373; /* Fond rouge */
+    background-color: #f0f0f0; /* Light gray pour contraster avec le bleu */
     border-radius: 10px;
-    color: white; /* Texte en blanc */
-
+    color: black; /* Texte en noir */
 }
 
+
 .footer-content {
-    background-color: #fe0008;
+    background-color: #003366; /* Dark Blue - Couleur du logo (assumé) */
     padding: 20px 0;
     color: white;
-    display: flex;
+    display: flex; /* Utiliser flexbox pour centrer le contenu */
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -420,6 +461,7 @@ footer .container {
     margin-right: 8px; /* Espace entre l'icône et le texte */
 }
 
+
 .fenetre-reservation {
     position: fixed;
     top: 50%;
@@ -452,8 +494,9 @@ footer .container {
 
 .fenetre-reservation .bouton-fermer {
     background-color: #f44336;
-    color: white;
+    color: black;
 }
+
 
 /* Enlève la fenêtre modale "comment-marche-fenetre" du CSS */
 
@@ -461,18 +504,18 @@ footer .container {
 #services .container,
 #contact .container,
 #apropos .container {
-  border: 1px solid #ccc;
+  border: none; /* Enlever la bordure pour un look plus moderne */
   border-radius: 10px;
-  background-color: #767373;
-  color: white;
+  color: black;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9); /* Ombre pour l'effet surélevé */
   padding: 20px;
   margin-bottom: 30px; /* Espace entre les sections */
 }
 
 #recherche-logement .container,
-background-color: #fe0008;
+background-color: #003366;
 }
+
 
 /* Styles pour les écrans de petite taille (smartphones) */
 @media (max-width: 768px) {
@@ -537,15 +580,47 @@ background-color: #fe0008;
     }
     /* Services */
     #services li {
-        flex: 0 0 100%;
+        /*flex: 0 0 100%;  Assurer que les éléments prennent toute la largeur */
+        text-align: left; /* Centrer le texte sur mobile */
         font-size: 1em;
         margin-bottom: 15px;
-        padding-left: 25px;
+        padding-left: 25px; /* Pas de padding à gauche sur mobile car centré */
+    }
+    #services li::before {
+        left: 0; /* Centrer le point sur mobile */
+        margin-left: 0; /* Ajuster pour centrer parfaitement (rayon/2) */
+    }
+    #services ul {
+        text-align: left; /* Centrer la liste des services */
     }
 
-    #services li::before {
-        width: 12px;
-        height: 12px;
+      /* Comment ça marche */
+    #comment-fonctionne .comment-ca-marche-item {
+        flex-direction: column; /* Disposition verticale sur mobile */
+    }
+      #comment-fonctionne .comment-ca-marche-item:nth-child(odd) { /* Éléments impairs (1, 3) */
+    flex-direction: column; /* Icône à gauche, texte à droite */
+}
+
+#comment-fonctionne .comment-ca-marche-item:nth-child(even) { /* Éléments pairs (2, 4) */
+    flex-direction: column; /* Texte à gauche, icône à droite */
+}
+
+    #comment-fonctionne .comment-ca-marche-item i {
+        margin: 0 0 10px 0; /* Marge en bas de l'icône */
+        text-align: center;
+        font-size: 3em; /* Réduire la taille sur mobile */
+    }
+      #comment-fonctionne .comment-ca-marche-item h4{
+        font-size: 1.1em;
+      }
+       /* Augmenter la taille du contenu des sous-titres */
+    #comment-fonctionne .comment-ca-marche-item p {
+        font-size: 1.1em; /* Augmenter à 1.1em sur mobile */
+    }
+    #comment-fonctionne .comment-ca-marche-item h4,
+    #comment-fonctionne .comment-ca-marche-item p{
+        text-align: center;
     }
 
     /* Carousel */
