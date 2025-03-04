@@ -6,6 +6,8 @@
     <title>ESPACE BENIN : Service Immobilier</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="img/logo.png" type="image/png">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-database-compat.js"></script>
@@ -48,18 +50,46 @@
 
         <section id="recherche-logement">
             <div class="container recherche-container">
-                <h2>Choisissez votre logement</h2>
-                <p class="text-center">Et c'est parti</p>
-                <form id="form-recherche">
-                    <label for="budget">Insérez votre Budget :</label>
-                    <input type="number" id="budget" name="budget" min="0">
+                <h2>Que recherchez-vous chez ESPACE BENIN : Service Immobilier ?</h2>
+                <!-- Choix Logement/Bien -->
+                <div class="choix-recherche">
+                    <input type="radio" id="choix-logement" name="choix-recherche" value="logement" checked>
+                    <label for="choix-logement">Un Logement</label>
 
-                    <label for="quartier">Choisissez la zone de recherche :</label>
-                    <input type="text" id="quartier" name="quartier">
+                    <input type="radio" id="choix-bien" name="choix-recherche" value="bien">
+                    <label for="choix-bien">Un Bien</label>
+                </div>
+
+                <form id="form-recherche">
+                    <!-- Champs pour Logement (initialement visibles) -->
+                    <div id="champs-logement">
+                        <label for="budget">Insérez votre Budget :</label>
+                        <input type="number" id="budget" name="budget" min="0">
+
+                        <label for="quartier">Choisissez la zone de recherche :</label>
+                        <input type="text" id="quartier" name="quartier">
+
+                        <label for="ville">Ville :</label>
+                        <input type="text" id="ville" name="ville">
+
+                        <label for="type">Type de logement :</label>
+                        <input type="text" id="type" name="type">
+                    </div>
+
+                    <!-- Champs pour Bien (initialement cachés) -->
+                    <div id="champs-bien" style="display: none;">
+                         <label for="budget-bien">Insérez votre Budget :</label>
+                        <input type="number" id="budget-bien" name="budget_bien" min="0">  <!-- Nom différent pour le budget -->
+
+                        <label for="quartier-bien">Choisissez la zone de recherche :</label>
+                        <input type="text" id="quartier-bien" name="quartier_bien"> <!-- Nom différent pour le quartier -->
+
+                        <label for="ville-bien">Ville :</label>
+                        <input type="text" id="ville-bien" name="ville_bien"> <!-- Nom différent -->
+                    </div>
 
                     <button type="submit">Rechercher</button>
                 </form>
-
             </div>
             <div id="resultats-recherche" style="display:none;"></div>
         </section>
@@ -112,6 +142,27 @@
             </div>
         </section>
 
+        <!-- Section Témoignages (Déplacée ici) -->
+        <section id="temoignages">
+            <div class="container">
+                <h2>Témoignages</h2>
+                <div class="temoignages-container">
+                    <div class="temoignage">
+                        <p>"Service impeccable! J'ai trouvé l'appartement parfait en quelques clics. Je recommande vivement!"</p>
+                        <p class="temoignage-auteur">- Marie D., Parakou</p>
+                    </div>
+                    <div class="temoignage">
+                        <p>"Facile, rapide et efficace.  La meilleure plateforme immobilière que j'ai utilisée."</p>
+                        <p class="temoignage-auteur">- Jean S., Cotonou</p>
+                    </div>
+                     <div class="temoignage">
+                        <p>"J'étais sceptique au début, mais le processus de réservation et de paiement était très simple. Merci!"</p>
+                        <p class="temoignage-auteur">- Elom K., Porto-Novo</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Fin de la section Témoignages -->
 
         <section id="apropos">
             <div class="container">

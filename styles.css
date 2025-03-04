@@ -8,7 +8,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 10px;
-    position: relative; /* Pour le positionnement des éléments enfants */
+    position: relative;
 }
 
 h2 {
@@ -23,6 +23,7 @@ p {
     text-align: center;
 }
 
+/* --- Header --- */
 header {
     background-color: #003366;
     padding: 20px 0;
@@ -54,12 +55,12 @@ nav {
     right: 0;
     top: 100%;
     display: block;
-    width: auto;
+    width: auto; /* Permet à la largeur de s'ajuster au contenu */
     z-index: 1000;
-    height: 800px; /* 100% de la hauteur de la fenêtre (viewport height) */
-    width: 500px;    /* Largeur fixe, ajuste selon tes préférences */
-    max-width: 80%;  /* Pour éviter que le menu ne soit TROP large sur les grands écrans */
-    overflow-y: auto; /* Ajoute une barre de défilement verticale si le contenu dépasse */
+    height: 800px;
+    width: 500px;
+    max-width: 80%;
+    overflow-y: auto;
 }
 
 nav ul {
@@ -69,11 +70,10 @@ nav ul {
     background-color: #fefefe;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-     width: 100%; /* Prend toute la largeur de son parent (nav) */
-    min-width: auto; /*Supprime la largeur minimal*/
+    width: 100%;
+    min-width: auto;
     text-align: left;
-     /* AJOUT: pour s'assurer que la liste remplisse le conteneur */
-     box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur/hauteur */
+    box-sizing: border-box;
 }
 
 nav li {
@@ -86,15 +86,13 @@ nav li:last-child {
     border-bottom: none;
 }
 
-
 nav a {
     display: block;
-    padding: 15px 20px; /* Augmente le padding pour des éléments plus grands */
+    padding: 15px 20px;
     text-decoration: none;
     color: #333;
-    /* AJOUTS pour le style du texte */
     font-weight: bold;
-    font-size: 1.1em; /* Ajuste la taille de la police */
+    font-size: 1.1em;
 }
 
 nav a:hover {
@@ -105,6 +103,7 @@ nav ul.hidden {
     display: none;
 }
 
+/* --- Section Accueil --- */
 #accueil {
     position: relative;
     color: white;
@@ -146,25 +145,46 @@ nav ul.hidden {
     font-size: 1.3em;
 }
 
+/* --- Section Recherche --- */
 #recherche-logement {
-    position: relative;
-    top: -100px;
-    margin-bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 1000px;
-    background-color: #2d38bd;
-    color: white;
-    padding: 20px;
-    border-radius: 50px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-    margin-top: 20px;
+  position: relative;
+  top: -100px;
+  margin-bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1000px;
+  background-color: #2d38bd;
+  color: white;
+  padding: 20px;
+  border-radius: 50px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+  text-align: center;
 }
 
-#recherche-logement .recherche-container {
+.choix-recherche {
+  margin-bottom: 20px;
+}
+
+.choix-recherche label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white;
+    margin-right: 15px;
+}
+
+.choix-recherche input[type="radio"] {
+  margin-right: 5px;
+}
+
+#recherche-logement .recherche-container,
+#recherche-logement .container {  /* Ciblage plus précis */
     max-width: 100%;
     padding: 0;
+    background-color: #2d38bd; /* Ajouté ici aussi pour la cohérence */
+    border-radius: 50px;    /* Ajouté ici aussi pour la cohérence */
+    color: white;              /* Ajouté ici aussi pour la cohérence */
 }
 
 #recherche-logement h2,
@@ -172,27 +192,32 @@ nav ul.hidden {
     text-align: center;
 }
 
-#recherche-logement #form-recherche {
+#form-recherche {
     display: flex;
     margin-bottom: 20px;
     flex-direction: column;
 }
 
-#recherche-logement #form-recherche label {
+#form-recherche label {
     margin-bottom: 5px;
     font-weight: bold;
     color: white;
+    text-align: left;
 }
 
-#recherche-logement #form-recherche input {
+/* Champs de formulaire pleine largeur */
+#form-recherche input[type="number"],
+#form-recherche input[type="text"] {
     margin-bottom: 15px;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 3px;
     color: black;
+    width: 100%; /* Prend toute la largeur disponible */
+    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur */
 }
 
-#recherche-logement #form-recherche button {
+#form-recherche button {
     padding: 10px 20px;
     background-color: #FFA500;
     color: black;
@@ -202,12 +227,6 @@ nav ul.hidden {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
     align-self: center;
     width: 50%;
-}
-
-#recherche-logement .container {
-    background-color: #2d38bd;
-    border-radius: 50px;
-    color: white;
 }
 
 #resultats-recherche {
@@ -222,7 +241,9 @@ nav ul.hidden {
     grid-gap: 20px;
 }
 
-.logement {
+/* --- Styles Communs Logement/Bien --- */
+.logement,
+.bien {
     border: 1px solid #ccc;
     padding: 20px;
     background-color: white;
@@ -230,16 +251,41 @@ nav ul.hidden {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.logement img {
+.logement img,
+.bien img {
     width: 100%;
     height: 200px;
     object-fit: cover;
     margin-bottom: 10px;
 }
 
+.logement h3, /* Titre, description, prix, etc. */
+.bien h3,
+.logement p,
+.bien p,
+.logement button,
+.bien button {
+    text-align: center;
+    color: #333;
+    margin: 5px 0;
+}
+.logement button,
+.bien button{
+     margin-top: auto;
+    padding: 5px 10px;
+    background-color: #FFA500;
+    color: #333;
+    border: none;
+    cursor: pointer;
+}
+/* --- Section Dernières Publications --- */
 #derniere-publication .container {
-    border-radius: 10px;
-    color: black;
+  border: none;        /* Suppression de la bordure */
+  border-radius: 10px;
+  color: black;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  margin-bottom: 30px;
 }
 
 #derniers-logements {
@@ -253,7 +299,7 @@ nav ul.hidden {
 .logement-carousel {
     display: flex;
     width: 300%;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.8s ease-in-out;
     position: relative;
     height: 100%;
 }
@@ -268,36 +314,13 @@ nav ul.hidden {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.8s ease-in-out;
     height: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ccc; /* Ajout de la bordure */
 }
 
-#derniers-logements .logement img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-#derniers-logements .logement h3,
-#derniers-logements .logement p {
-    text-align: center;
-    color: #333;
-    margin: 5px 0;
-}
-
-#derniers-logements .logement button {
-    margin-top: auto;
-    padding: 5px 10px;
-    background-color: #FFA500;
-    color: #333;
-    border: none;
-    cursor: pointer;
-}
-
-/* Positionnement des slides du carousel */
+/*Carousel positioning */
 #derniers-logements .logement:nth-child(2) {
     left: calc(50% - calc(100% / 6));
     z-index: 2;
@@ -323,10 +346,16 @@ nav ul.hidden {
     cursor: pointer;
 }
 
-#services .container {
+/* --- Section Services --- */
+#services .container,
+#apropos .container {  /* Ajout de #apropos .container ici */
     background-color: #f0f0f0;
     border-radius: 10px;
     color: black;
+    border: none;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    margin-bottom: 30px;
 }
 
 #services ul {
@@ -345,7 +374,6 @@ nav ul.hidden {
     position: relative;
 }
 
-/* Cercle bleu à côté de chaque service */
 #services li::before {
     content: "";
     display: block;
@@ -359,29 +387,28 @@ nav ul.hidden {
     transform: translateY(-50%);
 }
 
-/* Styles généraux (écrans larges) pour "Comment ça marche ?" */
+/* --- Section Comment ça Marche --- */
 #comment-fonctionne .container {
     background-color: #003366;
     border-radius: 10px;
     color: white;
-    padding: 20px;  /* Un peu de padding général */
+    padding: 20px;
     margin-bottom: 10px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
 }
 
 #comment-fonctionne h2 {
     text-align: center;
-    font-size: 2.0em; /* Conserve la taille sur les grands écrans */
+    font-size: 2.2em;
     margin-bottom: 20px;
 }
 
 #comment-fonctionne .comment-ca-marche-item {
     margin-bottom: 20px;
     display: flex;
-    align-items: center; /* Important pour l'alignement vertical */
+    align-items: center;
 }
 
-/* Disposition alternée (écrans larges) */
 #comment-fonctionne .comment-ca-marche-item:nth-child(odd) {
     flex-direction: row;
 }
@@ -390,85 +417,82 @@ nav ul.hidden {
     flex-direction: row-reverse;
 }
 
-/* Espacement (écrans larges) */
 #comment-fonctionne .comment-ca-marche-item i {
-    margin: 0 20px;  /* Marge autour de l'icône */
-    flex-shrink: 0; /* Empêche l'icône de rétrécir */
-    font-size: 3em; /* Taille de l'icône sur grand écran */
+    margin: 0 20px;
+    flex-shrink: 0;
+    font-size: 4em;
 }
 
 #comment-fonctionne .comment-ca-marche-item h4 {
     text-transform: uppercase;
     color: #FFA500;
-    font-size: 1.2em; /* Conserve la taille sur les grands écrans */
-    margin-bottom: 5px; /* Un peu d'espace sous le titre */
+    font-size: 1.5em;
+    margin-bottom: 5px;
 }
 
 #comment-fonctionne .comment-ca-marche-item h4,
 #comment-fonctionne .comment-ca-marche-item p {
-    text-align: left; /* Alignement du texte */
-     /* Supprimé font-size ici, géré par les media queries */
+    text-align: left;
 }
 
-/* Styles spécifiques pour les petits écrans (smartphones) */
-@media (max-width: 768px) {
-
-    #comment-fonctionne .container {
-        padding: 15px; /* Réduit le padding */
-    }
-
-    #comment-fonctionne h2 {
-        font-size: 1.6em; /* Réduit la taille du titre */
-    }
-
-    #comment-fonctionne .comment-ca-marche-item {
-        flex-direction: column; /* Empile les éléments verticalement */
-        text-align: center; /* Centre le texte et l'icône */
-        margin-bottom: 20px; /* Plus d'espace entre les éléments */
-    }
-
-    /* Annule la disposition alternée sur mobile */
-    #comment-fonctionne .comment-ca-marche-item:nth-child(odd),
-    #comment-fonctionne .comment-ca-marche-item:nth-child(even) {
-        flex-direction: column; /* Toujours en colonne */
-    }
-
-    #comment-fonctionne .comment-ca-marche-item i {
-        margin: 0 0 10px 0; /* Marge en bas de l'icône */
-        font-size: 2.5em;  /* Réduit légèrement la taille de l'icône */
-    }
-
-    #comment-fonctionne .comment-ca-marche-item h4 {
-        font-size: 1em; /* Réduit la taille du titre */
-    }
-
-    #comment-fonctionne .comment-ca-marche-item p {
-        font-size: 0.9em; /* Réduit la taille du texte */
-        text-align: center; /* S'assure que le texte est centré */
-    }
+/* --- Section Témoignages --- */
+#temoignages {
+    background-color: #f8f8f8;
+    padding: 20px 0;
+    margin-bottom: 20px;
 }
 
-
-#apropos .container {
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    color: black;
+#temoignages .container {
+    border: none;
+    box-shadow: none;
+    padding: 20px;
 }
 
+.temoignages-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.temoignage {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    width: 30%;
+    min-width: 250px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.temoignage p {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.temoignage-auteur {
+    font-weight: bold;
+    color: #333;
+    text-align: right;
+}
+
+/* --- Footer --- */
 .footer-content {
     background-color: #003366;
-     padding: 20px 0 20px 20px; /* Ajout du padding à gauche */
-    color: white;
-     text-align: left;
-}
-
-footer .container {
-    max-width: 1500px;
+    padding: 20px 0 20px 20px;
     color: white;
     text-align: left;
 }
 
-/* Section Contact dans le footer */
+footer .container {
+    max-width: 1500px; /* Différent de .container général */
+    color: white;
+    text-align: left;
+}
+
 #contact {
     margin-bottom: 15px;
     text-align: left;
@@ -485,21 +509,21 @@ footer .container {
 #contact li {
     margin: 5px 10px;
 }
- #contact a {
+
+#contact a {
     color: white;
     text-decoration: none;
-    display: flex; /* Pour aligner l'icône et le texte */
-    align-items: center; /* Centrer l'icône et le texte verticalement */
+    display: flex;
+    align-items: center;
 }
 
 #contact i {
     margin-right: 8px;
 }
 
-/* Styles pour les liens Termes et Conditions, Politique de Confidentialité */
 .footer-content .legal-links {
     margin-bottom: 10px;
-      text-align: left;
+    text-align: left;
 }
 
 .footer-content .legal-links a {
@@ -518,6 +542,7 @@ footer .container {
     text-align: left;
 }
 
+/* --- Fenêtre de Réservation --- */
 .fenetre-reservation {
     position: fixed;
     top: 50%;
@@ -553,25 +578,7 @@ footer .container {
     color: black;
 }
 
-/* Enlève la fenêtre modale "comment-marche-fenetre" du CSS */
-
-#derniere-publication .container,
-#services .container,
-#contact .container,
-#apropos .container {
-    border: none;
-    border-radius: 10px;
-    color: black;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
-    padding: 20px;
-    margin-bottom: 30px;
-}
-
-#recherche-logement .container,
-    background-color: #003366;
-}
-
-/* Styles pour les écrans de petite taille (smartphones) */
+/* --- Media Queries (Responsive) --- */
 @media (max-width: 768px) {
     .container {
         padding: 10px;
@@ -583,14 +590,14 @@ footer .container {
         font-size: 1.2rem;
     }
 
-   nav {
-        width: 80%; /* Le menu prend 80% de la largeur sur mobile */
-        max-width: 300px; /* Limite la largeur maximale */
-        height: 100vh;    /* Garde la hauteur complète */
-
+    nav {
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
     }
+
     nav a {
-        font-size: 1em; /* Ajuste la taille si besoin */
+        font-size: 1em;
     }
 
     /* Accueil */
@@ -602,6 +609,7 @@ footer .container {
     .accueil-text {
         top: 10%;
         padding: 10px;
+        width: 90%; /* Augmente la largeur */
     }
 
     .accueil-text h2 {
@@ -613,85 +621,110 @@ footer .container {
         font-size: 1em;
     }
 
-    /* Recherche de logement */
-    #form-recherche {
+    /* Section Recherche */
+    #recherche-logement {
+        width: 95%;
+        max-width: none;
+        transform: none;
+        margin: 20px auto;
+        left: 0;
+        top: -50px;
+        margin-bottom: -30px;
+
+    }
+
+    .choix-recherche {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+
+    .choix-recherche label {
+        margin: 5px;
+    }
+
+
+    #resultats-recherche {
+        grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+        padding: 10px;            /* Réduit le padding */
+        margin-top: 10px;        /* Réduit la marge */
+    }
+     /* Section Comment ça Marche (Mobile) */
+    #comment-fonctionne .container {
+        padding: 15px;
+    }
+
+    #comment-fonctionne h2 {
+        font-size: 1.6em;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item {
+        flex-direction: column;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item:nth-child(odd),
+    #comment-fonctionne .comment-ca-marche-item:nth-child(even) {
         flex-direction: column;
     }
 
-    #resultats-recherche {
-        grid-template-columns: 1fr;
+    #comment-fonctionne .comment-ca-marche-item i {
+        margin: 0 0 10px 0;
+        font-size: 2.5em;
     }
 
-    #recherche-logement {
-        position: relative;
-        width: 95%;
-        max-width: none;
-        transform: translateX(0%);
-        margin: 20px auto;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
-        top: -50px;
-        margin-bottom: -50px;
-    }
-
-    /* Services */
-    #services li {
-        text-align: left;
+    #comment-fonctionne .comment-ca-marche-item h4 {
         font-size: 1em;
-        margin-bottom: 15px;
-        padding-left: 25px;
     }
 
-    #services li::before {
-        left: 0;
-        margin-left: 0;
+    #comment-fonctionne .comment-ca-marche-item p {
+        font-size: 0.9em;
+        text-align: center;
     }
-
-    #services ul {
-        text-align: left;
-    }
-
-   /* Comment ça marche :  Les styles pour mobile sont déjà définis plus haut */
 
     /* Carousel */
     #derniers-logements .logement {
-        border: none;
+        border: none; /* Enlève la bordure sur mobile */
     }
 
-    .logement img {
-        height: 200px;
+    .logement img, .bien img {
+        height: 200px; /* Hauteur fixe, potentiellement à ajuster */
     }
 
     /* Footer */
     .footer-content {
         text-align: left;
         margin-left: 0;
-        padding: 20px 0 20px 10px;
+        padding: 20px 0 20px 10px; /* Réduit le padding gauche */
     }
-
-    #contact ul {
-         display: flex;  /* Remettre flexbox */
-        flex-wrap: wrap; /* Permettre le passage à la ligne au besoin*/
+      #contact ul {
+        display: flex;
+        flex-wrap: wrap;
         margin: 0;
         padding: 0;
-        margin-left: 10px; /* Reduire la marge */
+        margin-left: 10px; /* Réduit la marge */
     }
 
     #contact li {
-        margin: 5px 10px;  /*Marge autour*/
+      margin: 5px 10px;  /*Marge autour*/
     }
-
-    #resultats-recherche {
-        padding: 10px;
-        margin-top: 10px;
-    }
-
-    .footer-content p {
+     .footer-content p {
         margin: 10px 0;
         text-align: left;
-        margin-left: 10px; /* Reduire la marge */
-
+        margin-left: 10px;
     }
-     .footer-content .legal-links a{
-        margin-left: 10px
-     }
+    .footer-content .legal-links a{
+      margin-left: 10px;
+    }
+
+    /* Section Témoignages (Mobile) */
+    .temoignage {
+        width: 90%;
+        margin: 10px auto;
+    }
+     .temoignages-container{
+        margin: 10px;
+        padding: 10px;
+    }
 }

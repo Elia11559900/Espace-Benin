@@ -1,13 +1,13 @@
 // Configuration de Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyDGOgJ_Lmtc---VE6Ty-l3FHFzaFh5rcO4",
-    authDomain: "immo-c41e6.firebaseapp.com",
-    databaseURL: "https://immo-c41e6-default-rtdb.firebaseio.com",
-    projectId: "immo-c41e6",
-    storageBucket: "immo-c41e6.firebasestorage.app",
-    messagingSenderId: "1050311955497",
-    appId: "1:1050311955497:web:fdc94d20240387d1bdb838",
-    measurementId: "G-54VG8HN5H8"
+    apiKey: "AIzaSyAwHqU_XLmDz9VbsxVGN3wbru3-hLDiyNI",
+    authDomain: "microfinance-68811.firebaseapp.com",
+    databaseURL: "https://microfinance-68811-default-rtdb.firebaseio.com",
+    projectId: "microfinance-68811",
+    storageBucket: "microfinance-68811.appspot.com",
+    messagingSenderId: "328514838296",
+    appId: "1:328514838296:web:89b35343ca3a14b352c86d",
+    measurementId: "G-RBQJH93VWE"
 };
 
 // Initialiser Firebase
@@ -16,8 +16,8 @@ const database = firebase.database();
 
 
 
-// Fonction pour afficher les résultats de la recherche.
-async function afficherResultats(budget, quartier) {
+// Fonction pour afficher les résultats de la recherche (LOGEMENTS).
+async function afficherResultats(budget, quartier, ville, type) {
     const logementsFiltres = {};
 
     const entreprisesSnapshot = await database.ref('entreprises').once('value');
@@ -26,26 +26,25 @@ async function afficherResultats(budget, quartier) {
         const logementsRef = database.ref(`entreprises/${entrepriseKey}/logements`);
         const logementsSnapshot = await logementsRef.once('value');
 
-        // Récupère le nom de l'entreprise AVANT de boucler sur les logements
         const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
-
 
         for (const logementKey of Object.keys(logementsSnapshot.val() || {})) {
             const logement = logementsSnapshot.val()[logementKey];
 
-            // FILTRAGE STRICT (ajout de cette condition)
-            if ((budget === null || logement.prix <= budget) &&  // Correspondance exacte ou inférieure
-                (quartier === null || logement.quartier.toLowerCase() === quartier.toLowerCase())) {
-                // Ajoute le nom de l'entreprise ET le statut à l'objet logement
-                logementsFiltres[logementKey] = { ...logement, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: logement.statut || "Non spécifié" }; //Valeur par défaut au cas où
+            // FILTRAGE (modifié pour la recherche de biens - type peut être null)
+            if ((budget === null || logement.prix <= budget) &&
+                (quartier === null || logement.quartier.toLowerCase().includes(quartier.toLowerCase())) &&
+                (ville === null || logement.ville.toLowerCase().includes(ville.toLowerCase())) &&
+                (type === null || logement.type.toLowerCase().includes(type.toLowerCase()))) { // type optionnel
+
+                logementsFiltres[logementKey] = { ...logement, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: logement.statut || "Non spécifié" };
             }
         }
     }
-
     afficherResultatsDansLaPage(logementsFiltres);
 }
 
-// Fonction pour afficher les résultats DANS LA PAGE (séparée de la logique de récupération)
+// Fonction pour afficher les résultats DANS LA PAGE (LOGEMENTS)
 function afficherResultatsDansLaPage(logements) {
     const resultatsRecherche = document.getElementById("resultats-recherche");
     resultatsRecherche.innerHTML = "";
@@ -64,17 +63,108 @@ function afficherResultatsDansLaPage(logements) {
     }
 }
 
+
+// Fonction pour afficher les résultats de la recherche (BIENS).
+async function afficherResultatsBiens(budget, quartier, ville) { // Pas de type pour les biens
+    const biensFiltres = {};
+
+    const entreprisesSnapshot = await database.ref('entreprises').once('value');
+
+    for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
+        const biensRef = database.ref(`entreprises/${entrepriseKey}/biens`); // Chemin vers les BIENS
+        const biensSnapshot = await biensRef.once('value');
+
+        const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
+
+        for (const bienKey of Object.keys(biensSnapshot.val() || {})) {
+            const bien = biensSnapshot.val()[bienKey];
+
+            // FILTRAGE pour les biens
+            if ((budget === null || bien.prix <= budget) &&
+                (quartier === null || bien.quartier.toLowerCase().includes(quartier.toLowerCase())) &&
+                (ville === null || bien.ville.toLowerCase().includes(ville.toLowerCase()))) {
+
+                biensFiltres[bienKey] = { ...bien, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: bien.statut || "Non spécifié" };
+            }
+        }
+    }
+    afficherResultatsBiensDansLaPage(biensFiltres); // Affiche les biens
+}
+
+// Fonction pour afficher les BIENS
+function afficherResultatsBiensDansLaPage(biens) {
+    const resultatsRecherche = document.getElementById("resultats-recherche");
+    resultatsRecherche.innerHTML = ""; // Efface les résultats précédents
+    resultatsRecherche.style.display = "grid";
+
+    if (Object.keys(biens).length === 0) {
+        const messageAucunBien = document.createElement("p");
+        messageAucunBien.textContent = "Aucun bien disponible ne correspond à vos critères.";
+        resultatsRecherche.appendChild(messageAucunBien);
+    } else {
+        for (const bienId in biens) {
+            const bien = biens[bienId];
+            const divBien = creerDivBien(bien); // Crée la div pour le bien
+            resultatsRecherche.appendChild(divBien);
+        }
+    }
+}
+
+// Fonction pour créer un élément div pour un BIEN
+function creerDivBien(bien) {
+    const divBien = document.createElement("div");
+    divBien.classList.add("bien"); // Classe CSS "bien"
+
+    const entrepriseNomParagraphe = document.createElement("p");
+    entrepriseNomParagraphe.textContent = `Entreprise: ${bien.entrepriseNom}`;
+    divBien.appendChild(entrepriseNomParagraphe);
+
+    const statutBien = document.createElement("p");
+    statutBien.textContent = `Statut: ${bien.statut}`;
+    divBien.appendChild(statutBien);
+
+    const imgBien = document.createElement("img");
+    imgBien.src = bien.image;
+    imgBien.alt = bien.titre;  // Assure-toi que tes biens ont un champ 'titre'
+    divBien.appendChild(imgBien);
+
+    const titreBien = document.createElement("h3");
+    titreBien.textContent = bien.titre;
+    divBien.appendChild(titreBien);
+
+    const descriptionBien = document.createElement("p");
+    descriptionBien.textContent = bien.description; // Et un champ 'description'
+    divBien.appendChild(descriptionBien);
+
+    const prixBien = document.createElement("p");
+    prixBien.textContent = `${bien.prix} FCFA`;
+    divBien.appendChild(prixBien);
+
+    const etatBien = document.createElement("p"); //Si tu as un champ 'etat' pour les biens
+    etatBien.textContent = `État : ${bien.etat || 'Non spécifié'}`;  // Gère le cas où 'etat' est manquant
+    divBien.appendChild(etatBien);
+
+    const quartierBien = document.createElement("p");
+    quartierBien.textContent = `Quartier : ${bien.quartier}`;
+    divBien.appendChild(quartierBien);
+
+    const boutonReserverBien = document.createElement("button");  // Un bouton "Réserver" pour les biens aussi?
+    boutonReserverBien.textContent = "Réserver";
+    boutonReserverBien.addEventListener("click", () => {
+        // Tu peux utiliser la même fenêtre ou en créer une spécifique pour les biens
+        afficherFenetreReservation(bien);
+    });
+    divBien.appendChild(boutonReserverBien);
+
+
+    return divBien;
+}
+
 // Fonction pour créer un élément div pour un logement (réutilisable et améliorée)
 function creerDivLogement(logement) {
     const divLogement = document.createElement("div");
     divLogement.classList.add("logement");
 
-    // Supprime l'ancien paragraphe d'ID de l'entreprise
-    // const entrepriseIdParagraphe = document.createElement("p");
-    // entrepriseIdParagraphe.textContent = `Entreprise ID: ${logement.entrepriseId}`;
-    // divLogement.appendChild(entrepriseIdParagraphe);
-
-    // Ajout d'un paragraphe pour le *NOM* de l'entreprise
     const entrepriseNomParagraphe = document.createElement("p");
     entrepriseNomParagraphe.textContent = `Entreprise: ${logement.entrepriseNom}`; // Utilise entrepriseNom
     divLogement.appendChild(entrepriseNomParagraphe);
@@ -123,11 +213,39 @@ function creerDivLogement(logement) {
 
 // Écouter la soumission du formulaire de recherche
 const formRecherche = document.getElementById("form-recherche");
+const choixLogement = document.getElementById("choix-logement");
+const choixBien = document.getElementById("choix-bien");
+const champsLogement = document.getElementById("champs-logement");
+const champsBien = document.getElementById("champs-bien");
+
+//Affiche le formulaire en fonction du choix
+choixLogement.addEventListener("change", () => {
+    champsLogement.style.display = "block";
+    champsBien.style.display = "none";
+});
+
+choixBien.addEventListener("change", () => {
+    champsLogement.style.display = "none";
+    champsBien.style.display = "block";
+});
+
 formRecherche.addEventListener("submit", (event) => {
     event.preventDefault();
-    const budget = parseInt(document.getElementById("budget").value) || null; // Gère le cas où le champ est vide
-    const quartier = document.getElementById("quartier").value || null; // Gère le cas où le champ est vide
-    afficherResultats(budget, quartier);
+
+    if (choixLogement.checked) {
+        const budget = parseInt(document.getElementById("budget").value) || null;
+        const quartier = document.getElementById("quartier").value || null;
+        const ville = document.getElementById("ville").value || null;
+        const type = document.getElementById("type").value || null;
+
+        afficherResultats(budget, quartier, ville, type); // Recherche de logements
+    } else if (choixBien.checked) {
+        const budget = parseInt(document.getElementById("budget-bien").value) || null; // Budget du bien
+        const quartier = document.getElementById("quartier-bien").value || null;    // Quartier du bien
+        const ville = document.getElementById("ville-bien").value || null;          // Ville du bien
+
+        afficherResultatsBiens(budget, quartier, ville); // Recherche de biens
+    }
 });
 
 // Fonction pour afficher les dernières publications (version SIMPLIFIÉE)
@@ -213,7 +331,7 @@ afficherDernieresPublications();
 // Fonction pour afficher TOUS les logements (pour le bouton "Voir plus")
 async function afficherTousLesLogements() {
     // Appelle afficherResultats sans filtre (budget et quartier à null)
-    afficherResultats(null, null);
+    afficherResultats(null, null, null, null); // Ajout de null pour ville et type
 }
 
 
