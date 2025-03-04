@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Gestion des logements</title>
+    <title>Admin - ESPACE BENIN : Service Immobilier</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="img/logo.png" type="image/x-icon">  <!-- Favicon:  Utilise logo.ico -->
 </head>
 <body>
     <div class="container">
@@ -60,13 +61,16 @@
       <!-- Section Contenu Principal (visible après connexion) -->
 <div id="main-content-section" style="display: none;">
     <div class="header-content">
-        <h1>Administration - Gestion des logements</h1>
+        <div class="logo-container">
+            <img src="img/logo.png" alt="Logo Entreprise" id="logo"> <!-- Logo -->
+            <h1>ESPACE BENIN : Service Immobilier</h1>
+        </div>
         <img src="img/Accueil.jpeg" alt="Image d'accueil" id="header-image">
-        <p id="header-text">Bienvenue dans l'interface d'administration. <span id="entreprise-name"></span></p>
+        <p id="header-text">Bienvenue dans l'interface d'administration de <span class="not-bold">ESPACE BENIN - Service Immobilier</span> : <span id="entreprise-name"></span></p>
     </div>
 
-    <!-- Menu (toujours visible après connexion) -->
-      <div class="menu">
+        <!-- Menu -->
+    <div class="menu">
         <button id="afficher-form-logement-btn">Logements</button>
         <button id="afficher-form-locataire-btn">Locataires</button>
         <button id="afficher-form-bien-btn">Biens</button>
@@ -102,8 +106,9 @@
             </div>
             <div><label for="proprietaire">Propriétaire :</label><input type="text" id="proprietaire" name="proprietaire" required></div>
             <div><label for="quartier">Quartier :</label><input type="text" id="quartier" name="quartier" required></div>
-            <div><label for="image">Image (URL) :</label><input type="text" id="image" name="image" required></div>
-             <div> <!-- Ajout du champ statut -->
+           <div><label for="ville">Ville :</label><input type="text" id="ville" name="ville" required></div>
+            <div><label for="image">Image :</label><input type="file" id="image" name="image" accept="image/*" required></div>
+             <div>
                     <label for="statut">Statut :</label>
                     <select id="statut" name="statut" required>
                         <option value="Libre">Libre</option>
@@ -123,7 +128,7 @@
     <button class="export-btn" data-table="logements" data-format="pdf">Exporter en PDF</button>
 
     <!-- Statistiques des logements -->
-     <div class="statistiques">
+    <div class="statistiques">
         <h3>Statistiques des logements</h3>
         <div>
             <span>Libres:</span>
@@ -147,7 +152,6 @@
         </div>
     </div>
 
-
     <table>
         <thead>
             <tr>
@@ -160,6 +164,7 @@
                 <th>Démarcheur</th>
                 <th>Propriétaire</th>
                 <th>Quartier</th>
+                <th>Ville</th>
                 <th>Image</th>
                 <th>Statut</th> <!-- Nouvelle colonne -->
                 <th>Actions</th>
@@ -169,56 +174,57 @@
     </table>
 </div>
 
-    <div style="height: 50px;"></div>
+<div style="height: 50px;"></div>
 
-    <!-- Formulaire d'ajout de locataire -->
-    <div class="form-container" id="form-locataire" style="display: none;">
-        <form id="form-ajout-locataire">
-            <h2>Enregistre le Locataire</h2>
-            <div><label for="nom">Nom :</label><input type="text" id="nom" name="nom" required></div>
-            <div><label for="prenoms">Prénoms :</label><input type="text" id="prenoms" name="prenoms" required></div>
-            <div><label for="adresse">Adresse :</label><input type="text" id="adresse" name="adresse" required></div>
-            <div><label for="email">Email :</label><input type="email" id="email" name="email" required></div>
-            <div><label for="facebook">Facebook :</label><input type="text" id="facebook" name="facebook" required></div>
-            <!-- Ajout du champ contact -->
-            <div><label for="contactLocataire">Contact :</label><input type="text" id="contactLocataire" name="contactLocataire" required></div>
+<!-- Formulaire d'ajout de locataire -->
+<div class="form-container" id="form-locataire" style="display: none;">
+    <form id="form-ajout-locataire">
+        <h2>Enregistre le Locataire</h2>
+        <div><label for="nom">Nom :</label><input type="text" id="nom" name="nom" required></div>
+        <div><label for="prenoms">Prénoms :</label><input type="text" id="prenoms" name="prenoms" required></div>
+        <div><label for="adresse">Adresse :</label><input type="text" id="adresse" name="adresse" required></div>
+        <div><label for="email">Email :</label><input type="email" id="email" name="email" required></div>
+        <div><label for="facebook">Facebook :</label><input type="text" id="facebook" name="facebook" required></div>
+        <!-- Ajout du champ contact -->
+        <div><label for="contactLocataire">Contact :</label><input type="text" id="contactLocataire" name="contactLocataire" required></div>
 
-            <button type="submit">Ajouter</button>
-        </form>
-        <button id="afficher-locataires-btn">Afficher les locataires</button>
-    </div>
+        <button type="submit">Ajouter</button>
+    </form>
+    <button id="afficher-locataires-btn">Afficher les locataires</button>
+</div>
 
-    <!-- Liste des locataires -->
-    <div id="liste-locataires" style="display: none;">
-        <h2>Liste des locataires</h2>
-        <button class="export-btn" data-table="locataires" data-format="xlsx">Exporter en Excel</button>
-        <button class="export-btn" data-table="locataires" data-format="pdf">Exporter en PDF</button>
-        <table>
-            <thead><tr><th>ID</th><th>Nom</th><th>Prénoms</th><th>Adresse</th><th>Email</th><th>Facebook</th><th>Contact</th><th>Actions</th></tr></thead>
-            <tbody id="tbody-locataires"></tbody>
-        </table>
-    </div>
+<!-- Liste des locataires -->
+<div id="liste-locataires" style="display: none;">
+    <h2>Liste des locataires</h2>
+    <button class="export-btn" data-table="locataires" data-format="xlsx">Exporter en Excel</button>
+    <button class="export-btn" data-table="locataires" data-format="pdf">Exporter en PDF</button>
+    <table>
+        <thead><tr><th>ID</th><th>Nom</th><th>Prénoms</th><th>Adresse</th><th>Email</th><th>Facebook</th><th>Contact</th><th>Actions</th></tr></thead>
+        <tbody id="tbody-locataires"></tbody>
+    </table>
+</div>
 
-    <!-- Formulaire d'ajout de bien -->
-    <div class="form-container" id="form-bien" style="display: none;">
-        <form id="form-ajout-bien">
-            <h2>Enregistre ton Bien</h2>
-            <div><label for="titreBien">Titre :</label><input type="text" id="titreBien" name="titreBien" required></div>
-            <div><label for="descriptionBien">Description :</label><textarea id="descriptionBien" name="descriptionBien" required></textarea></div>
-            <div>
-                <label for="etatBien">Etat du Bien :</label>
-                <select id="etatBien" name="etatBien" required>
-                    <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
-                    <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
-                </select>
-            </div>
-            <div><label for="prixBien">Prix (FCFA) :</label><input type="number" id="prixBien" name="prixBien" min="0" required></div>
-            <div><label for="proprietaireBien">Propriétaire :</label><input type="text" id="proprietaireBien" name="proprietaireBien" required></div>
-            <div><label for="imageBien">Image (URL) :</label><input type="text" id="imageBien" name="imageBien" required></div>
-            <button type="submit">Ajouter</button>
-        </form>
-        <button id="afficher-biens-btn">Afficher les biens</button>
-    </div>
+<!-- Formulaire d'ajout de bien -->
+<div class="form-container" id="form-bien" style="display: none;">
+    <form id="form-ajout-bien">
+        <h2>Enregistre ton Bien</h2>
+        <div><label for="titreBien">Titre :</label><input type="text" id="titreBien" name="titreBien" required></div>
+        <div><label for="descriptionBien">Description :</label><textarea id="descriptionBien" name="descriptionBien" required></textarea></div>
+        <div>
+            <label for="etatBien">Etat du Bien :</label>
+            <select id="etatBien" name="etatBien" required>
+                <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
+                <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
+            </select>
+        </div>
+        <div><label for="prixBien">Prix (FCFA) :</label><input type="number" id="prixBien" name="prixBien" min="0" required></div>
+        <div><label for="proprietaireBien">Propriétaire :</label><input type="text" id="proprietaireBien" name="proprietaireBien" required></div>
+         <div><label for="villeBien">Ville :</label><input type="text" id="villeBien" name="villeBien" required></div>
+        <div><label for="imageBien">Image :</label><input type="file" id="imageBien" name="imageBien" accept="image/*" required></div>
+        <button type="submit">Ajouter</button>
+    </form>
+    <button id="afficher-biens-btn">Afficher les biens</button>
+</div>
 
     <!-- Liste des biens -->
     <div id="liste-biens" style="display: none;">
@@ -226,43 +232,54 @@
         <button class="export-btn" data-table="biens" data-format="xlsx">Exporter en Excel</button>
         <button class="export-btn" data-table="biens" data-format="pdf">Exporter en PDF</button>
         <table>
-            <thead><tr><th>ID</th><th>Titre</th><th>Description</th><th>Etat</th><th>Prix</th><th>Propriétaire</th><th>Image</th><th>Actions</th></tr></thead>
+            <thead><tr><th>ID</th><th>Titre</th><th>Description</th><th>Etat</th><th>Prix</th><th>Propriétaire</th><th>Ville</th><th>Image</th><th>Actions</th></tr></thead>
             <tbody id="tbody-biens"></tbody>
         </table>
     </div>
 
-    <!-- Formulaire de demande de paiement -->
-    <div class="form-container" id="form-demande-paiement" style="display: none;">
-        <form id="form-ajout-demande-paiement">
-            <h2>Demande de Paiement</h2>
-            <div>
-                <label for="demande-paiement-montant">Montant (FCFA) :</label>
-                <input type="number" id="demande-paiement-montant" name="demande-paiement-montant" min="0" required>
-            </div>
-            <button type="submit">Soumettre la Demande</button>
-        </form>
-    </div>
+   <!-- Formulaire de demande de paiement -->
+<div class="form-container" id="form-demande-paiement" style="display: none;">
+    <form id="form-ajout-demande-paiement">
+        <h2>Demande de Paiement</h2>
+        <div>
+            <label for="demande-paiement-etablissement">Établissement :</label>
+            <input type="text" id="demande-paiement-etablissement" name="demande-paiement-etablissement" readonly>
+            <!-- readonly pour empêcher la modification manuelle -->
+        </div>
+        <div>
+            <label for="demande-paiement-montant">Montant (FCFA) :</label>
+            <input type="number" id="demande-paiement-montant" name="demande-paiement-montant" min="0" required>
+        </div>
+        <div>
+            <label for="demande-paiement-situation">Situation :</label>
+            <input type="text" id="demande-paiement-situation" name="demande-paiement-situation" required>
+        </div>
+        <button type="submit">Soumettre la Demande</button>
+    </form>
+</div>
 
-    <!-- Liste des demandes de paiement -->
-    <div id="liste-demandes-paiement" style="display: none;">
-        <h2>Demandes de Paiement</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Montant (FCFA)</th>
-                    <th>Statut</th>
-                </tr>
-            </thead>
-            <tbody id="tbody-demandes-paiement"></tbody>
-        </table>
-    </div>
+<!-- Liste des demandes de paiement (ajout des colonnes) -->
+<div id="liste-demandes-paiement" style="display: none;">
+    <h2>Demandes de Paiement</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Établissement</th>
+                <th>Montant (FCFA)</th>
+                <th>Situation</th>  <!-- Nouvelle colonne -->
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-demandes-paiement"></tbody>
+    </table>
+</div>
 
 </div>  <!-- Fin de main-content-section -->
 
 <footer>
-    <p>JAE - Entreprise : L'Assurance du résultat</p>
+    <p>ESPACE BENIN - Service Immobilier : L'Assurance du résultat</p>
 </footer>
 </div>
 
@@ -271,7 +288,8 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.0/xlsx.full.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
 <script src="script.js"></script>
 </body>

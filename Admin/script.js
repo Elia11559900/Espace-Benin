@@ -1,16 +1,16 @@
-// Firebase configuration
+// Configuration Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyDGOgJ_Lmtc---VE6Ty-l3FHFzaFh5rcO4",  // Remplacez par votre clé API
-    authDomain: "immo-c41e6.firebaseapp.com",
-    databaseURL: "https://immo-c41e6-default-rtdb.firebaseio.com",
-    projectId: "immo-c41e6",
-    storageBucket: "immo-c41e6.firebasestorage.app",
-    messagingSenderId: "1050311955497",
-    appId: "1:1050311955497:web:fdc94d20240387d1bdb838",
-    measurementId: "G-54VG8HN5H8"
+    apiKey: "AIzaSyAwHqU_XLmDz9VbsxVGN3wbru3-hLDiyNI",
+    authDomain: "microfinance-68811.firebaseapp.com",
+    databaseURL: "https://microfinance-68811-default-rtdb.firebaseio.com",
+    projectId: "microfinance-68811",
+    storageBucket: "microfinance-68811.appspot.com",
+    messagingSenderId: "328514838296",
+    appId: "1:328514838296:web:89b35343ca3a14b352c86d",
+    measurementId: "G-RBQJH93VWE"
 };
 
-// Initialize Firebase
+// Initialisation Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 const auth = firebase.auth();
@@ -41,8 +41,7 @@ function afficherNotification(message, type, notificationId = "notification") {
     }
 }
 
-// ---------- AUTHENTIFICATION ----------
-
+//  AUTHENTIFICATION 
 // Fonction pour afficher la section de connexion
 function showLogin() {
     loginSection.style.display = 'block';
@@ -64,7 +63,6 @@ function showMainContent() {
     mainContentSection.style.display = 'block';
 }
 
-
 // Gestionnaire d'état de connexion
 auth.onAuthStateChanged((user) => {
     if (user) {
@@ -73,14 +71,18 @@ auth.onAuthStateChanged((user) => {
         afficherLogements();
         afficherLocataires();
         afficherBiens();
-        afficherDemandesPaiement(); // Afficher les demandes de paiement au chargement
+        afficherDemandesPaiement();
 
-        // Récupérer et afficher le nom de l'entreprise
+        // Récupérer et afficher le nom de l'entreprise + Pré-remplissage
         database.ref(`entreprises/${currentUser.uid}/nom`).once('value')
             .then((snapshot) => {
                 const entrepriseName = snapshot.val();
                 if (entrepriseName) {
                     document.getElementById('entreprise-name').textContent = entrepriseName;
+                     // Pré-remplit le champ établissement *uniquement* si le formulaire existe
+                    if (document.getElementById("demande-paiement-etablissement")) {
+                        document.getElementById("demande-paiement-etablissement").value = entrepriseName;
+                    }
                 }
             })
             .catch((error) => {
@@ -92,7 +94,6 @@ auth.onAuthStateChanged((user) => {
         showLogin();
     }
 });
-
 
 // Inscription
 const signupForm = document.getElementById('signup-form');
@@ -177,9 +178,8 @@ document.getElementById('show-login').addEventListener('click', (e) => {
     showLogin();
 });
 
-// ---------- FONCTIONS LOGEMENTS ----------
-
-function ajouterLogement(event) {
+//  FONCTIONS LOGEMENTS (MODIFIÉES) 
+async function ajouterLogement(event) {  // async ajouté
     event.preventDefault();
     if (!currentUser) return;
 
@@ -191,55 +191,72 @@ function ajouterLogement(event) {
     const demarcheur = document.getElementById("demarcheur").value;
     const proprietaire = document.getElementById("proprietaire").value;
     const quartier = document.getElementById("quartier").value;
-    const imageUrl = document.getElementById("image").value;
-    const statut = document.getElementById("statut").value; // Récupère la valeur du statut
-
+    const ville = document.getElementById("ville").value; // Nouveau champ
+    const statut = document.getElementById("statut").value;
+    const imageFile = document.getElementById("image").files[0]; // Fichier, pas URL
 
     if (editingLogementId) {
-        mettreAJourLogement(editingLogementId, titre, type, description, etat, prix, demarcheur, proprietaire, quartier, imageUrl, statut); // Ajout du statut
+        // Mise à jour.  Gère l'upload si une *nouvelle* image est sélectionnée.
+        let imageUrl = null;
+        if (imageFile) {
+             imageUrl = await uploadImage(imageFile, 'logements'); //Fonction uploadImage
+        }
+        mettreAJourLogement(editingLogementId, titre, type, description, etat, prix, demarcheur, proprietaire, quartier, ville, imageUrl, statut);
+
     } else {
-        enregistrerLogement(titre, type, description, etat, prix, demarcheur, proprietaire, quartier, imageUrl, statut); // Ajout du statut
+        // Ajout :  L'image est *requise* pour un nouvel ajout.
+         if (!imageFile) {
+            afficherNotification("Veuillez sélectionner une image.", "error");
+            return;
+        }
+        const imageUrl = await uploadImage(imageFile, 'logements');
+        enregistrerLogement(titre, type, description, etat, prix, demarcheur, proprietaire, quartier, ville, imageUrl, statut);
     }
 }
 
-function enregistrerLogement(titre, type, description, etat, prix, demarcheur, proprietaire, quartier, imageUrl, statut) {
-    if (!currentUser) return;
+async function enregistrerLogement(titre, type, description, etat, prix, demarcheur, proprietaire, quartier, ville, imageUrl, statut) {
+     if (!currentUser) return;
 
     const nouveauLogementRef = database.ref(`entreprises/${currentUser.uid}/logements`).push();
-    nouveauLogementRef.set({
-        titre, type, description, etat, prix, demarcheur, proprietaire, quartier, image: imageUrl, statut: statut // Ajout du statut
-    })
-    .then(() => {
+     try {  // Gestion d'erreur améliorée
+        await nouveauLogementRef.set({ //await ici aussi
+            titre, type, description, etat, prix, demarcheur, proprietaire, quartier, ville, image: imageUrl, statut
+        });
         afficherNotification("Logement ajouté avec succès !", "success");
         document.getElementById("form-ajout-logement").reset();
         editingLogementId = null;
         const boutonAjouter = document.querySelector("#form-ajout-logement button[type='submit']");
         boutonAjouter.textContent = "Ajouter";
-    })
-    .catch((error) => {
+    } catch (error) {
         console.error("Erreur lors de l'ajout du logement :", error);
         afficherNotification("Erreur lors de l'ajout du logement", "error");
-    });
+    }
 }
 
-function mettreAJourLogement(id, titre, type, description, etat, prix, demarcheur, proprietaire, quartier, imageUrl, statut) {
+async function mettreAJourLogement(id, titre, type, description, etat, prix, demarcheur, proprietaire, quartier, ville, imageUrl, statut) {
     if (!currentUser) return;
-    database.ref(`entreprises/${currentUser.uid}/logements/${id}`).update({
-       titre, type, description, etat, prix, demarcheur, proprietaire, quartier, image: imageUrl, statut: statut // Ajout du statut
-    })
-    .then(() => {
+
+    const updates = {
+        titre, type, description, etat, prix, demarcheur, proprietaire, quartier, ville, statut
+    };
+    if (imageUrl) { //Mise à jour l'image SEULEMENT si une nouvelle URL est fournie
+        updates.image = imageUrl;
+    }
+
+    try {
+       await database.ref(`entreprises/${currentUser.uid}/logements/${id}`).update(updates);
         afficherNotification("Logement modifié avec succès !", "success");
+        document.getElementById("form-ajout-logement").reset(); //Réinitialiser après la mise à jour
+         editingLogementId = null;
         const boutonAjouter = document.querySelector("#form-ajout-logement button[type='submit']");
         boutonAjouter.textContent = "Ajouter";
-        document.getElementById("form-ajout-logement").reset();
-        editingLogementId = null;
-    })
-    .catch((error) => {
+    } catch(error){
         console.error("Erreur lors de la modification du logement :", error);
         afficherNotification("Erreur lors de la modification du logement", "error");
-    });
+    }
 }
 
+// La fonction supprimerLogement reste *inchangée*.
 function supprimerLogement(id) {
     if (!currentUser) return;
     database.ref(`entreprises/${currentUser.uid}/logements/${id}`).remove()
@@ -253,30 +270,32 @@ function supprimerLogement(id) {
 }
 
 function editerLogement(id) {
-     if (!currentUser) return;
+    if (!currentUser) return;
     editingLogementId = id;
 
     database.ref(`entreprises/${currentUser.uid}/logements/${id}`).once('value', (snapshot) => {
         const logement = snapshot.val();
         if (logement) {
-          document.getElementById("titre").value = logement.titre;
-          document.getElementById("type").value = logement.type;
-          document.getElementById("description").value = logement.description;
-          document.getElementById("etat").value = logement.etat;
-          document.getElementById("prix").value = logement.prix;
-          document.getElementById("demarcheur").value = logement.demarcheur;
-          document.getElementById("proprietaire").value = logement.proprietaire;
-          document.getElementById("quartier").value = logement.quartier;
-          document.getElementById("image").value = logement.image;
-          document.getElementById("statut").value = logement.statut; //Remplissage du champ statut
+            document.getElementById("titre").value = logement.titre;
+            document.getElementById("type").value = logement.type;
+            document.getElementById("description").value = logement.description;
+            document.getElementById("etat").value = logement.etat;
+            document.getElementById("prix").value = logement.prix;
+            document.getElementById("demarcheur").value = logement.demarcheur;
+            document.getElementById("proprietaire").value = logement.proprietaire;
+            document.getElementById("quartier").value = logement.quartier;
+            document.getElementById("ville").value = logement.ville; // Champ ville
+            document.getElementById("statut").value = logement.statut;
 
-          const boutonAjouter = document.querySelector("#form-ajout-logement button[type='submit']");
-          boutonAjouter.textContent = "Modifier";
-          document.getElementById("form-ajout-logement").scrollIntoView({ behavior: "smooth" });
+            // IMPORTANT:  N'affiche PAS le champ file input avec l'image.  Gère ça dans mettreAJourLogement.
+             // Laisse l'utilisateur choisir une *nouvelle* image s'il le souhaite.
+
+            const boutonAjouter = document.querySelector("#form-ajout-logement button[type='submit']");
+            boutonAjouter.textContent = "Modifier";
+            document.getElementById("form-ajout-logement").scrollIntoView({ behavior: "smooth" });
         } else {
-             console.error("Aucune donnée trouvée pour ce logement.");
+            console.error("Aucune donnée trouvée pour ce logement.");
         }
-
     });
 }
 
@@ -304,8 +323,9 @@ function afficherLogements() {
                 <td>${logement.demarcheur}</td>
                 <td>${logement.proprietaire}</td>
                 <td>${logement.quartier}</td>
+                <td>${logement.ville}</td>
                 <td><img src="${logement.image}" alt="${logement.titre}" width="50"></td>
-                <td>${logement.statut}</td> <!-- Affichage du statut -->
+                <td>${logement.statut}</td>
                 <td class="action-buttons">
                     <button onclick="editerLogement('${id}')">Éditer</button>
                     <button onclick="supprimerLogement('${id}')">Supprimer</button>
@@ -316,7 +336,7 @@ function afficherLogements() {
             `;
             tbody.appendChild(tr);
         });
-        calculerStatistiquesLogements(); // Calcul des statistiques après l'affichage
+        calculerStatistiquesLogements();
     });
 }
 
@@ -349,7 +369,7 @@ if (formAjoutLogement) {
   formAjoutLogement.addEventListener("submit", ajouterLogement);
 }
 
-// ---------- FONCTIONS LOCATAIRES ----------
+//  FONCTIONS LOCATAIRES 
 function ajouterLocataire(event) {
     event.preventDefault();
     if (!currentUser) return;
@@ -414,7 +434,6 @@ function editerLocataire(id) {
         const locataire = snapshot.val();
 
         if (locataire) {
-            document.getElementById("nom").value = locataire.nom;
             document.getElementById("prenoms").value = locataire.prenoms;
             document.getElementById("adresse").value = locataire.adresse;
             document.getElementById("email").value = locataire.email;
@@ -430,7 +449,6 @@ function editerLocataire(id) {
         }
     });
 }
-
 
 function afficherLocataires() {
     if (!currentUser) return;
@@ -464,14 +482,25 @@ function afficherLocataires() {
     });
 }
 
+function supprimerLocataire(id) {
+    if (!currentUser) return;
+    database.ref(`entreprises/${currentUser.uid}/locataires/${id}`).remove()
+        .then(() => {
+            afficherNotification("Locataire supprimé avec succès !", "success");
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la suppression du locataire :", error);
+            afficherNotification("Erreur lors de la suppression du locataire", "error");
+        });
+}
+
 const formAjoutLocataire = document.getElementById("form-ajout-locataire");
 if (formAjoutLocataire) {
     formAjoutLocataire.addEventListener("submit", ajouterLocataire);
 }
 
-// ---------- FONCTIONS BIENS ----------
-
-function ajouterBien(event) {
+//  FONCTIONS BIENS (MODIFIÉES) 
+async function ajouterBien(event) {
     event.preventDefault();
     if (!currentUser) return;
 
@@ -480,47 +509,68 @@ function ajouterBien(event) {
     const etat = document.getElementById("etatBien").value;
     const prix = parseInt(document.getElementById("prixBien").value);
     const proprietaire = document.getElementById("proprietaireBien").value;
-    const imageUrl = document.getElementById("imageBien").value;
+    const ville = document.getElementById("villeBien").value; // Nouveau champ.
+    const imageFile = document.getElementById("imageBien").files[0];
 
-    if (editingBienId) {
-        mettreAJourBien(editingBienId, titre, description, etat, prix, proprietaire, imageUrl);
+     if (editingBienId) {
+        let imageUrl = null;
+        if (imageFile) {
+            imageUrl = await uploadImage(imageFile, 'biens');
+        }
+        mettreAJourBien(editingBienId, titre, description, etat, prix, proprietaire, ville, imageUrl); // Pass ville.
     } else {
-        const nouveauBienRef = database.ref(`entreprises/${currentUser.uid}/biens`).push();
-        nouveauBienRef.set({
-            titre, description, etat, prix, proprietaire, image: imageUrl
-        })
-        .then(() => {
-            afficherNotification("Bien ajouté avec succès!", "success");
-            document.getElementById("form-ajout-bien").reset();
-            editingBienId = null;
-            const boutonAjouter = document.querySelector("#form-ajout-bien button[type='submit']");
-            boutonAjouter.textContent = "Ajouter";
-        })
-        .catch((error) => {
-            console.error("Erreur lors de l'ajout du bien:", error);
-            afficherNotification("Erreur lors de l'ajout du bien", "error");
-        });
+        if (!imageFile) {
+            afficherNotification("Veuillez sélectionner une image.", "error");
+            return;
+        }
+        const imageUrl = await uploadImage(imageFile, 'biens');
+        enregistrerBien(titre, description, etat, prix, proprietaire, ville, imageUrl); // Pass ville.
     }
 }
 
-function mettreAJourBien(id, titre, description, etat, prix, proprietaire, imageUrl) {
+async function enregistrerBien(titre, description, etat, prix, proprietaire, ville, imageUrl) {
     if (!currentUser) return;
-    database.ref(`entreprises/${currentUser.uid}/biens/${id}`).update({
-        titre, description, etat, prix, proprietaire, image: imageUrl
-    })
-    .then(() => {
+
+    const nouveauBienRef = database.ref(`entreprises/${currentUser.uid}/biens`).push();
+    try {
+        await nouveauBienRef.set({
+            titre, description, etat, prix, proprietaire, ville, image: imageUrl // Ajout ville
+        });
+        afficherNotification("Bien ajouté avec succès!", "success");
+        document.getElementById("form-ajout-bien").reset();
+        editingBienId = null;
+        const boutonAjouter = document.querySelector("#form-ajout-bien button[type='submit']");
+        boutonAjouter.textContent = "Ajouter";
+
+    } catch(error){
+        console.error("Erreur lors de l'ajout du bien:", error);
+        afficherNotification("Erreur lors de l'ajout du bien", "error");
+    }
+}
+
+async function mettreAJourBien(id, titre, description, etat, prix, proprietaire, ville, imageUrl) {
+     if (!currentUser) return;
+
+    const updates = { titre, description, etat, prix, proprietaire, ville };  // Ajout ville
+    if (imageUrl) {
+        updates.image = imageUrl;
+    }
+
+    try{
+        await database.ref(`entreprises/${currentUser.uid}/biens/${id}`).update(updates);
         afficherNotification("Bien mis à jour avec succès!", "success");
         document.getElementById("form-ajout-bien").reset();
         editingBienId = null;
         const boutonAjouter = document.querySelector("#form-ajout-bien button[type='submit']");
         boutonAjouter.textContent = "Ajouter";
-    })
-    .catch((error) => {
-        console.error("Erreur lors de la mise à jour du bien:", error);
+
+    }catch(error){
+       console.error("Erreur lors de la mise à jour du bien:", error);
         afficherNotification("Erreur lors de la mise à jour du bien", "error");
-    });
+    }
 }
 
+// supprimerBien reste *inchangée*.
 function supprimerBien(id) {
     if (!currentUser) return;
     database.ref(`entreprises/${currentUser.uid}/biens/${id}`).remove()
@@ -545,7 +595,8 @@ function editerBien(id) {
             document.getElementById("etatBien").value = bien.etat;
             document.getElementById("prixBien").value = bien.prix;
             document.getElementById("proprietaireBien").value = bien.proprietaire;
-            document.getElementById("imageBien").value = bien.image;
+            document.getElementById("villeBien").value = bien.ville; // Champ ville.
+            // Pas de pré-remplissage du champ image.
 
             const boutonAjouter = document.querySelector("#form-ajout-bien button[type='submit']");
             boutonAjouter.textContent = "Modifier";
@@ -578,6 +629,7 @@ function afficherBiens() {
                 <td>${bien.etat}</td>
                 <td>${bien.prix} FCFA</td>
                 <td>${bien.proprietaire}</td>
+                <td>${bien.ville}</td>
                 <td><img src="${bien.image}" alt="${bien.titre}" width="50"></td>
                 <td class="action-buttons">
                     <button onclick="editerBien('${id}')">Éditer</button>
@@ -589,14 +641,43 @@ function afficherBiens() {
     });
 }
 
+//  FONCTION UPLOAD D'IMAGE (Nouvelle) 
+async function uploadImage(file, folder) {
+    if (!currentUser) throw new Error("Utilisateur non connecté.");
+
+    const storageRef = storage.ref(`${currentUser.uid}/${folder}/${Date.now()}_${file.name}`);
+    const uploadTask = storageRef.put(file);
+
+    return new Promise((resolve, reject) => {
+        uploadTask.on(
+            firebase.storage.TaskEvent.STATE_CHANGED,
+            (snapshot) => {
+                // Pourcentage de progression (facultatif)
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            },
+            (error) => {
+                console.error("Erreur lors de l'upload:", error);
+                reject(error); // Rejette la promesse en cas d'erreur.
+            },
+            () => {
+                // Succès de l'upload
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    console.log('File available at', downloadURL);
+                    resolve(downloadURL); // Résout la promesse avec l'URL.
+                });
+            }
+        );
+    });
+}
+
 const formAjoutBien = document.getElementById("form-ajout-bien");
 if (formAjoutBien) {
     formAjoutBien.addEventListener("submit", ajouterBien);
 }
 
 
-// ---------- STATISTIQUES ----------
-
+//  STATISTIQUES
 function calculerStatistiquesLogements() {
   if (!currentUser) return;
 
@@ -642,19 +723,26 @@ function ajouterDemandePaiement(event) {
     event.preventDefault();
     if (!currentUser) return;
 
+    const etablissement = document.getElementById("demande-paiement-etablissement").value; // Récupère la valeur (pré-remplie)
     const montant = parseInt(document.getElementById("demande-paiement-montant").value);
+    const situation = document.getElementById("demande-paiement-situation").value; // Nouvelle valeur
     const date = new Date().getTime(); // Timestamp en millisecondes
     const statut = "En attente";  // Statut initial
 
     const nouvelleDemandeRef = database.ref(`entreprises/${currentUser.uid}/demandesPaiement`).push();
     nouvelleDemandeRef.set({
         date,
+        etablissement, // Ajout de l'établissement
         montant,
+        situation,  // Ajout de la situation
         statut
     })
     .then(() => {
         afficherNotification("Demande de paiement soumise avec succès !", "success");
         document.getElementById("form-ajout-demande-paiement").reset();
+         //Réinitialise tous les champs, y compris le champ situation
+         document.getElementById("demande-paiement-etablissement").value = etablissement;
+         //Garde le nom d'établissement pré-rempli
     })
     .catch((error) => {
         console.error("Erreur lors de la soumission de la demande de paiement :", error);
@@ -662,15 +750,16 @@ function ajouterDemandePaiement(event) {
     });
 }
 
+
 function afficherDemandesPaiement() {
     if (!currentUser) return;
 
     const tbody = document.getElementById("tbody-demandes-paiement");
-     if (!tbody) return;
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     database.ref(`entreprises/${currentUser.uid}/demandesPaiement`).on('value', (snapshot) => {
-        tbody.innerHTML = "";  //Réinitialiser le tbody a chaque changement
+        tbody.innerHTML = "";
         snapshot.forEach((childSnapshot) => {
             const demande = childSnapshot.val();
             const id = childSnapshot.key;
@@ -678,7 +767,9 @@ function afficherDemandesPaiement() {
             tr.innerHTML = `
                 <td>${id}</td>
                 <td>${new Date(demande.date).toLocaleString()}</td>
+                <td>${demande.etablissement}</td>
                 <td>${demande.montant} FCFA</td>
+                <td>${demande.situation}</td> 
                 <td>${demande.statut}</td>
             `;
             tbody.appendChild(tr);
@@ -686,10 +777,7 @@ function afficherDemandesPaiement() {
     });
 }
 
-
-
-// ---------- GESTION DE L'AFFICHAGE ----------
-
+//GESTION DE L'AFFICHAGE 
 const afficherFormLogementBtn = document.getElementById("afficher-form-logement-btn");
 const afficherFormLocataireBtn = document.getElementById("afficher-form-locataire-btn");
 const afficherFormBienBtn = document.getElementById("afficher-form-bien-btn");
@@ -704,8 +792,6 @@ const formBien = document.getElementById("form-bien");
 const listeBiens = document.getElementById("liste-biens");
 const formDemandePaiement = document.getElementById("form-demande-paiement"); // Nouveau
 const listeDemandesPaiement = document.getElementById("liste-demandes-paiement"); // Nouveau
-
-
 
 // Fonction pour masquer tous les formulaires/tableaux
 function masquerTout() {
@@ -760,8 +846,7 @@ if (afficherDemandesPaiementBtn) {
     });
 }
 
-// ---------- EXPORTATION ----------
-
+// EXPORTATION
 function exportToExcel(tableId) {
     const table = document.getElementById(tableId);
     if (!table) return;
@@ -773,8 +858,49 @@ function exportToExcel(tableId) {
 function exportToPDF(tableId) {
     const table = document.getElementById(tableId);
     if (!table) return;
-    const doc = new jsPDF();
-    doc.autoTable({ html: `#${tableId}` });
+
+    // Crée une instance de jsPDF en mode paysage ("l") et en millimètres ("mm").
+    const doc = new jsPDF("l", "mm", "a4"); // "l" pour paysage, "mm" pour millimètres, "a4" pour le format de page.
+
+    // Utilise autoTable pour convertir la table HTML en PDF.
+    doc.autoTable({
+        html: `#${tableId}`,
+        // styles de base pour le tableau (facultatif)
+        styles: {
+            fontSize: 10, // Taille de police
+            cellPadding: 2, // Espacement intérieur des cellules
+            overflow: 'linebreak', //  'linebreak' (par défaut), 'ellipsize' ou 'visible'.
+            halign: 'left', // Alignement horizontal ('left', 'center', 'right')
+            valign: 'middle', // Alignement vertical ('top', 'middle', 'bottom')
+        },
+        // Style d'entête (facultatif)
+        headStyles: {
+            fillColor: [41, 128, 185], // Couleur de fond de l'en-tête (bleu)
+            textColor: 255, // Couleur du texte de l'en-tête (blanc)
+            fontStyle: 'bold', // Style de police de l'en-tête
+        },
+       // Style du corps (facultatif)
+        bodyStyles: {
+            fillColor: [236, 240, 241], // Couleur de fond des lignes (gris clair)
+        },
+         //Style des lignes alternatives (facultatif)
+        alternateRowStyles: {
+            fillColor: [255, 255, 255] // Couleur de fond des lignes alternatives
+        },
+         // Hook pour personnaliser le contenu des cellules (facultatif)
+        didParseCell: function (data) {
+            // Vous pouvez modifier data.cell.text ou data.cell.styles ici
+            // Par exemple, pour mettre en gras le texte de la première colonne :
+            // if (data.column.index === 0) {
+            //    data.cell.styles.fontStyle = 'bold';
+            //}
+        },
+        margin: { top: 15, left: 10, right:10, bottom:15 },
+        tableWidth: 'auto',
+
+    });
+
+    // Enregistre le PDF.
     doc.save(`${tableId}.pdf`);
 }
 
@@ -799,9 +925,6 @@ const formAjoutDemandePaiement = document.getElementById("form-ajout-demande-pai
 if (formAjoutDemandePaiement) {
     formAjoutDemandePaiement.addEventListener("submit", ajouterDemandePaiement);
 }
-
-
-// ---------- Initialisation ----------
 
 // Au chargement initial, on affiche la section de connexion
 showLogin();
