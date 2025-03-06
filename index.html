@@ -92,6 +92,8 @@
                 </form>
             </div>
             <div id="resultats-recherche" style="display:none;"></div>
+             <!-- Indicateur de chargement (initialement caché) -->
+            <div id="loading-indicator" class="loading" style="display: none;">Chargement...</div>
         </section>
 
         <section id="derniere-publication">
@@ -143,22 +145,24 @@
         </section>
 
         <!-- Section Témoignages (Déplacée ici) -->
-        <section id="temoignages">
+       <section id="temoignages">
             <div class="container">
                 <h2>Témoignages</h2>
                 <div class="temoignages-container">
-                    <div class="temoignage">
-                        <p>"Service impeccable! J'ai trouvé l'appartement parfait en quelques clics. Je recommande vivement!"</p>
-                        <p class="temoignage-auteur">- Marie D., Parakou</p>
-                    </div>
-                    <div class="temoignage">
-                        <p>"Facile, rapide et efficace.  La meilleure plateforme immobilière que j'ai utilisée."</p>
-                        <p class="temoignage-auteur">- Jean S., Cotonou</p>
-                    </div>
-                     <div class="temoignage">
-                        <p>"J'étais sceptique au début, mais le processus de réservation et de paiement était très simple. Merci!"</p>
-                        <p class="temoignage-auteur">- Elom K., Porto-Novo</p>
-                    </div>
+                    <!-- Les témoignages existants seront remplacés par ceux de Firebase -->
+                </div>
+
+                 <!-- Formulaire d'ajout d'avis -->
+                <div id="ajout-avis">
+                    <h3>Ajouter un avis</h3>
+                    <form id="form-ajout-avis">
+                        <div class="input-group">
+                            <input type="text" id="avis-nom" placeholder="Votre nom" required>
+                            <input type="email" id="avis-email" placeholder="Votre email (facultatif)">
+                        </div>
+                        <textarea id="avis-texte" placeholder="Votre avis" required></textarea>
+                        <button type="submit">Soumettre</button>
+                    </form>
                 </div>
             </div>
         </section>
