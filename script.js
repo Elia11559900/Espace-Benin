@@ -20,8 +20,8 @@ function toggleLoading(show) {
     loadingIndicator.style.display = show ? "block" : "none";
 }
 
-// Fonction générique pour effectuer une recherche (logements ou biens)
-async function effectuerRecherche(typeRecherche, budget, quartier, ville, typeLogement = null) {
+// Fonction générique pour effectuer une recherche (logements ET biens)
+async function effectuerRecherche(typeRecherche, titre, budget, quartier, ville, typeLogement) {
     toggleLoading(true);
     const resultats = {};
     const maintenant = Date.now(); // Timestamp actuel
@@ -30,6 +30,7 @@ async function effectuerRecherche(typeRecherche, budget, quartier, ville, typeLo
         const entreprisesSnapshot = await database.ref('entreprises').once('value');
 
         for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
+            // Utilisation du type de recherche spécifié
             const itemsRef = database.ref(`entreprises/${entrepriseKey}/${typeRecherche}`);
             const itemsSnapshot = await itemsRef.once('value');
 
@@ -42,96 +43,89 @@ async function effectuerRecherche(typeRecherche, budget, quartier, ville, typeLo
                 if (item.statut === "Payé" && item.datePaiement) {
                     const datePaiement = new Date(item.datePaiement);
                     const vingtQuatreHeures = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
-                     if (maintenant - datePaiement.getTime() < vingtQuatreHeures) {
-                         continue; //Ignore les biens/logements payés datant de plus de 24 heures
+                        if (maintenant - datePaiement.getTime() < vingtQuatreHeures) {
+                            continue; //Ignore les biens/logements payés datant de plus de 24 heures
                     }
                 }
 
-                // FILTRAGE (commun aux logements et biens)
-                if ((budget === null || item.prix <= budget) &&
-                    (quartier === null || item.quartier.toLowerCase().includes(quartier.toLowerCase())) &&
-                    (ville === null || item.ville.toLowerCase().includes(ville.toLowerCase()))
-                   )
-                {
-                     // Filtrage supplémentaire pour le type de logement
-                    if (typeRecherche === 'logements' && typeLogement !== null && !item.type.toLowerCase().includes(typeLogement.toLowerCase())) {
-                        continue;
-                    }
+                // FILTRAGE (adapté pour logements et biens)
+                if ((typeRecherche === 'biens' && (titre === null || item.titre.toLowerCase().includes(titre.toLowerCase()))) || typeRecherche === 'logements') { // Filtre par titre si c'est un bien
+                    if ((budget === null || item.prix <= budget) &&
+                        (quartier === null || item.quartier.toLowerCase().includes(quartier.toLowerCase())) &&
+                        (ville === null || item.ville.toLowerCase().includes(ville.toLowerCase()))
+                       )
+                    {
+                        // Filtrage supplémentaire pour le type de logement (si spécifié ET si c'est un logement)
+                        if (typeRecherche === 'logements' && typeLogement !== null && typeLogement !== "" && item.type && !item.type.toLowerCase().includes(typeLogement.toLowerCase())) {
+                            continue;  // Skip if type doesn't match
+                        }
 
-                    resultats[itemKey] = { ...item, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: item.statut || "Non spécifié" };
+                        resultats[itemKey] = { ...item, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: item.statut || "Non spécifié", typeRecherche: typeRecherche, id: itemKey };
+                    }
                 }
             }
         }
         return resultats;
     } catch (error) {
-        console.error(`Erreur lors de la récupération des ${typeRecherche}:`, error);
-        alert(`Une erreur est survenue lors de la recherche de ${typeRecherche}. Veuillez réessayer.`);
+        console.error(`Erreur lors de la récupération des données:`, error);
+        alert(`Une erreur est survenue lors de la recherche. Veuillez réessayer.`);
         return {};
     } finally {
         toggleLoading(false);
     }
 }
 
-// Fonction pour afficher les résultats (logements ou biens)
-function afficherResultatsDansLaPage(resultats, typeRecherche) {
+
+// Fonction pour afficher les résultats (logements ET biens)
+function afficherResultatsDansLaPage(resultats) {
     const resultatsRecherche = document.getElementById("resultats-recherche");
-    resultatsRecherche.innerHTML = "";
+    resultatsRecherche.innerHTML = "";  // Clear previous results
     resultatsRecherche.style.display = "grid";
 
     if (Object.keys(resultats).length === 0) {
         const messageAucunResultat = document.createElement("p");
-        messageAucunResultat.textContent = `Aucun ${typeRecherche === 'logements' ? 'logement' : 'bien'} disponible ne correspond à vos critères.`;
+        messageAucunResultat.textContent = "Aucun résultat ne correspond à vos critères.";
         resultatsRecherche.appendChild(messageAucunResultat);
     } else {
         for (const itemId in resultats) {
             const item = resultats[itemId];
-            const divItem = typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
+            const divItem = item.typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
             resultatsRecherche.appendChild(divItem);
         }
     }
 }
 
-// Écoute de la soumission du formulaire de recherche
+// Gestionnaire d'événement pour le changement de type de recherche
+document.getElementById('type-recherche').addEventListener('change', function() {
+    const type = this.value;
+    const champsBiens = document.getElementById('champs-biens');
+    const champsLogements = document.getElementById('champs-logements');
+
+    if (type === 'biens') {
+        champsBiens.style.display = 'block';
+        champsLogements.style.display = 'none';
+    } else {
+        champsBiens.style.display = 'none';
+        champsLogements.style.display = 'block';
+    }
+});
+
+
+// Écoute de la soumission du formulaire de recherche (simplifié)
 const formRecherche = document.getElementById("form-recherche");
-const champsLogement = document.getElementById("champs-logement");
-const champsBien = document.getElementById("champs-bien");
-
-// On sélectionne directement les labels (maintenant des boutons)
-const labelLogement = document.getElementById("label-logement");
-const labelBien = document.getElementById("label-bien");
-
-// Fonction pour gérer l'état actif des labels (maintenant des boutons)
-function setActiveLabel(activeLabel, inactiveLabel) {
-    activeLabel.classList.add("active");
-    inactiveLabel.classList.remove("active");
-}
-
-// Écouteurs d'événements sur les labels (maintenant des boutons)
-labelLogement.addEventListener("click", () => {
-    setActiveLabel(labelLogement, labelBien);
-    champsLogement.style.display = "block";
-    champsBien.style.display = "none";
-});
-
-labelBien.addEventListener("click", () => {
-    setActiveLabel(labelBien, labelLogement);
-    champsLogement.style.display = "none";
-    champsBien.style.display = "block";
-});
 
 formRecherche.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    // On détermine le type de recherche en fonction du label actif
-    const typeRecherche = labelLogement.classList.contains("active") ? "logements" : "biens";
+    const typeRecherche = document.getElementById("type-recherche").value;  // Récupère le type (logement ou bien)
+    const titre = document.getElementById("titre").value || null; // Pour la recherche de biens
+    const budget = parseInt(document.getElementById("budget").value) || null;
+    const quartier = document.getElementById("quartier").value || null;
+    const ville = document.getElementById("ville").value || null;
+    const typeLogement = document.getElementById("type").value || null;
 
-    const budget = parseInt(document.getElementById(typeRecherche === "logements" ? "budget" : "budget-bien").value) || null;
-    const quartier = document.getElementById(typeRecherche === "logements" ? "quartier" : "quartier-bien").value || null;
-    const ville = document.getElementById(typeRecherche === "logements" ? "ville" : "ville-bien").value || null;
-    const typeLogement = typeRecherche === "logements" ? (document.getElementById("type").value || null) : null;
-
-    const resultats = await effectuerRecherche(typeRecherche, budget, quartier, ville, typeLogement);
-    afficherResultatsDansLaPage(resultats, typeRecherche);
+    const resultats = await effectuerRecherche(typeRecherche, titre, budget, quartier, ville, typeLogement);
+    afficherResultatsDansLaPage(resultats);
 });
 
 
@@ -239,62 +233,68 @@ function creerDivLogement(logement) {
     return divLogement;
 }
 
-// Fonction pour afficher les dernières publications
+// Fonction pour afficher les dernières publications (logements et biens)
 async function afficherDernieresPublications() {
     const derniersLogements = document.getElementById("derniers-logements");
     derniersLogements.innerHTML = "";
 
-    let allLogements = [];
+    let allItems = [];
     const maintenant = Date.now();
 
     const entreprisesSnapshot = await database.ref('entreprises').once('value');
     for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
-        const logementsRef = database.ref(`entreprises/${entrepriseKey}/logements`);
-        const logementsSnapshot = await logementsRef.once('value');
         const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
 
-        for (const logementKey of Object.keys(logementsSnapshot.val() || {})) {
-            const logement = logementsSnapshot.val()[logementKey];
+        // Loop through both 'logements' and 'biens'
+        for (const typeRecherche of ['logements', 'biens']) {
+            const itemsRef = database.ref(`entreprises/${entrepriseKey}/${typeRecherche}`);
+            const itemsSnapshot = await itemsRef.once('value');
 
-            if (logement.statut === "Payé" && logement.datePaiement) {
-                const datePaiement = new Date(logement.datePaiement);
-                const vingtQuatreHeures = 24 * 60 * 60 * 1000;
-                if (maintenant - datePaiement.getTime() < vingtQuatreHeures) {
-                    continue;
+            for (const itemKey of Object.keys(itemsSnapshot.val() || {})) {
+                const item = itemsSnapshot.val()[itemKey];
+
+                // FILTRAGE: Payé et date de paiement
+                if (item.statut === "Payé" && item.datePaiement) {
+                    const datePaiement = new Date(item.datePaiement);
+                    const vingtQuatreHeures = 24 * 60 * 60 * 1000;
+                    if (maintenant - datePaiement.getTime() < vingtQuatreHeures) {
+                        continue;  // Skip paid items older than 24 hours
+                    }
                 }
+                allItems.push({ ...item, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, id: itemKey, statut: item.statut || "Non spécifié", typeRecherche: typeRecherche });
             }
-
-            allLogements.push({ ...logement, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, id: logementKey, statut: logement.statut || "Non spécifié" });
         }
     }
 
-    allLogements.sort((a, b) => (b.datePublication || 0) - (a.datePublication || 0));
-    const logementsRecents = allLogements.slice(0, 3);
+    // Trier par date de publication (la plus récente en premier)
+    allItems.sort((a, b) => (b.datePublication || 0) - (a.datePublication || 0));
+    const recentItems = allItems.slice(0, 3);
 
-    if (logementsRecents.length > 0) {
-        const logementCarousel = document.createElement("div");
-        logementCarousel.classList.add("logement-carousel");
+    if (recentItems.length > 0) {
+        const itemCarousel = document.createElement("div");
+        itemCarousel.classList.add("logement-carousel"); // Use the same class for styling
 
-        logementsRecents.forEach((logement) => {
-            const divLogement = creerDivLogement(logement);
-            logementCarousel.appendChild(divLogement);
+        recentItems.forEach((item) => {
+            const divItem = item.typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
+            itemCarousel.appendChild(divItem);
         });
 
-        derniersLogements.appendChild(logementCarousel);
+        derniersLogements.appendChild(itemCarousel);
 
-        let currentLogementIndex = 0;
-        const slides = logementCarousel.querySelectorAll(".logement");
+        // Carousel logic (same as before, but using a more generic class name)
+        let currentItemIndex = 0;
+        const slides = itemCarousel.querySelectorAll(".logement, .bien"); // Select both logements and biens
         const numSlides = slides.length;
 
         setInterval(() => {
             slides.forEach((slide, index) => {
-                if (index === currentLogementIndex) {
+                if (index === currentItemIndex) {
                     slide.style.left = `calc(50% - calc(100% / 6))`;
                     slide.style.zIndex = "2";
                     slide.style.opacity = "1";
                 } else if (
-                    index === (currentLogementIndex + 1) % numSlides ||
-                    (currentLogementIndex === numSlides - 1 && index === 0)
+                    index === (currentItemIndex + 1) % numSlides ||
+                    (currentItemIndex === numSlides - 1 && index === 0)
                 ) {
                     slide.style.left = `calc(100% - calc(100% / 3))`;
                     slide.style.zIndex = "1";
@@ -305,23 +305,30 @@ async function afficherDernieresPublications() {
                     slide.style.opacity = "0.7";
                 }
             });
-            currentLogementIndex = (currentLogementIndex + 1) % numSlides;
+            currentItemIndex = (currentItemIndex + 1) % numSlides;
         }, 5000);
 
     } else {
-        const messageAucunLogement = document.createElement("p");
-        messageAucunLogement.textContent = "Aucune publication récente.";
-        derniersLogements.appendChild(messageAucunLogement);
+        const messageAucunItem = document.createElement("p");
+        messageAucunItem.textContent = "Aucune publication récente.";
+        derniersLogements.appendChild(messageAucunItem);
     }
 }
 
+
 afficherDernieresPublications();
 
+//Fonction pour afficher tous les logements/biens (sans filtre)
 async function afficherTousLesLogements() {
-     const resultats = await effectuerRecherche("logements", null, null, null, null);
-    afficherResultatsDansLaPage(resultats, "logements");
+    // Utilise 'logements' et 'biens' comme types de recherche pour afficher tous les éléments.
+    const resultatsLogements = await effectuerRecherche('logements', null, null, null, null, null);
+    const resultatsBiens = await effectuerRecherche('biens', null, null, null, null, null);
+     // Combine les résultats.  Utilise spread operator pour décomposer les objets.
+    const resultatsCombinés = { ...resultatsLogements, ...resultatsBiens };
+    afficherResultatsDansLaPage(resultatsCombinés);
 }
 
+//Bouton "Voir plus" : affiche tous les logements/biens
 const voirPlusButton = document.getElementById("voir-plus");
 voirPlusButton.addEventListener("click", () => {
     afficherTousLesLogements();
@@ -346,7 +353,7 @@ async function afficherFenetreDetails(item) {
     const entrepriseWhatsapp = entrepriseData.whatsapp;
     const demarcheurNom = item.demarcheur || "Non spécifié";
     const proprietaireNom = item.proprietaire || "Non spécifié";
-    let texteBoutonPayerAvance = (item.hasOwnProperty('type')) ? "Payer Avance Logement" : "Payer Avance Bien";
+    let texteBoutonPayerAvance = (item.typeRecherche === 'logements') ? "Payer Avance Logement" : "Payer Avance Bien";
 
     fenetreDetails.innerHTML = `
         <h3>${item.titre}</h3>
@@ -400,7 +407,7 @@ async function afficherFenetreDetails(item) {
 
     const boutonDiscussion = fenetreDetails.querySelector(".bouton-discussion");
     boutonDiscussion.addEventListener("click", () => {
-        const message = item.hasOwnProperty('type')
+        const message = item.typeRecherche === 'logements'
         ? `Je suis intéressé par le logement : ${item.titre}`
         : `Je suis intéressé par le bien : ${item.titre}`;
         window.location.href = `https://wa.me/${entrepriseWhatsapp}?text=${encodeURIComponent(message)}`;
@@ -436,7 +443,7 @@ async function afficherFenetreDetails(item) {
              fraisReservation = 25000;
          }
 
-        const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.hasOwnProperty('type') ? 'logements' : 'biens'}/${item.id}`);
+        const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.typeRecherche}/${item.id}`);
         try {
             await itemRef.update({ statut: "Réservé" });
               const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${fraisReservation}`;
@@ -451,7 +458,7 @@ async function afficherFenetreDetails(item) {
     const boutonPayerAvance = fenetreDetails.querySelector(".bouton-payer-avance");
     boutonPayerAvance.addEventListener("click", async () => {
 
-        const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.hasOwnProperty('type') ? 'logements' : 'biens'}/${item.id}`);
+        const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.typeRecherche}/${item.id}`);
         try{
             await itemRef.update({
                 statut: "Payé",
