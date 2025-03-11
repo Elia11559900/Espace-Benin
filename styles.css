@@ -147,107 +147,113 @@ nav ul.hidden {
 
 /* --- Section Recherche --- */
 #recherche-logement {
-  position: relative;
-  top: -100px;
-  margin-bottom: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 1000px;
-  background-color: #2d38bd;
-  color: white;
-  padding: 20px;
-  border-radius: 50px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-  margin-top: 20px;
-  text-align: center;
-}
-
-/* Amélioration du choix Logement/Bien (plus responsive) */
-.choix-recherche {
-    display: flex;
-    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne */
-    justify-content: center; /* Centre les éléments horizontalement */
-    gap: 10px; /* Espace entre les éléments */
-    margin-bottom: 20px;
-}
-
-.choix-recherche label {
-    margin-bottom: 5px;
-    font-weight: bold;
+    position: relative;
+    top: -100px;
+    margin-bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1000px;
+    background-color: #2d38bd;
     color: white;
-    /* margin-right: 15px;  Supprimé, car gap gère l'espace */
-    cursor: pointer; /* Améliore l'UX */
-     user-select: none; /* Empêche la sélection du texte du label */
-}
-
-.choix-recherche input[type="radio"] {
-  margin-right: 5px;
-  cursor: pointer; /* Améliore l'UX */
-}
-
-#recherche-logement .recherche-container,
-#recherche-logement .container {  /* Ciblage plus précis */
-    max-width: 100%;
-    padding: 0;
-    background-color: #2d38bd; /* Ajouté ici aussi pour la cohérence */
-    border-radius: 50px;    /* Ajouté ici aussi pour la cohérence */
-    color: white;              /* Ajouté ici aussi pour la cohérence */
-}
-
-#recherche-logement h2,
-#recherche-logement p {
-    text-align: center;
-}
-
-#form-recherche {
-    display: flex;
-    margin-bottom: 20px;
-    flex-direction: column;
-}
-
-#form-recherche label {
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: white;
-    text-align: left;
-}
-
-/* Champs de formulaire pleine largeur */
-#form-recherche input[type="number"],
-#form-recherche input[type="text"] {
-    margin-bottom: 15px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    color: black;
-    width: 100%; /* Prend toute la largeur disponible */
-    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur */
-}
-
-#form-recherche button {
-    padding: 10px 20px;
-    background-color: #FFA500;
-    color: black;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    align-self: center;
-    width: 50%;
-}
-
-#resultats-recherche {
-    margin-top: 20px;
     padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-    color: black;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    grid-gap: 20px;
-}
+    border-radius: 50px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  /* Nouveaux styles pour les boutons de choix */
+  .choix-recherche {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+  }
+
+  .choix-btn {
+      background-color: #2d38bd; /* Couleur de fond par défaut */
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px; /* Bords arrondis */
+      cursor: pointer;
+      transition: background-color 0.3s ease; /* Transition douce */
+      font-weight: bold; /* Texte en gras */
+  }
+
+  .choix-btn:hover {
+      background-color: #1a237e; /* Couleur au survol */
+  }
+
+  .choix-btn.active {
+      background-color: #FFA500; /* Couleur pour le bouton actif */
+      color: black;
+  }
+
+  #recherche-logement .recherche-container,
+  #recherche-logement .container {  /* Ciblage plus précis */
+      max-width: 100%;
+      padding: 0;
+      background-color: #2d38bd; /* Ajouté ici aussi pour la cohérence */
+      border-radius: 50px;    /* Ajouté ici aussi pour la cohérence */
+      color: white;              /* Ajouté ici aussi pour la cohérence */
+  }
+
+  #recherche-logement h2,
+  #recherche-logement p {
+      text-align: center;
+  }
+
+  #form-recherche {
+      display: flex;
+      margin-bottom: 20px;
+      flex-direction: column;
+  }
+
+  #form-recherche label {
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: white;
+      text-align: left;
+  }
+
+  /* Champs de formulaire pleine largeur */
+  #form-recherche input[type="number"],
+  #form-recherche input[type="text"] {
+      margin-bottom: 15px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      color: black;
+      width: 100%; /* Prend toute la largeur disponible */
+      box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur */
+  }
+
+  #form-recherche button {
+      padding: 10px 20px;
+      background-color: #FFA500;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+      align-self: center;
+      width: 50%;
+  }
+
+  #resultats-recherche {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+      color: black;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-gap: 20px;
+  }
 
 /* --- Styles Communs Logement/Bien --- */
 .logement,
@@ -726,6 +732,10 @@ footer .container {
         display: flex;
         flex-direction: column;
         margin-bottom: 10px;
+    .choix-btn {
+        width: 100%; /*Boutons prennent toute la largeur*/
+        margin: 5px 0;
+        }
     }
 
     .choix-recherche label {

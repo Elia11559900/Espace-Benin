@@ -72,7 +72,7 @@ async function effectuerRecherche(typeRecherche, budget, quartier, ville, typeLo
     }
 }
 
-// Fonction pour afficher les résultats (logements ou biens) - INCHANGÉE
+// Fonction pour afficher les résultats (logements ou biens)
 function afficherResultatsDansLaPage(resultats, typeRecherche) {
     const resultatsRecherche = document.getElementById("resultats-recherche");
     resultatsRecherche.innerHTML = "";
@@ -91,6 +91,8 @@ function afficherResultatsDansLaPage(resultats, typeRecherche) {
     }
 }
 
+
+
 // Écoute de la soumission du formulaire de recherche
 const formRecherche = document.getElementById("form-recherche");
 const choixLogement = document.getElementById("choix-logement");
@@ -98,47 +100,42 @@ const choixBien = document.getElementById("choix-bien");
 const champsLogement = document.getElementById("champs-logement");
 const champsBien = document.getElementById("champs-bien");
 
-// Ajout des écouteurs d'événements sur les labels
-document.querySelector("label[for=choix-logement]").addEventListener("click", () => {
-  choixLogement.checked = true;
+// Gestionnaires d'événements pour les boutons de choix
+choixLogement.addEventListener("click", () => {
+  // Active le bouton "Logement" et désactive l'autre
+  choixLogement.classList.add("active");
+  choixBien.classList.remove("active");
+  // Affiche les champs correspondants
   champsLogement.style.display = "block";
   champsBien.style.display = "none";
 });
 
-document.querySelector("label[for=choix-bien]").addEventListener("click", () => {
-  choixBien.checked = true;
+choixBien.addEventListener("click", () => {
+  // Active le bouton "Bien" et désactive l'autre
+  choixBien.classList.add("active");
+  choixLogement.classList.remove("active");
+  // Affiche les champs correspondants
   champsLogement.style.display = "none";
   champsBien.style.display = "block";
 });
 
-// Gestionnaires 'change' (conservés pour la cohérence)
-choixLogement.addEventListener("change", () => {
-    champsLogement.style.display = "block";
-    champsBien.style.display = "none";
-});
 
-choixBien.addEventListener("change", () => {
-    champsLogement.style.display = "none";
-    champsBien.style.display = "block";
-});
-
-// ***** MODIFICATION ICI : on utilise 'async' et 'await' *****
 formRecherche.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    // On détermine le type de recherche *APRÈS* avoir forcé le bon état des boutons
-    const typeRecherche = choixLogement.checked ? "logements" : "biens";
-    const budget = parseInt(document.getElementById(choixLogement.checked ? "budget" : "budget-bien").value) || null;
-    const quartier = document.getElementById(choixLogement.checked ? "quartier" : "quartier-bien").value || null;
-    const ville = document.getElementById(choixLogement.checked ? "ville" : "ville-bien").value || null;
-    const typeLogement = choixLogement.checked ? (document.getElementById("type").value || null) : null;
+    // Détermine le type de recherche en fonction du bouton actif
+    const typeRecherche = choixLogement.classList.contains("active") ? "logements" : "biens";
+    // Le reste est identique, on utilise toujours les ID des champs pour récupérer les valeurs
+    const budget = parseInt(document.getElementById(choixLogement.classList.contains("active") ? "budget" : "budget-bien").value) || null;
+    const quartier = document.getElementById(choixLogement.classList.contains("active") ? "quartier" : "quartier-bien").value || null;
+    const ville = document.getElementById(choixLogement.classList.contains("active") ? "ville" : "ville-bien").value || null;
+    const typeLogement = choixLogement.classList.contains("active") ? (document.getElementById("type").value || null) : null;
 
-    // On attend la fin de la recherche *avant* d'afficher les résultats
     const resultats = await effectuerRecherche(typeRecherche, budget, quartier, ville, typeLogement);
     afficherResultatsDansLaPage(resultats, typeRecherche);
 });
 
-// Fonction pour créer un élément div pour un BIEN - MODIFIÉE
+// Fonction pour créer un élément div pour un BIEN
 function creerDivBien(bien) {
     const divBien = document.createElement("div");
     divBien.classList.add("bien");
@@ -192,7 +189,7 @@ function creerDivBien(bien) {
 }
 
 
-// Fonction pour créer un élément div pour un LOGEMENT - MODIFIÉE
+// Fonction pour créer un élément div pour un LOGEMENT
 function creerDivLogement(logement) {
     const divLogement = document.createElement("div");
     divLogement.classList.add("logement");
@@ -245,7 +242,7 @@ function creerDivLogement(logement) {
     return divLogement;
 }
 
-// Fonction pour afficher les dernières publications - MODIFIÉE
+// Fonction pour afficher les dernières publications
 async function afficherDernieresPublications() {
     const derniersLogements = document.getElementById("derniers-logements");
     derniersLogements.innerHTML = "";
@@ -336,7 +333,7 @@ voirPlusButton.addEventListener("click", () => {
     afficherTousLesLogements();
 });
 
-// Fonction pour afficher la fenêtre de détails - MODIFIÉE
+// Fonction pour afficher la fenêtre de détails
 async function afficherFenetreDetails(item) {
     const fenetreDetails = document.createElement("div");
     fenetreDetails.classList.add("fenetre-details");
@@ -433,7 +430,7 @@ async function afficherFenetreDetails(item) {
         reservationInfo.style.display = "block";
     });
 
-     //Bouton "Confirmer Réservation" (à l'intérieur des infos de réservation) - MODIFIÉ
+     //Bouton "Confirmer Réservation" (à l'intérieur des infos de réservation)
     const confirmerReservation = fenetreDetails.querySelector(".confirmer-reservation");
     confirmerReservation.addEventListener("click", async () => {
         //Calcul des frais
@@ -467,7 +464,7 @@ async function afficherFenetreDetails(item) {
     });
 
 
-    // Bouton Payer Avance - MODIFIÉ
+    // Bouton Payer Avance
     const boutonPayerAvance = fenetreDetails.querySelector(".bouton-payer-avance");
     boutonPayerAvance.addEventListener("click", async () => {
 
