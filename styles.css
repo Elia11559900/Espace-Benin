@@ -178,6 +178,7 @@ nav ul.hidden {
     color: white;
     /* margin-right: 15px;  Supprimé, car gap gère l'espace */
     cursor: pointer; /* Améliore l'UX */
+     user-select: none; /* Empêche la sélection du texte du label */
 }
 
 .choix-recherche input[type="radio"] {
@@ -864,7 +865,7 @@ footer .container {
     border: 1px solid #888;
     width: 80%;
     max-width: 800px; /* Largeur maximale */
-	overflow-y: auto;
+    overflow-y: auto;
 }
 
 .close-button {

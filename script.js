@@ -1,4 +1,3 @@
-
 // Configuration de Firebase (inchangée)
 const firebaseConfig = {
     apiKey: "AIzaSyAwHqU_XLmDz9VbsxVGN3wbru3-hLDiyNI",
@@ -92,15 +91,27 @@ function afficherResultatsDansLaPage(resultats, typeRecherche) {
     }
 }
 
-
-
-// Écouter la soumission du formulaire de recherche - INCHANGÉ
+// Écoute de la soumission du formulaire de recherche
 const formRecherche = document.getElementById("form-recherche");
 const choixLogement = document.getElementById("choix-logement");
 const choixBien = document.getElementById("choix-bien");
 const champsLogement = document.getElementById("champs-logement");
 const champsBien = document.getElementById("champs-bien");
 
+// Ajout des écouteurs d'événements sur les labels
+document.querySelector("label[for=choix-logement]").addEventListener("click", () => {
+  choixLogement.checked = true;
+  champsLogement.style.display = "block";
+  champsBien.style.display = "none";
+});
+
+document.querySelector("label[for=choix-bien]").addEventListener("click", () => {
+  choixBien.checked = true;
+  champsLogement.style.display = "none";
+  champsBien.style.display = "block";
+});
+
+// Gestionnaires 'change' (conservés pour la cohérence)
 choixLogement.addEventListener("change", () => {
     champsLogement.style.display = "block";
     champsBien.style.display = "none";
@@ -111,19 +122,21 @@ choixBien.addEventListener("change", () => {
     champsBien.style.display = "block";
 });
 
+// ***** MODIFICATION ICI : on utilise 'async' et 'await' *****
 formRecherche.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    // On détermine le type de recherche *APRÈS* avoir forcé le bon état des boutons
     const typeRecherche = choixLogement.checked ? "logements" : "biens";
     const budget = parseInt(document.getElementById(choixLogement.checked ? "budget" : "budget-bien").value) || null;
     const quartier = document.getElementById(choixLogement.checked ? "quartier" : "quartier-bien").value || null;
     const ville = document.getElementById(choixLogement.checked ? "ville" : "ville-bien").value || null;
     const typeLogement = choixLogement.checked ? (document.getElementById("type").value || null) : null;
 
+    // On attend la fin de la recherche *avant* d'afficher les résultats
     const resultats = await effectuerRecherche(typeRecherche, budget, quartier, ville, typeLogement);
     afficherResultatsDansLaPage(resultats, typeRecherche);
 });
-
 
 // Fonction pour créer un élément div pour un BIEN - MODIFIÉE
 function creerDivBien(bien) {
