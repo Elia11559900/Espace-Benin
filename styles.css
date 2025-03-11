@@ -1,4 +1,3 @@
-
 body {
     font-family: sans-serif;
     margin: 0;
@@ -162,6 +161,38 @@ nav ul.hidden {
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
   margin-top: 20px;
   text-align: center;
+}
+
+/* Choix Logement/Bien */
+.choix-recherche {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.choix-label {
+    padding: 10px 15px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.choix-label.active {
+    background-color: #FFA500;
+    color: white;
+    border-color: #FFA500;
+}
+
+.choix-label:hover {
+    background-color: #ddd;
+    border-color: #999;
 }
 
 #recherche-logement .recherche-container,
@@ -696,6 +727,17 @@ footer .container {
         top: -50px;
         margin-bottom: -30px;
     }
+    /* Style des boutons de choix pour mobile */
+     .choix-recherche {
+        flex-direction: column;
+    }
+
+    .choix-label {
+        margin: 5px 0;
+        padding: 8px 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 
     #resultats-recherche {
         grid-template-columns: 1fr;
@@ -861,27 +903,4 @@ footer .container {
 .modal-content ul {
     list-style: disc;
     margin-left: 20px;
-}
-
-/* Styles pour les boutons de type de recherche */
-.search-type-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    justify-content: center; /* Centrer les boutons */
-}
-
-.search-type-buttons button {
-    padding: 10px 15px;
-    background-color: #f0f0f0; /* Couleur de fond par défaut */
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Transition douce */
-}
-
-.search-type-buttons button.active {
-    background-color: #FFA500; /* Couleur de fond pour */
-    color: white;
 }
