@@ -51,33 +51,38 @@
         <section id="recherche-logement">
             <div class="container recherche-container">
                 <h2>Que recherchez-vous chez ESPACE BENIN : Service Immobilier ?</h2>
-                <!-- Combined Search Form -->
+                <!-- Choix Logement/Bien -->
+                <div class="choix-recherche">
+                    <button type="button" id="label-logement" class="choix-label active">Un Logement</button>
+                    <button type="button" id="label-bien" class="choix-label">Un Bien</button>
+                </div>
+
                 <form id="form-recherche">
-                    <label for="type-recherche">Type de recherche :</label>
-                    <select id="type-recherche" name="type-recherche">
-                        <option value="logements">Logements</option>
-                        <option value="biens">Biens</option>
-                    </select>
-
-                    <div id="champs-biens" style="display: none;">
-                      <label for="titre">Titre :</label>
-                      <input type="text" id="titre" name="titre">
-                    </div>
-
-                    <div id="champs-communs">
+                    <!-- Champs pour Logement (initialement visibles) -->
+                    <div id="champs-logement">
                         <label for="budget">Insérez votre Budget :</label>
                         <input type="number" id="budget" name="budget" min="0">
 
-                         <label for="quartier">Choisissez la zone de recherche :</label>
+                        <label for="quartier">Choisissez la zone de recherche :</label>
                         <input type="text" id="quartier" name="quartier">
 
                         <label for="ville">Ville :</label>
                         <input type="text" id="ville" name="ville">
+
+                        <label for="type">Type de logement :</label>
+                        <input type="text" id="type" name="type">
                     </div>
 
-                    <div id="champs-logements" style="display: block;">
-                        <label for="type">Type de logement (optionnel) :</label>
-                        <input type="text" id="type" name="type">
+                    <!-- Champs pour Bien (initialement cachés) -->
+                    <div id="champs-bien" style="display: none;">
+                         <label for="budget-bien">Insérez votre Budget :</label>
+                        <input type="number" id="budget-bien" name="budget_bien" min="0">
+
+                        <label for="quartier-bien">Choisissez la zone de recherche :</label>
+                        <input type="text" id="quartier-bien" name="quartier_bien">
+
+                        <label for="ville-bien">Ville :</label>
+                        <input type="text" id="ville-bien" name="ville_bien">
                     </div>
 
                     <button type="submit">Rechercher</button>
