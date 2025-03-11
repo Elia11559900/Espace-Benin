@@ -96,17 +96,17 @@ const formRecherche = document.getElementById("form-recherche");
 const champsLogement = document.getElementById("champs-logement");
 const champsBien = document.getElementById("champs-bien");
 
-// On sélectionne directement les labels
+// On sélectionne directement les labels (maintenant des boutons)
 const labelLogement = document.getElementById("label-logement");
 const labelBien = document.getElementById("label-bien");
 
-// Fonction pour gérer l'état actif des labels
+// Fonction pour gérer l'état actif des labels (maintenant des boutons)
 function setActiveLabel(activeLabel, inactiveLabel) {
     activeLabel.classList.add("active");
     inactiveLabel.classList.remove("active");
 }
 
-// Écouteurs d'événements sur les labels
+// Écouteurs d'événements sur les labels (maintenant des boutons)
 labelLogement.addEventListener("click", () => {
     setActiveLabel(labelLogement, labelBien);
     champsLogement.style.display = "block";

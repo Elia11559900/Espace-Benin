@@ -55,7 +55,7 @@ nav {
     right: 0;
     top: 100%;
     display: block;
-    width: auto; /* Permet à la largeur de s'ajuster au contenu */
+    width: auto;
     z-index: 1000;
     height: 800px;
     width: 500px;
@@ -163,7 +163,7 @@ nav ul.hidden {
   text-align: center;
 }
 
-/* Amélioration du choix Logement/Bien (plus responsive) */
+/* Choix Logement/Bien */
 .choix-recherche {
     display: flex;
     flex-wrap: wrap;
@@ -172,7 +172,6 @@ nav ul.hidden {
     margin-bottom: 20px;
 }
 
-/* Styles pour les labels de choix (logement/bien) */
 .choix-label {
     padding: 10px 15px;
     border: 2px solid #ccc;
@@ -191,11 +190,10 @@ nav ul.hidden {
     border-color: #FFA500;
 }
 
-.choix-label:not(.active):hover {
+.choix-label:hover {
     background-color: #ddd;
     border-color: #999;
 }
-
 
 #recherche-logement .recherche-container,
 #recherche-logement .container {
@@ -646,7 +644,6 @@ footer .container {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    /* width: 100%;  Supprimé */
 }
 /* Texte explicatif pour la réservation */
 .fenetre-details .reservation-info {
@@ -664,7 +661,6 @@ footer .container {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-          /* width: 100%; Supprimé */
 }
 
 .fenetre-details h3 {
@@ -709,7 +705,7 @@ footer .container {
     .accueil-text {
         top: 10%;
         padding: 10px;
-        width: 90%; /* Augmente la largeur */
+        width: 90%;
     }
 
     .accueil-text h2 {
@@ -730,25 +726,23 @@ footer .container {
         left: 0;
         top: -50px;
         margin-bottom: -30px;
-
     }
-
-    .choix-recherche {
-        display: flex;
+    /* Style des boutons de choix pour mobile */
+     .choix-recherche {
         flex-direction: column;
-        margin-bottom: 10px;
     }
 
-    .choix-label { /* Ajout pour mobile */
-        margin: 5px 0; /* Marge verticale */
-        padding: 8px 12px; /* Padding légèrement réduit */
+    .choix-label {
+        margin: 5px 0;
+        padding: 8px 12px;
+        width: 100%;
+        box-sizing: border-box;
     }
-
 
     #resultats-recherche {
-        grid-template-columns: 1fr; /* Une seule colonne sur mobile */
-        padding: 10px;            /* Réduit le padding */
-        margin-top: 10px;        /* Réduit la marge */
+        grid-template-columns: 1fr;
+        padding: 10px;
+        margin-top: 10px;
     }
      /* Section Comment ça Marche (Mobile) */
     #comment-fonctionne .container {
@@ -786,29 +780,29 @@ footer .container {
 
     /* Carousel */
     #derniers-logements .logement {
-        border: none; /* Enlève la bordure sur mobile */
+        border: none;
     }
 
     .logement img, .bien img {
-        height: 200px; /* Hauteur fixe, potentiellement à ajuster */
+        height: 200px;
     }
 
     /* Footer */
     .footer-content {
         text-align: left;
         margin-left: 0;
-        padding: 20px 0 20px 10px; /* Réduit le padding gauche */
+        padding: 20px 0 20px 10px;
     }
       #contact ul {
         display: flex;
         flex-wrap: wrap;
         margin: 0;
         padding: 0;
-        margin-left: 10px; /* Réduit la marge */
+        margin-left: 10px;
     }
 
     #contact li {
-      margin: 5px 10px;  /*Marge autour*/
+      margin: 5px 10px;
     }
      .footer-content p {
         margin: 10px 0;
@@ -830,24 +824,24 @@ footer .container {
     }
      /* Fenêtre Détails (responsive) */
     .fenetre-details {
-        width: 95%; /* Presque toute la largeur */
-        max-width: none; /* Pas de largeur maximale */
-        padding: 10px; /* Padding réduit */
+        width: 95%;
+        max-width: none;
+        padding: 10px;
     }
      /* Ajustement pour le formulaire d'ajout d'avis sur mobile */
     #ajout-avis input[type="text"],
     #ajout-avis input[type="email"] {
-        width: 100%; /* Pleine largeur sur mobile */
+        width: 100%;
     }
 
      #ajout-avis .input-group {
-       flex-direction: column; /* Colonne sur petit ecran */
+       flex-direction: column;
     }
      /* Boutons dans la fenêtre détails (responsive) */
     .fenetre-details .boutons-container {
-        flex-direction: row; /* Toujours en ligne, mais... */
-        flex-wrap: wrap;     /* ...permet le passage à la ligne */
-        justify-content: space-around; /* ...et ajuste l'espacement */
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
     }
 }
 .loading {
