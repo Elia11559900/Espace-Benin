@@ -91,49 +91,49 @@ function afficherResultatsDansLaPage(resultats, typeRecherche) {
     }
 }
 
-
-
 // Écoute de la soumission du formulaire de recherche
 const formRecherche = document.getElementById("form-recherche");
-const choixLogement = document.getElementById("choix-logement");
-const choixBien = document.getElementById("choix-bien");
 const champsLogement = document.getElementById("champs-logement");
 const champsBien = document.getElementById("champs-bien");
 
-// Gestionnaires d'événements pour les boutons de choix
-choixLogement.addEventListener("click", () => {
-  // Active le bouton "Logement" et désactive l'autre
-  choixLogement.classList.add("active");
-  choixBien.classList.remove("active");
-  // Affiche les champs correspondants
-  champsLogement.style.display = "block";
-  champsBien.style.display = "none";
+// On sélectionne directement les labels
+const labelLogement = document.getElementById("label-logement");
+const labelBien = document.getElementById("label-bien");
+
+// Fonction pour gérer l'état actif des labels
+function setActiveLabel(activeLabel, inactiveLabel) {
+    activeLabel.classList.add("active");
+    inactiveLabel.classList.remove("active");
+}
+
+// Écouteurs d'événements sur les labels
+labelLogement.addEventListener("click", () => {
+    setActiveLabel(labelLogement, labelBien);
+    champsLogement.style.display = "block";
+    champsBien.style.display = "none";
 });
 
-choixBien.addEventListener("click", () => {
-  // Active le bouton "Bien" et désactive l'autre
-  choixBien.classList.add("active");
-  choixLogement.classList.remove("active");
-  // Affiche les champs correspondants
-  champsLogement.style.display = "none";
-  champsBien.style.display = "block";
+labelBien.addEventListener("click", () => {
+    setActiveLabel(labelBien, labelLogement);
+    champsLogement.style.display = "none";
+    champsBien.style.display = "block";
 });
-
 
 formRecherche.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    // Détermine le type de recherche en fonction du bouton actif
-    const typeRecherche = choixLogement.classList.contains("active") ? "logements" : "biens";
-    // Le reste est identique, on utilise toujours les ID des champs pour récupérer les valeurs
-    const budget = parseInt(document.getElementById(choixLogement.classList.contains("active") ? "budget" : "budget-bien").value) || null;
-    const quartier = document.getElementById(choixLogement.classList.contains("active") ? "quartier" : "quartier-bien").value || null;
-    const ville = document.getElementById(choixLogement.classList.contains("active") ? "ville" : "ville-bien").value || null;
-    const typeLogement = choixLogement.classList.contains("active") ? (document.getElementById("type").value || null) : null;
+    // On détermine le type de recherche en fonction du label actif
+    const typeRecherche = labelLogement.classList.contains("active") ? "logements" : "biens";
+
+    const budget = parseInt(document.getElementById(typeRecherche === "logements" ? "budget" : "budget-bien").value) || null;
+    const quartier = document.getElementById(typeRecherche === "logements" ? "quartier" : "quartier-bien").value || null;
+    const ville = document.getElementById(typeRecherche === "logements" ? "ville" : "ville-bien").value || null;
+    const typeLogement = typeRecherche === "logements" ? (document.getElementById("type").value || null) : null;
 
     const resultats = await effectuerRecherche(typeRecherche, budget, quartier, ville, typeLogement);
     afficherResultatsDansLaPage(resultats, typeRecherche);
 });
+
 
 // Fonction pour créer un élément div pour un BIEN
 function creerDivBien(bien) {
@@ -145,9 +145,8 @@ function creerDivBien(bien) {
     divBien.appendChild(entrepriseNomParagraphe);
 
     const statutBien = document.createElement("p");
-    statutBien.textContent = `Statut: ${bien.statut}`;  // Affiche le statut
+    statutBien.textContent = `Statut: ${bien.statut}`;
     divBien.appendChild(statutBien);
-
 
     const imgBien = document.createElement("img");
     imgBien.src = bien.image;
@@ -188,19 +187,17 @@ function creerDivBien(bien) {
     return divBien;
 }
 
-
 // Fonction pour créer un élément div pour un LOGEMENT
 function creerDivLogement(logement) {
     const divLogement = document.createElement("div");
     divLogement.classList.add("logement");
 
      const entrepriseNomParagraphe = document.createElement("p");
-    entrepriseNomParagraphe.textContent = `Entreprise: ${logement.entrepriseNom}`; // Utilise entrepriseNom
+    entrepriseNomParagraphe.textContent = `Entreprise: ${logement.entrepriseNom}`;
     divLogement.appendChild(entrepriseNomParagraphe);
 
-    // Ajout d'un paragraphe pour le *Statut* de l'entreprise
     const statutLogement = document.createElement("p");
-    statutLogement.textContent = `Statut: ${logement.statut}`; // Utilise entrepriseNom
+    statutLogement.textContent = `Statut: ${logement.statut}`;
     divLogement.appendChild(statutLogement);
 
     const imgLogement = document.createElement("img");
@@ -248,7 +245,7 @@ async function afficherDernieresPublications() {
     derniersLogements.innerHTML = "";
 
     let allLogements = [];
-    const maintenant = Date.now(); // Timestamp actuel pour la vérification des 24 heures
+    const maintenant = Date.now();
 
     const entreprisesSnapshot = await database.ref('entreprises').once('value');
     for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
@@ -259,12 +256,11 @@ async function afficherDernieresPublications() {
         for (const logementKey of Object.keys(logementsSnapshot.val() || {})) {
             const logement = logementsSnapshot.val()[logementKey];
 
-            // Vérifie si le logement est payé et si la date de paiement est dépassée
             if (logement.statut === "Payé" && logement.datePaiement) {
                 const datePaiement = new Date(logement.datePaiement);
                 const vingtQuatreHeures = 24 * 60 * 60 * 1000;
                 if (maintenant - datePaiement.getTime() < vingtQuatreHeures) {
-                    continue; // Ignore ce logement
+                    continue;
                 }
             }
 
@@ -286,7 +282,6 @@ async function afficherDernieresPublications() {
 
         derniersLogements.appendChild(logementCarousel);
 
-        // Carousel (logique inchangée)
         let currentLogementIndex = 0;
         const slides = logementCarousel.querySelectorAll(".logement");
         const numSlides = slides.length;
@@ -319,7 +314,6 @@ async function afficherDernieresPublications() {
         derniersLogements.appendChild(messageAucunLogement);
     }
 }
-
 
 afficherDernieresPublications();
 
@@ -354,14 +348,13 @@ async function afficherFenetreDetails(item) {
     const proprietaireNom = item.proprietaire || "Non spécifié";
     let texteBoutonPayerAvance = (item.hasOwnProperty('type')) ? "Payer Avance Logement" : "Payer Avance Bien";
 
-    // Construction du contenu de la fenêtre (avec le statut)
     fenetreDetails.innerHTML = `
         <h3>${item.titre}</h3>
         <img src="${item.image}" alt="${item.titre}">
         <p>${item.description}</p>
         <p>Prix : ${item.prix} FCFA</p>
         <p>Entreprise : ${item.entrepriseNom}</p>
-        <p>Statut : ${item.statut}</p> <!-- Affichage du statut -->
+        <p>Statut : ${item.statut}</p>
         <div class="boutons-container">
             <button class="bouton-discussion">Discussion</button>
             <button class="bouton-infos">Infos </button>
@@ -391,7 +384,7 @@ async function afficherFenetreDetails(item) {
             <h4>Informations détaillées :</h4>
             <p><strong>Titre:</strong> ${item.titre}</p>
             ${item.type ? `<p><strong>Type:</strong> ${item.type}</p>` : ''}
-            <p><strong>Description:</strong> ${item.description}</p>           
+            <p><strong>Description:</strong> ${item.description}</p>
             <p><strong>État:</strong> ${item.etat || 'Non spécifié'}</p>
             <p><strong>Prix:</strong> ${item.prix} FCFA</p>
             <p><strong>Démarcheur:</strong> ${demarcheurNom}</p>
@@ -400,8 +393,6 @@ async function afficherFenetreDetails(item) {
              <p><strong>Ville:</strong> ${item.ville}</p>
              <p><strong>Entreprise:</strong> ${item.entrepriseNom}</p>
               <p><strong>Statut:</strong> ${item.statut}</p>
-
-
         </div>
     `;
 
@@ -413,7 +404,6 @@ async function afficherFenetreDetails(item) {
         ? `Je suis intéressé par le logement : ${item.titre}`
         : `Je suis intéressé par le bien : ${item.titre}`;
         window.location.href = `https://wa.me/${entrepriseWhatsapp}?text=${encodeURIComponent(message)}`;
-
     });
 
     const boutonInfos = fenetreDetails.querySelector(".bouton-infos");
@@ -423,17 +413,14 @@ async function afficherFenetreDetails(item) {
        infosLogement.style.display = infosLogement.style.display === "none" ? "block" : "none";
      });
 
-    // Bouton Réservation (affiche les infos + met à jour le statut)
     const boutonReservation = fenetreDetails.querySelector(".bouton-reservation");
     const reservationInfo = fenetreDetails.querySelector(".reservation-info");
     boutonReservation.addEventListener("click", () => {
         reservationInfo.style.display = "block";
     });
 
-     //Bouton "Confirmer Réservation" (à l'intérieur des infos de réservation)
     const confirmerReservation = fenetreDetails.querySelector(".confirmer-reservation");
     confirmerReservation.addEventListener("click", async () => {
-        //Calcul des frais
         let fraisReservation = 0;
         if (prixNumerique <= 5000) {
             fraisReservation = 2000;
@@ -449,11 +436,9 @@ async function afficherFenetreDetails(item) {
              fraisReservation = 25000;
          }
 
-        // Met à jour le statut à "Réservé" dans Firebase
         const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.hasOwnProperty('type') ? 'logements' : 'biens'}/${item.id}`);
         try {
             await itemRef.update({ statut: "Réservé" });
-            // Redirection vers Fedapay (après la mise à jour du statut)
               const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${fraisReservation}`;
               window.location.href = lienPaiement;
             alert("Réservation confirmée!  Vous allez être redirigé pour le paiement.");
@@ -463,19 +448,15 @@ async function afficherFenetreDetails(item) {
         }
     });
 
-
-    // Bouton Payer Avance
     const boutonPayerAvance = fenetreDetails.querySelector(".bouton-payer-avance");
     boutonPayerAvance.addEventListener("click", async () => {
 
-         // Met à jour le statut à "Payé" et ajoute la date de paiement
         const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.hasOwnProperty('type') ? 'logements' : 'biens'}/${item.id}`);
         try{
             await itemRef.update({
                 statut: "Payé",
-                datePaiement: new Date().toISOString() // Timestamp au format ISO
+                datePaiement: new Date().toISOString()
             });
-            // Redirection vers Fedapay (après la mise à jour du statut)
             const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${item.prix}`;
             window.location.href = lienPaiement;
              alert("Paiement confirmé !");
@@ -491,7 +472,6 @@ async function afficherFenetreDetails(item) {
         document.body.removeChild(fenetreDetails);
     });
 }
-
 
 const menuToggle = document.getElementById("menu-toggle");
 const menu = document.getElementById("menu");
@@ -528,7 +508,6 @@ async function afficherTemoignages() {
         temoignagesContainer.innerHTML = "<p>Erreur lors du chargement des témoignages.</p>";
     }
 }
-
 
 const formAjoutAvis = document.getElementById("form-ajout-avis");
 formAjoutAvis.addEventListener("submit", async (event) => {

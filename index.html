@@ -53,9 +53,8 @@
                 <h2>Que recherchez-vous chez ESPACE BENIN : Service Immobilier ?</h2>
                 <!-- Choix Logement/Bien -->
                 <div class="choix-recherche">
-                    <!-- Remplacement des radios par des boutons -->
-                    <button id="choix-logement" class="choix-btn active">Un Logement</button>
-                    <button id="choix-bien" class="choix-btn">Un Bien</button>
+                    <label for="choix-logement" id="label-logement" class="choix-label active">Un Logement</label>
+                    <label for="choix-bien" id="label-bien" class="choix-label">Un Bien</label>
                 </div>
 
                 <form id="form-recherche">
@@ -77,13 +76,13 @@
                     <!-- Champs pour Bien (initialement cachés) -->
                     <div id="champs-bien" style="display: none;">
                          <label for="budget-bien">Insérez votre Budget :</label>
-                        <input type="number" id="budget-bien" name="budget_bien" min="0">  <!-- Nom différent pour le budget -->
+                        <input type="number" id="budget-bien" name="budget_bien" min="0">
 
                         <label for="quartier-bien">Choisissez la zone de recherche :</label>
-                        <input type="text" id="quartier-bien" name="quartier_bien"> <!-- Nom différent pour le quartier -->
+                        <input type="text" id="quartier-bien" name="quartier_bien">
 
                         <label for="ville-bien">Ville :</label>
-                        <input type="text" id="ville-bien" name="ville_bien"> <!-- Nom différent -->
+                        <input type="text" id="ville-bien" name="ville_bien">
                     </div>
 
                     <button type="submit">Rechercher</button>
@@ -219,7 +218,6 @@
             </ul>
             <p>Nous ne vendons ni ne partageons vos données avec des tiers sans votre accord, sauf en cas d'obligation légale.</p>
 
-            <!-- ... (Le reste de la politique de confidentialité) ... -->
              <h4>1.3 Sécurité et Conservation des Données</h4>
                 <p>Nous mettons en place des mesures pour protéger vos données, mais nous vous recommandons d'être prudent lorsque vous partagez vos informations en ligne.</p>
                 <p>Vos données sont conservées uniquement le temps nécessaire à la gestion du service, puis supprimées en toute sécurité.</p>
