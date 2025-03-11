@@ -152,9 +152,9 @@
                     <!-- Les témoignages existants seront remplacés par ceux de Firebase -->
                 </div>
 
-                 <!-- Formulaire d'ajout d'avis -->
+                 <!-- Formulaire d'ajout de commentaire -->
                 <div id="ajout-avis">
-                    <h3>Ajouter un avis</h3>
+                    <h3>Ajouter un Commentaire</h3>
                     <form id="form-ajout-avis">
                         <div class="input-group">
                             <input type="text" id="avis-nom" placeholder="Votre nom" required>
@@ -191,12 +191,88 @@
             </section>
             <!-- AJOUT: Liens Termes et Conditions, Politique de Confidentialité -->
             <div class="legal-links">
-                <a href="#">Termes et Conditions</a> |
-                <a href="#">Politique de Confidentialité</a>
+                <a href="#" id="show-terms">Termes et Conditions</a> |
+                <a href="#" id="show-privacy">Politique de Confidentialité</a>
             </div>
             <p>© 2025 Plateforme de gestion immobilière</p>
         </div>
     </footer>
+    <!-- Fenêtre modale pour la politique de confidentialité -->
+    <div id="privacy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <h2>POLITIQUE DE CONFIDENTIALITÉ ET CONDITIONS D'UTILISATION</h2>
+
+            <h3>1. Politique de Confidentialité</h3>
+            <h4>1.1 Collecte des Informations</h4>
+            <p>Nous collectons certaines informations lorsque vous utilisez notre site, notamment :</p>
+            <ul>
+                <li>Votre nom, numéro de téléphone et adresse e-mail lorsque vous vous inscrivez ou effectuez une réservation.</li>
+                <li>Des données sur votre navigation pour améliorer votre expérience.</li>
+                <li>Les informations sur les biens immobiliers que vous consultez ou publiez.</li>
+            </ul>
+
+            <h4>1.2 Utilisation des Données</h4>
+            <p>Nous utilisons vos données pour :</p>
+            <ul>
+                <li>Faciliter la mise en relation entre propriétaires et locataires.</li>
+                <li>Vous informer des offres et services disponibles.</li>
+                <li>Améliorer notre site et nos services.</li>
+            </ul>
+            <p>Nous ne vendons ni ne partageons vos données avec des tiers sans votre accord, sauf en cas d'obligation légale.</p>
+
+            <!-- ... (Le reste de la politique de confidentialité) ... -->
+             <h4>1.3 Sécurité et Conservation des Données</h4>
+                <p>Nous mettons en place des mesures pour protéger vos données, mais nous vous recommandons d'être prudent lorsque vous partagez vos informations en ligne.</p>
+                <p>Vos données sont conservées uniquement le temps nécessaire à la gestion du service, puis supprimées en toute sécurité.</p>
+
+            <h4>1.4 Vos Droits</h4>
+              <p>Vous avez le droit de :</p>
+                <ul>
+                    <li>Accéder à vos informations personnelles.</li>
+                    <li>Demander la modification ou suppression de vos données.</li>
+                    <li>Vous opposer à leur utilisation à des fins commerciales.</li>
+                </ul>
+
+            <h4>1.5 Cookies et Technologies de Suivi</h4>
+               <p>Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez les désactiver dans les paramètres de votre navigateur.</p>
+
+            <h3>2. Conditions d'Utilisation</h3>
+               <h4>1.6 Contact</h4>
+                <p>Pour toute question sur vos données personnelles, contactez-nous :</p>
+                 <ul>
+                    <li>Téléphone / WhatsApp : +229 0151092429</li>
+                    <li>Email : 65604738a@gmail.com</li>
+                </ul>
+
+                <h4>2. Conditions d'Utilisation</h4>
+
+                <h4>2.1 Objet du Site</h4>
+                <p>ESPACE BENIN : Service Immobilier est une plateforme pour la recherche et la mise en relation autour des biens immobiliers au Bénin.</p>
+
+                <h4>2.2 Accès et Inscription</h4>
+                <ul>
+                    <li>L'utilisation du site est gratuite, mais certaines fonctionnalités peuvent nécessiter un abonnement.</li>
+                    <li>Vous devez fournir des informations exactes lors de l'inscription.</li>
+                </ul>
+
+                <h4>2.3 Responsabilités des Utilisateurs</h4>
+                <ul>
+                    <li>Les annonces publiées doivent être véridiques et respecter la loi.</li>
+                    <li>Tout contenu frauduleux ou inapproprié sera supprimé.</li>
+                    <li>Les transactions entre utilisateurs se font sous leur propre responsabilité.</li>
+                </ul>
+
+                <h4>2.4 Limitation de Responsabilité</h4>
+                <ul>
+                    <li>ESPACE BENIN ne garantit pas la véracité des annonces publiées par les utilisateurs.</li>
+                    <li>Nous ne sommes pas responsables des litiges entre propriétaires et locataires.</li>
+                </ul>
+
+                <h4>2.5 Modifications des Conditions</h4>
+                <p>Nous pouvons modifier ces conditions à tout moment. Les utilisateurs seront informés des changements importants.</p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

@@ -1,4 +1,5 @@
-// Configuration de Firebase
+
+// Configuration de Firebase (inchangée)
 const firebaseConfig = {
     apiKey: "AIzaSyAwHqU_XLmDz9VbsxVGN3wbru3-hLDiyNI",
     authDomain: "microfinance-68811.firebaseapp.com",
@@ -20,132 +21,127 @@ function toggleLoading(show) {
     loadingIndicator.style.display = show ? "block" : "none";
 }
 
-// Fonction pour afficher les résultats de la recherche (LOGEMENTS).
-async function afficherResultats(budget, quartier, ville, type) {
-    toggleLoading(true); // Affiche le chargement
-    const logementsFiltres = {};
+// Fonction générique pour effectuer une recherche (logements ou biens)
+async function effectuerRecherche(typeRecherche, budget, quartier, ville, typeLogement = null) {
+    toggleLoading(true);
+    const resultats = {};
+    const maintenant = Date.now(); // Timestamp actuel
 
     try {
         const entreprisesSnapshot = await database.ref('entreprises').once('value');
 
         for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
-            const logementsRef = database.ref(`entreprises/${entrepriseKey}/logements`);
-            const logementsSnapshot = await logementsRef.once('value');
+            const itemsRef = database.ref(`entreprises/${entrepriseKey}/${typeRecherche}`);
+            const itemsSnapshot = await itemsRef.once('value');
 
             const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
 
-            for (const logementKey of Object.keys(logementsSnapshot.val() || {})) {
-                const logement = logementsSnapshot.val()[logementKey];
+            for (const itemKey of Object.keys(itemsSnapshot.val() || {})) {
+                const item = itemsSnapshot.val()[itemKey];
 
-                // FILTRAGE (modifié pour la recherche de biens - type peut être null)
-                if ((budget === null || logement.prix <= budget) &&
-                    (quartier === null || logement.quartier.toLowerCase().includes(quartier.toLowerCase())) &&
-                    (ville === null || logement.ville.toLowerCase().includes(ville.toLowerCase())) &&
-                    (type === null || logement.type.toLowerCase().includes(type.toLowerCase()))) { // type optionnel
+                // FILTRAGE: Vérifie si l'élément est payé et si la date de paiement est dépassée
+                if (item.statut === "Payé" && item.datePaiement) {
+                    const datePaiement = new Date(item.datePaiement);
+                    const vingtQuatreHeures = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
+                     if (maintenant - datePaiement.getTime() < vingtQuatreHeures) {
+                         continue; //Ignore les biens/logements payés datant de plus de 24 heures
+                    }
+                }
 
-                    logementsFiltres[logementKey] = { ...logement, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: logement.statut || "Non spécifié" };
+                // FILTRAGE (commun aux logements et biens)
+                if ((budget === null || item.prix <= budget) &&
+                    (quartier === null || item.quartier.toLowerCase().includes(quartier.toLowerCase())) &&
+                    (ville === null || item.ville.toLowerCase().includes(ville.toLowerCase()))
+                   )
+                {
+                     // Filtrage supplémentaire pour le type de logement
+                    if (typeRecherche === 'logements' && typeLogement !== null && !item.type.toLowerCase().includes(typeLogement.toLowerCase())) {
+                        continue;
+                    }
+
+                    resultats[itemKey] = { ...item, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: item.statut || "Non spécifié" };
                 }
             }
         }
+        return resultats;
     } catch (error) {
-        console.error("Erreur lors de la récupération des logements:", error);
-        alert("Une erreur est survenue lors de la recherche. Veuillez réessayer.");
+        console.error(`Erreur lors de la récupération des ${typeRecherche}:`, error);
+        alert(`Une erreur est survenue lors de la recherche de ${typeRecherche}. Veuillez réessayer.`);
+        return {};
     } finally {
         toggleLoading(false);
-        afficherResultatsDansLaPage(logementsFiltres); // Affiche les résultats *après* le chargement
     }
 }
 
-// Fonction pour afficher les résultats DANS LA PAGE (LOGEMENTS)
-function afficherResultatsDansLaPage(logements) {
+// Fonction pour afficher les résultats (logements ou biens) - INCHANGÉE
+function afficherResultatsDansLaPage(resultats, typeRecherche) {
     const resultatsRecherche = document.getElementById("resultats-recherche");
     resultatsRecherche.innerHTML = "";
     resultatsRecherche.style.display = "grid";
 
-    if (Object.keys(logements).length === 0) {
-        const messageAucunLogement = document.createElement("p");
-        messageAucunLogement.textContent = "Aucun logement n'est disponible correspondant à votre budget.";
-        resultatsRecherche.appendChild(messageAucunLogement);
+    if (Object.keys(resultats).length === 0) {
+        const messageAucunResultat = document.createElement("p");
+        messageAucunResultat.textContent = `Aucun ${typeRecherche === 'logements' ? 'logement' : 'bien'} disponible ne correspond à vos critères.`;
+        resultatsRecherche.appendChild(messageAucunResultat);
     } else {
-        for (const logementId in logements) {
-            const logement = logements[logementId];
-            const divLogement = creerDivLogement(logement); // Utilise la fonction de création de div
-            resultatsRecherche.appendChild(divLogement);
+        for (const itemId in resultats) {
+            const item = resultats[itemId];
+            const divItem = typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
+            resultatsRecherche.appendChild(divItem);
         }
     }
 }
 
-// Fonction pour afficher les résultats de la recherche (BIENS).
-async function afficherResultatsBiens(budget, quartier, ville) {
-    toggleLoading(true); // Affiche le chargement
-    const biensFiltres = {};
 
-    try {
-        const entreprisesSnapshot = await database.ref('entreprises').once('value');
 
-        for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
-            const biensRef = database.ref(`entreprises/${entrepriseKey}/biens`); // Chemin vers les BIENS
-            const biensSnapshot = await biensRef.once('value');
+// Écouter la soumission du formulaire de recherche - INCHANGÉ
+const formRecherche = document.getElementById("form-recherche");
+const choixLogement = document.getElementById("choix-logement");
+const choixBien = document.getElementById("choix-bien");
+const champsLogement = document.getElementById("champs-logement");
+const champsBien = document.getElementById("champs-bien");
 
-            const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
+choixLogement.addEventListener("change", () => {
+    champsLogement.style.display = "block";
+    champsBien.style.display = "none";
+});
 
-            for (const bienKey of Object.keys(biensSnapshot.val() || {})) {
-                const bien = biensSnapshot.val()[bienKey];
+choixBien.addEventListener("change", () => {
+    champsLogement.style.display = "none";
+    champsBien.style.display = "block";
+});
 
-                // FILTRAGE pour les biens
-                if ((budget === null || bien.prix <= budget) &&
-                    (quartier === null || bien.quartier.toLowerCase().includes(quartier.toLowerCase())) &&
-                    (ville === null || bien.ville.toLowerCase().includes(ville.toLowerCase()))) {
+formRecherche.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-                    biensFiltres[bienKey] = { ...bien, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, statut: bien.statut || "Non spécifié" };
-                }
-            }
-        }
-    } catch (error) {
-        console.error("Erreur lors de la récupération des biens:", error);
-        alert("Une erreur est survenue lors de la recherche de biens. Veuillez réessayer.");
+    const typeRecherche = choixLogement.checked ? "logements" : "biens";
+    const budget = parseInt(document.getElementById(choixLogement.checked ? "budget" : "budget-bien").value) || null;
+    const quartier = document.getElementById(choixLogement.checked ? "quartier" : "quartier-bien").value || null;
+    const ville = document.getElementById(choixLogement.checked ? "ville" : "ville-bien").value || null;
+    const typeLogement = choixLogement.checked ? (document.getElementById("type").value || null) : null;
 
-    } finally {
-        toggleLoading(false);
-        afficherResultatsBiensDansLaPage(biensFiltres); // Affiche les résultats *après* le chargement
-    }
-}
+    const resultats = await effectuerRecherche(typeRecherche, budget, quartier, ville, typeLogement);
+    afficherResultatsDansLaPage(resultats, typeRecherche);
+});
 
-// Fonction pour afficher les BIENS
-function afficherResultatsBiensDansLaPage(biens) {
-    const resultatsRecherche = document.getElementById("resultats-recherche");
-    resultatsRecherche.innerHTML = ""; // Efface les résultats précédents
-    resultatsRecherche.style.display = "grid";
 
-    if (Object.keys(biens).length === 0) {
-        const messageAucunBien = document.createElement("p");
-        messageAucunBien.textContent = "Aucun bien disponible ne correspond à vos critères.";
-        resultatsRecherche.appendChild(messageAucunBien);
-    } else {
-        for (const bienId in biens) {
-            const bien = biens[bienId];
-            const divBien = creerDivBien(bien); // Crée la div pour le bien
-            resultatsRecherche.appendChild(divBien);
-        }
-    }
-}
-
-// Fonction pour créer un élément div pour un BIEN
+// Fonction pour créer un élément div pour un BIEN - MODIFIÉE
 function creerDivBien(bien) {
     const divBien = document.createElement("div");
-    divBien.classList.add("bien"); // Classe CSS "bien"
+    divBien.classList.add("bien");
 
     const entrepriseNomParagraphe = document.createElement("p");
     entrepriseNomParagraphe.textContent = `Entreprise: ${bien.entrepriseNom}`;
     divBien.appendChild(entrepriseNomParagraphe);
 
     const statutBien = document.createElement("p");
-    statutBien.textContent = `Statut: ${bien.statut}`;
+    statutBien.textContent = `Statut: ${bien.statut}`;  // Affiche le statut
     divBien.appendChild(statutBien);
+
 
     const imgBien = document.createElement("img");
     imgBien.src = bien.image;
-    imgBien.alt = bien.titre;  // Assure-toi que tes biens ont un champ 'titre'
+    imgBien.alt = bien.titre;
     divBien.appendChild(imgBien);
 
     const titreBien = document.createElement("h3");
@@ -153,41 +149,42 @@ function creerDivBien(bien) {
     divBien.appendChild(titreBien);
 
     const descriptionBien = document.createElement("p");
-    descriptionBien.textContent = bien.description; // Et un champ 'description'
+    descriptionBien.textContent = bien.description;
     divBien.appendChild(descriptionBien);
 
     const prixBien = document.createElement("p");
     prixBien.textContent = `${bien.prix} FCFA`;
     divBien.appendChild(prixBien);
 
-    const etatBien = document.createElement("p"); //Si tu as un champ 'etat' pour les biens
-    etatBien.textContent = `État : ${bien.etat || 'Non spécifié'}`;  // Gère le cas où 'etat' est manquant
+    const etatBien = document.createElement("p");
+    etatBien.textContent = `État : ${bien.etat || 'Non spécifié'}`;
     divBien.appendChild(etatBien);
 
     const quartierBien = document.createElement("p");
     quartierBien.textContent = `Quartier : ${bien.quartier}`;
     divBien.appendChild(quartierBien);
 
-      const villeBien = document.createElement("p");
-    villeBien.textContent = `Ville : ${bien.ville}`;  // Ajout de la ville
+    const villeBien = document.createElement("p");
+    villeBien.textContent = `Ville : ${bien.ville}`;
     divBien.appendChild(villeBien);
 
-    const boutonDetailsBien = document.createElement("button");  // CHANGEMENT : Bouton "Détails"
+    const boutonDetailsBien = document.createElement("button");
     boutonDetailsBien.textContent = "Détails";
     boutonDetailsBien.addEventListener("click", () => {
-        afficherFenetreDetails(bien); // Affiche la fenêtre de détails
+        afficherFenetreDetails(bien);
     });
     divBien.appendChild(boutonDetailsBien);
 
     return divBien;
 }
 
-// Fonction pour créer un élément div pour un logement (réutilisable et améliorée)
+
+// Fonction pour créer un élément div pour un LOGEMENT - MODIFIÉE
 function creerDivLogement(logement) {
     const divLogement = document.createElement("div");
     divLogement.classList.add("logement");
 
-    const entrepriseNomParagraphe = document.createElement("p");
+     const entrepriseNomParagraphe = document.createElement("p");
     entrepriseNomParagraphe.textContent = `Entreprise: ${logement.entrepriseNom}`; // Utilise entrepriseNom
     divLogement.appendChild(entrepriseNomParagraphe);
 
@@ -195,7 +192,6 @@ function creerDivLogement(logement) {
     const statutLogement = document.createElement("p");
     statutLogement.textContent = `Statut: ${logement.statut}`; // Utilise entrepriseNom
     divLogement.appendChild(statutLogement);
-
 
     const imgLogement = document.createElement("img");
     imgLogement.src = logement.image;
@@ -222,94 +218,58 @@ function creerDivLogement(logement) {
     quartierLogement.textContent = `Quartier : ${logement.quartier}`;
     divLogement.appendChild(quartierLogement);
 
-     const villeLogement = document.createElement("p");
-     villeLogement.textContent = `Ville : ${logement.ville}`;  // Ajout de la ville
-     divLogement.appendChild(villeLogement);
+    const villeLogement = document.createElement("p");
+    villeLogement.textContent = `Ville : ${logement.ville}`;
+    divLogement.appendChild(villeLogement);
 
-
-    const boutonDetails = document.createElement("button"); // CHANGEMENT : Bouton "Détails"
+    const boutonDetails = document.createElement("button");
     boutonDetails.textContent = "Détails";
     boutonDetails.addEventListener("click", () => {
-        afficherFenetreDetails(logement);  // Affiche la fenêtre de détails
+        afficherFenetreDetails(logement);
     });
     divLogement.appendChild(boutonDetails);
 
     return divLogement;
 }
 
-// Écouter la soumission du formulaire de recherche
-const formRecherche = document.getElementById("form-recherche");
-const choixLogement = document.getElementById("choix-logement");
-const choixBien = document.getElementById("choix-bien");
-const champsLogement = document.getElementById("champs-logement");
-const champsBien = document.getElementById("champs-bien");
-
-//Affiche le formulaire en fonction du choix
-choixLogement.addEventListener("change", () => {
-    champsLogement.style.display = "block";
-    champsBien.style.display = "none";
-});
-
-choixBien.addEventListener("change", () => {
-    champsLogement.style.display = "none";
-    champsBien.style.display = "block";
-});
-
-formRecherche.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    if (choixLogement.checked) {
-        const budget = parseInt(document.getElementById("budget").value) || null;
-        const quartier = document.getElementById("quartier").value || null;
-        const ville = document.getElementById("ville").value || null;
-        const type = document.getElementById("type").value || null;
-
-        afficherResultats(budget, quartier, ville, type); // Recherche de logements
-    } else if (choixBien.checked) {
-        const budget = parseInt(document.getElementById("budget-bien").value) || null; // Budget du bien
-        const quartier = document.getElementById("quartier-bien").value || null;    // Quartier du bien
-        const ville = document.getElementById("ville-bien").value || null;          // Ville du bien
-
-        afficherResultatsBiens(budget, quartier, ville); // Recherche de biens
-    }
-});
-
-// Fonction pour afficher les dernières publications (version SIMPLIFIÉE)
+// Fonction pour afficher les dernières publications - MODIFIÉE
 async function afficherDernieresPublications() {
     const derniersLogements = document.getElementById("derniers-logements");
     derniersLogements.innerHTML = "";
 
-    let allLogements = []; // Tableau pour stocker TOUS les logements
+    let allLogements = [];
+    const maintenant = Date.now(); // Timestamp actuel pour la vérification des 24 heures
 
     const entreprisesSnapshot = await database.ref('entreprises').once('value');
     for (const entrepriseKey of Object.keys(entreprisesSnapshot.val() || {})) {
         const logementsRef = database.ref(`entreprises/${entrepriseKey}/logements`);
         const logementsSnapshot = await logementsRef.once('value');
-
-        // Récupère le nom de l'entreprise AVANT de boucler sur les logements
         const entrepriseNom = (await database.ref(`entreprises/${entrepriseKey}/nom`).once('value')).val();
-
 
         for (const logementKey of Object.keys(logementsSnapshot.val() || {})) {
             const logement = logementsSnapshot.val()[logementKey];
-            // Ajoute l'ID de l'entreprise, le NOM, l'ID du logement et le STATUT
+
+            // Vérifie si le logement est payé et si la date de paiement est dépassée
+            if (logement.statut === "Payé" && logement.datePaiement) {
+                const datePaiement = new Date(logement.datePaiement);
+                const vingtQuatreHeures = 24 * 60 * 60 * 1000;
+                if (maintenant - datePaiement.getTime() < vingtQuatreHeures) {
+                    continue; // Ignore ce logement
+                }
+            }
+
             allLogements.push({ ...logement, entrepriseId: entrepriseKey, entrepriseNom: entrepriseNom, id: logementKey, statut: logement.statut || "Non spécifié" });
         }
     }
 
-    // Trie TOUS les logements par date de publication (décroissant)
     allLogements.sort((a, b) => (b.datePublication || 0) - (a.datePublication || 0));
-
-    // Sélectionne les 3 premiers (les plus récents)
     const logementsRecents = allLogements.slice(0, 3);
 
-
-    if (logementsRecents.length > 0) { //Utilisation de length sur le tableau
-
+    if (logementsRecents.length > 0) {
         const logementCarousel = document.createElement("div");
         logementCarousel.classList.add("logement-carousel");
 
-        logementsRecents.forEach((logement) => { //Utilisation du tableau logementsRecents
+        logementsRecents.forEach((logement) => {
             const divLogement = creerDivLogement(logement);
             logementCarousel.appendChild(divLogement);
         });
@@ -350,30 +310,25 @@ async function afficherDernieresPublications() {
     }
 }
 
-// Appeler la fonction pour afficher les dernières publications au chargement de la page
+
 afficherDernieresPublications();
 
-
-// Fonction pour afficher TOUS les logements (pour le bouton "Voir plus")
 async function afficherTousLesLogements() {
-    // Appelle afficherResultats sans filtre (budget et quartier à null)
-    afficherResultats(null, null, null, null); // Ajout de null pour ville et type
+     const resultats = await effectuerRecherche("logements", null, null, null, null);
+    afficherResultatsDansLaPage(resultats, "logements");
 }
 
-// Écouter le clic sur le bouton "Voir plus"
 const voirPlusButton = document.getElementById("voir-plus");
 voirPlusButton.addEventListener("click", () => {
     afficherTousLesLogements();
 });
 
-// Fonction pour afficher la fenêtre de détails (REMPLACE afficherFenetreReservation)
-async function afficherFenetreDetails(item) { // 'item' peut être un logement OU un bien
+// Fonction pour afficher la fenêtre de détails - MODIFIÉE
+async function afficherFenetreDetails(item) {
     const fenetreDetails = document.createElement("div");
     fenetreDetails.classList.add("fenetre-details");
 
     let prixNumerique = parseFloat(item.prix);
-
-    // Récupère les infos de l'entreprise (dont le numéro WhatsApp)
     const entrepriseRef = database.ref(`entreprises/${item.entrepriseId}`);
     const entrepriseSnapshot = await entrepriseRef.once('value');
     const entrepriseData = entrepriseSnapshot.val();
@@ -381,24 +336,22 @@ async function afficherFenetreDetails(item) { // 'item' peut être un logement O
     if (!entrepriseData) {
         console.error("Entreprise non trouvée:", item.entrepriseId);
         alert("Erreur : Impossible de trouver les informations de l'entreprise.");
-        return; // Arrête l'exécution si l'entreprise n'est pas trouvée
+        return;
     }
 
-    const entrepriseWhatsapp = entrepriseData.whatsapp; // Assure-toi que le champ 'whatsapp' existe
-     // Récupérer le nom du démarcheur (si disponible)
+    const entrepriseWhatsapp = entrepriseData.whatsapp;
     const demarcheurNom = item.demarcheur || "Non spécifié";
     const proprietaireNom = item.proprietaire || "Non spécifié";
-
-    // Détermine le texte du bouton "Payer Avance" en fonction du type
     let texteBoutonPayerAvance = (item.hasOwnProperty('type')) ? "Payer Avance Logement" : "Payer Avance Bien";
 
-
+    // Construction du contenu de la fenêtre (avec le statut)
     fenetreDetails.innerHTML = `
         <h3>${item.titre}</h3>
         <img src="${item.image}" alt="${item.titre}">
         <p>${item.description}</p>
         <p>Prix : ${item.prix} FCFA</p>
         <p>Entreprise : ${item.entrepriseNom}</p>
+        <p>Statut : ${item.statut}</p> <!-- Affichage du statut -->
         <div class="boutons-container">
             <button class="bouton-discussion">Discussion</button>
             <button class="bouton-infos">Infos </button>
@@ -407,9 +360,9 @@ async function afficherFenetreDetails(item) { // 'item' peut être un logement O
             <button class="bouton-fermer">Fermer</button>
         </div>
 
-        <!-- Section d'information sur la réservation (initialement cachée) -->
         <div class="reservation-info" style="display: none;">
-            <p>NB : La réservation se fait à un prix forfaitaire selon le critère :</p>
+            <p>NB : La réservation peut se fait selon les critères</p>
+            <p>Loyer compris entre :</p>
             <ul>
                 <li>L : 0 - 5.000f = 2.000f</li>
                 <li>L : 5.001 - 10.000f = 3.000f</li>
@@ -418,13 +371,12 @@ async function afficherFenetreDetails(item) { // 'item' peut être un logement O
                 <li>L : 25.001 - 50.000f = 15.000f</li>
                 <li>L : 50.001f et plus = 25.000f</li>
             </ul>
-            <p>Après paiement de l'avance, vos frais de réservation vous seront remboursés automatiquement.</p>
-            <p>Si la chambre n'est plus disponible, vous perdez vos frais de réservation.</p>
-            <p>La chambre peut être réservée dans un délai de huit (08) jours après le paiement de la réservation.</p>
-            <button class="confirmer-reservation">Réserver</button>
+            <p>Les frais de réservation son restitué après location effectif du local dans un délai de huit (08) jours.</p>
+            <p>Si vous décidez de ne plus louer la chambre ou le local, ou aucune local, vous perdre vos frais de réservation</p>
+            <p>Vous pouvez changer de local et bénéficier de la restitution des frais de Réservation toujours en respactant le délai de huit (08) jours.</p>
+            <button class="confirmer-reservation">Réserver quand même</button>
         </div>
 
-        <!-- Section d'informations détaillées (initialement cachée) -->
         <div class="infos-logement" style="display: none;">
             <h4>Informations détaillées :</h4>
             <p><strong>Titre:</strong> ${item.titre}</p>
@@ -445,41 +397,34 @@ async function afficherFenetreDetails(item) { // 'item' peut être un logement O
 
     document.body.appendChild(fenetreDetails);
 
-    // Bouton Discussion
     const boutonDiscussion = fenetreDetails.querySelector(".bouton-discussion");
     boutonDiscussion.addEventListener("click", () => {
-        //Adapte le message en fonction du type de bien
         const message = item.hasOwnProperty('type')
         ? `Je suis intéressé par le logement : ${item.titre}`
         : `Je suis intéressé par le bien : ${item.titre}`;
-         // Utilise le numéro WhatsApp de l'entreprise
         window.location.href = `https://wa.me/${entrepriseWhatsapp}?text=${encodeURIComponent(message)}`;
 
     });
 
-      //Bouton Infos Logement/Bien (affiche les infos)
     const boutonInfos = fenetreDetails.querySelector(".bouton-infos");
     const infosLogement = fenetreDetails.querySelector(".infos-logement");
 
     boutonInfos.addEventListener("click", () => {
-    // Affiche/masque la section des informations détaillées en utilisant un toggle
        infosLogement.style.display = infosLogement.style.display === "none" ? "block" : "none";
      });
 
-    //Bouton Réservation (affiche les infos)
+    // Bouton Réservation (affiche les infos + met à jour le statut)
     const boutonReservation = fenetreDetails.querySelector(".bouton-reservation");
     const reservationInfo = fenetreDetails.querySelector(".reservation-info");
+    boutonReservation.addEventListener("click", () => {
+        reservationInfo.style.display = "block";
+    });
 
-     boutonReservation.addEventListener("click", () => {
-        reservationInfo.style.display = "block"; // Affiche les infos de réservation
-     });
-
-     //Bouton "Confirmer Réservation" (à l'intérieur des infos de réservation)
-     const confirmerReservation = fenetreDetails.querySelector(".confirmer-reservation");
-     confirmerReservation.addEventListener("click", () => {
-      // Calcul des frais de réservation.
-                let fraisReservation = 0;
-
+     //Bouton "Confirmer Réservation" (à l'intérieur des infos de réservation) - MODIFIÉ
+    const confirmerReservation = fenetreDetails.querySelector(".confirmer-reservation");
+    confirmerReservation.addEventListener("click", async () => {
+        //Calcul des frais
+        let fraisReservation = 0;
         if (prixNumerique <= 5000) {
             fraisReservation = 2000;
         } else if (prixNumerique <= 10000) {
@@ -493,28 +438,51 @@ async function afficherFenetreDetails(item) { // 'item' peut être un logement O
          }else{
              fraisReservation = 25000;
          }
-           // Rediriger vers le lien de paiement Fedapay avec le montant
-         const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${fraisReservation}`;
-         window.location.href = lienPaiement;
 
-     });
-
-    // Bouton Payer Avance
-    const boutonPayerAvance = fenetreDetails.querySelector(".bouton-payer-avance");
-    boutonPayerAvance.addEventListener("click", () => {
-        // Rediriger vers le lien de paiement Fedapay avec le montant de l'AVANCE (prix complet)
-        const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${item.prix}`;
-        window.location.href = lienPaiement;
+        // Met à jour le statut à "Réservé" dans Firebase
+        const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.hasOwnProperty('type') ? 'logements' : 'biens'}/${item.id}`);
+        try {
+            await itemRef.update({ statut: "Réservé" });
+            // Redirection vers Fedapay (après la mise à jour du statut)
+              const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${fraisReservation}`;
+              window.location.href = lienPaiement;
+            alert("Réservation confirmée!  Vous allez être redirigé pour le paiement.");
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du statut:", error);
+            alert("Erreur lors de la réservation.  Veuillez réessayer.");
+        }
     });
 
-    // Bouton Fermer
+
+    // Bouton Payer Avance - MODIFIÉ
+    const boutonPayerAvance = fenetreDetails.querySelector(".bouton-payer-avance");
+    boutonPayerAvance.addEventListener("click", async () => {
+
+         // Met à jour le statut à "Payé" et ajoute la date de paiement
+        const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.hasOwnProperty('type') ? 'logements' : 'biens'}/${item.id}`);
+        try{
+            await itemRef.update({
+                statut: "Payé",
+                datePaiement: new Date().toISOString() // Timestamp au format ISO
+            });
+            // Redirection vers Fedapay (après la mise à jour du statut)
+            const lienPaiement = `https://me.fedapay.com/mon_loyer?amount=${item.prix}`;
+            window.location.href = lienPaiement;
+             alert("Paiement confirmé !");
+
+        }catch(error){
+            console.error("Erreur lors de la mise à jour du statut (paiement):", error);
+            alert("Erreur lors du paiement.  Veuillez réessayer.");
+        }
+    });
+
     const boutonFermer = fenetreDetails.querySelector(".bouton-fermer");
     boutonFermer.addEventListener("click", () => {
         document.body.removeChild(fenetreDetails);
     });
 }
 
-// Basculer la visibilité du menu (inchangé)
+
 const menuToggle = document.getElementById("menu-toggle");
 const menu = document.getElementById("menu");
 
@@ -522,12 +490,9 @@ menuToggle.addEventListener("click", () => {
     menu.classList.toggle("hidden");
 });
 
-// --------- Gestion des avis (NOUVEAU) ---------
-
-// Fonction pour afficher les témoignages depuis Firebase
 async function afficherTemoignages() {
     const temoignagesContainer = document.querySelector(".temoignages-container");
-    temoignagesContainer.innerHTML = ""; // Efface les témoignages existants
+    temoignagesContainer.innerHTML = "";
 
     try {
         const avisSnapshot = await database.ref('avis').once('value');
@@ -545,7 +510,7 @@ async function afficherTemoignages() {
                 temoignagesContainer.appendChild(temoignageDiv);
             }
         } else {
-            temoignagesContainer.innerHTML = "<p>Aucun témoignage pour le moment.</p>";
+        temoignagesContainer.innerHTML = "<p>Aucun témoignage pour le moment.</p>";
         }
 
     } catch (error) {
@@ -555,7 +520,6 @@ async function afficherTemoignages() {
 }
 
 
-// Écoute de la soumission du formulaire d'ajout d'avis
 const formAjoutAvis = document.getElementById("form-ajout-avis");
 formAjoutAvis.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -564,7 +528,7 @@ formAjoutAvis.addEventListener("submit", async (event) => {
     const email = document.getElementById("avis-email").value;
     const texte = document.getElementById("avis-texte").value;
 
-    if (!texte.trim()) { // Vérifie que l'avis n'est pas vide
+    if (!texte.trim()) {
         alert("Veuillez entrer un avis.");
         return;
     }
@@ -575,17 +539,31 @@ formAjoutAvis.addEventListener("submit", async (event) => {
             nom: nom,
             email: email,
             texte: texte,
-            date: new Date().toISOString() // Ajoute une date pour le tri
+            date: new Date().toISOString()
         });
-        // Efface le formulaire après soumission
         formAjoutAvis.reset();
         alert("Avis ajouté avec succès !");
-        afficherTemoignages(); // Recharge les témoignages (y compris le nouveau)
+        afficherTemoignages();
 
     } catch (error) {
         console.error("Erreur lors de l'ajout de l'avis:", error);
         alert("Une erreur est survenue lors de l'ajout de l'avis. Veuillez réessayer.");
     }
 });
-// Appeler la fonction pour afficher les témoignages au chargement
+
 afficherTemoignages();
+
+document.getElementById('show-privacy').addEventListener('click', function(event) {
+    event.preventDefault();
+    document.getElementById('privacy-modal').style.display = 'block';
+});
+
+document.querySelector('.close-button').addEventListener('click', function() {
+    document.getElementById('privacy-modal').style.display = 'none';
+});
+
+window.addEventListener('click', function(event) {
+    if (event.target == document.getElementById('privacy-modal')) {
+        document.getElementById('privacy-modal').style.display = 'none';
+    }
+});
