@@ -51,15 +51,18 @@
         <section id="recherche-logement">
             <div class="container recherche-container">
                 <h2>Que recherchez-vous chez ESPACE BENIN : Service Immobilier ?</h2>
-                <!-- Choix Logement/Bien -->
+                <!-- Choix du type de recherche -->
                 <div class="choix-recherche">
-                    <button type="button" id="label-logement" class="choix-label active">Un Logement</button>
-                    <button type="button" id="label-bien" class="choix-label">Un Bien</button>
+                    <label for="type-recherche">Rechercher :</label>
+                    <select id="type-recherche">
+                        <option value="logements">Logements</option>
+                        <option value="biens">Biens</option>
+                    </select>
                 </div>
 
+                <!-- Formulaire de recherche (sera modifié dynamiquement) -->
                 <form id="form-recherche">
-                    <!-- Champs pour Logement (initialement visibles) -->
-                    <div id="champs-logement">
+                   <div id="champs-communs">
                         <label for="budget">Insérez votre Budget :</label>
                         <input type="number" id="budget" name="budget" min="0">
 
@@ -68,21 +71,16 @@
 
                         <label for="ville">Ville :</label>
                         <input type="text" id="ville" name="ville">
+                    </div>
 
+                    <div id="champs-logements" style="display: block;"> <!-- Initialement visible -->
                         <label for="type">Type de logement :</label>
                         <input type="text" id="type" name="type">
                     </div>
 
-                    <!-- Champs pour Bien (initialement cachés) -->
-                    <div id="champs-bien" style="display: none;">
-                         <label for="budget-bien">Insérez votre Budget :</label>
-                        <input type="number" id="budget-bien" name="budget_bien" min="0">
-
-                        <label for="quartier-bien">Choisissez la zone de recherche :</label>
-                        <input type="text" id="quartier-bien" name="quartier_bien">
-
-                        <label for="ville-bien">Ville :</label>
-                        <input type="text" id="ville-bien" name="ville_bien">
+                    <!-- Les champs pour les biens seront ajoutés/supprimés dynamiquement -->
+                     <div id="champs-biens" style="display: none;">
+                        <!--  champs spécifiques aux biens -->
                     </div>
 
                     <button type="submit">Rechercher</button>
@@ -198,7 +196,7 @@
     <div id="privacy-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">×</span>
-            <h2>POLITIQUE DE CONFIDENTIALITÉ ET CONDITIONS D'UTILISATION</h2>
+            <h2>POLITIQUE DE CONFIDENTIALITÉ</h2>
 
             <h3>1. Politique de Confidentialité</h3>
             <h4>1.1 Collecte des Informations</h4>
@@ -232,8 +230,14 @@
 
             <h4>1.5 Cookies et Technologies de Suivi</h4>
                <p>Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez les désactiver dans les paramètres de votre navigateur.</p>
+        </div>
+    </div>
 
-            <h3>2. Conditions d'Utilisation</h3>
+    <!-- Fenêtre modale pour les termes et conditions -->
+    <div id="terms-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+             <h2>CONDITIONS D'UTILISATION</h2>
                <h4>1.6 Contact</h4>
                 <p>Pour toute question sur vos données personnelles, contactez-nous :</p>
                  <ul>

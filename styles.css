@@ -163,38 +163,6 @@ nav ul.hidden {
   text-align: center;
 }
 
-/* Choix Logement/Bien */
-.choix-recherche {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.choix-label {
-    padding: 10px 15px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    font-weight: bold;
-    color: #333;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.choix-label.active {
-    background-color: #FFA500;
-    color: white;
-    border-color: #FFA500;
-}
-
-.choix-label:hover {
-    background-color: #ddd;
-    border-color: #999;
-}
-
 #recherche-logement .recherche-container,
 #recherche-logement .container {
     max-width: 100%;
@@ -207,6 +175,25 @@ nav ul.hidden {
 #recherche-logement h2,
 #recherche-logement p {
     text-align: center;
+}
+
+/* Styles pour le sélecteur de type de recherche */
+.choix-recherche {
+    margin-bottom: 15px;
+    text-align: center; /* Centrer le contenu */
+}
+
+.choix-recherche label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+.choix-recherche select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
 }
 
 #form-recherche {
@@ -726,17 +713,6 @@ footer .container {
         left: 0;
         top: -50px;
         margin-bottom: -30px;
-    }
-    /* Style des boutons de choix pour mobile */
-     .choix-recherche {
-        flex-direction: column;
-    }
-
-    .choix-label {
-        margin: 5px 0;
-        padding: 8px 12px;
-        width: 100%;
-        box-sizing: border-box;
     }
 
     #resultats-recherche {
