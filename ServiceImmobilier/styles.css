@@ -1,0 +1,929 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* --- Header --- */
+header {
+    background-color: #003366;
+    padding: 20px 0;
+    position: relative;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    height: 50px;
+}
+
+#menu-toggle {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #FFA500;
+    color: white;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+}
+
+nav {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    display: block;
+    width: auto;
+    z-index: 1000;
+    height: 800px;
+    width: 500px;
+    max-width: 80%;
+    overflow-y: auto;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fefefe;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    min-width: auto;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+nav li {
+    display: block;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+}
+
+nav li:last-child {
+    border-bottom: none;
+}
+
+nav a {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+nav a:hover {
+    background-color: #f0f0f0;
+}
+
+nav ul.hidden {
+    display: none;
+}
+
+/* --- Section Accueil --- */
+#accueil {
+    position: relative;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+
+#accueil .accueil-container {
+    position: relative;
+    padding-bottom: 0;
+}
+
+.image-accueil {
+    display: block;
+    width: 100%;
+    height: 700px;
+    object-fit: cover;
+    position: relative;
+    filter: brightness(80%);
+    border-radius: 1%;
+}
+
+.accueil-text {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 80%;
+    max-width: 800px;
+}
+
+.accueil-text h2 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.accueil-text p {
+    font-size: 1.3em;
+}
+
+/* --- Section Recherche --- */
+#recherche-logement {
+  position: relative;
+  top: -100px;
+  margin-bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 1000px;
+  background-color: #2d38bd;
+  color: white;
+  padding: 20px;
+  border-radius: 50px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+  text-align: center;
+}
+
+#recherche-logement .recherche-container,
+#recherche-logement .container {
+    max-width: 100%;
+    padding: 0;
+    background-color: #2d38bd;
+    border-radius: 50px;
+    color: white;
+}
+
+#recherche-logement h2,
+#recherche-logement p {
+    text-align: center;
+}
+
+/* Styles pour le sélecteur de type de recherche */
+.choix-recherche {
+    margin-bottom: 15px;
+    text-align: center; /* Centrer le contenu */
+}
+
+.choix-recherche label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+.choix-recherche select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+#form-recherche {
+    display: flex;
+    margin-bottom: 20px;
+    flex-direction: column;
+}
+
+#form-recherche label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+}
+
+/* Champs de formulaire pleine largeur */
+#form-recherche input[type="number"],
+#form-recherche input[type="text"] {
+    margin-bottom: 15px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: black;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#form-recherche button {
+    padding: 10px 20px;
+    background-color: #FFA500;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    align-self: center;
+    width: 50%;
+}
+
+#resultats-recherche {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    color: black;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 20px;
+}
+
+/* --- Styles Communs Logement/Bien --- */
+.logement,
+.bien {
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logement img,
+.bien img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.logement h3,
+.bien h3,
+.logement p,
+.bien p,
+.logement button,
+.bien button {
+    text-align: center;
+    color: #333;
+    margin: 5px 0;
+}
+.logement button,
+.bien button{
+     margin-top: auto;
+    padding: 5px 10px;
+    background-color: #FFA500;
+    color: #333;
+    border: none;
+    cursor: pointer;
+}
+/* --- Section Dernières Publications --- */
+#derniere-publication .container {
+  border: none;
+  border-radius: 10px;
+  color: black;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+#derniers-logements {
+    margin-bottom: 20px;
+    width: 100%;
+    height: 550px;
+    position: relative;
+    overflow: hidden;
+}
+
+.logement-carousel {
+    display: flex;
+    width: 300%;
+    transition: transform 0.8s ease-in-out;
+    position: relative;
+    height: 100%;
+}
+
+#derniers-logements .logement {
+    width: calc(100% / 3);
+    box-sizing: border-box;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: opacity 0.8s ease-in-out;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+/*Carousel positioning */
+#derniers-logements .logement:nth-child(2) {
+    left: calc(50% - calc(100% / 6));
+    z-index: 2;
+}
+
+#derniers-logements .logement:first-child {
+    left: 0;
+    z-index: 1;
+}
+
+#derniers-logements .logement:last-child {
+    left: calc(100% - calc(100% / 3));
+    z-index: 1;
+}
+
+#voir-plus {
+    display: inline-block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #FFA500;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* --- Section Services --- */
+#services .container,
+#apropos .container {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    color: black;
+    border: none;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+#services ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+#services li {
+    margin-bottom: 25px;
+    text-align: left;
+    font-size: 1.2em;
+    font-weight: normal;
+    padding-left: 25px;
+    position: relative;
+}
+
+#services li::before {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-color: #1f2ab0;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* --- Section Comment ça Marche --- */
+#comment-fonctionne .container {
+    background-color: #003366;
+    border-radius: 10px;
+    color: white;
+    padding: 20px;
+    margin-bottom: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+}
+
+#comment-fonctionne h2 {
+    text-align: center;
+    font-size: 2.2em;
+    margin-bottom: 20px;
+}
+
+#comment-fonctionne .comment-ca-marche-item {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+#comment-fonctionne .comment-ca-marche-item:nth-child(odd) {
+    flex-direction: row;
+}
+
+#comment-fonctionne .comment-ca-marche-item:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+#comment-fonctionne .comment-ca-marche-item i {
+    margin: 0 20px;
+    flex-shrink: 0;
+    font-size: 4em;
+}
+
+#comment-fonctionne .comment-ca-marche-item h4 {
+    text-transform: uppercase;
+    color: #FFA500;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+#comment-fonctionne .comment-ca-marche-item h4,
+#comment-fonctionne .comment-ca-marche-item p {
+    text-align: left;
+}
+
+/* --- Section Espace Administrateurs --- */
+#espace-administrateurs .container {
+    background-color: #f8f8f8; /* Couleur de fond (ajuste) */
+    border-radius: 10px;
+    color: black; /* Couleur du texte */
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9); /* Ombre */
+}
+
+#espace-administrateurs h2 {
+    text-align: center;
+    font-size: 2.2em;
+    margin-bottom: 20px;
+}
+
+#espace-administrateurs p {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+#admin-login-button {
+    display: block; /* Le bouton prend toute la largeur */
+    margin: 20px auto; /* Centrage horizontal */
+    padding: 10px 20px;
+    background-color: #FFA500; /* Couleur du bouton (ajuste) */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+/* --- Section Témoignages --- */
+#temoignages {
+    background-color: #f8f8f8;
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+#temoignages .container {
+    border: none;
+    box-shadow: none;
+    padding: 20px;
+}
+
+.temoignages-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.temoignage {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    width: 30%;
+    min-width: 250px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.temoignage p {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.temoignage-auteur {
+    font-weight: bold;
+    color: #333;
+    text-align: right;
+}
+/* Formulaire d'ajout d'avis (caché par défaut) */
+#ajout-avis {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+#ajout-avis textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Important pour le padding/border */
+}
+
+#ajout-avis input[type="text"],
+#ajout-avis input[type="email"]
+ {
+    width: 48%; /* Pour les mettre côte à côte, avec un peu d'espace */
+    margin-bottom: 10px;
+    padding: 8px;
+     border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Disposition en ligne pour nom/email */
+#ajout-avis .input-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+#ajout-avis button {
+    padding: 10px 15px;
+    background-color: #FFA500;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* --- Footer --- */
+.footer-content {
+    background-color: #003366;
+    padding: 20px 0 20px 20px;
+    color: white;
+    text-align: left;
+}
+
+footer .container {
+    max-width: 1500px; /* Différent de .container général */
+    color: white;
+    text-align: left;
+}
+
+#contact {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+#contact ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#contact li {
+    margin: 5px 10px;
+}
+
+#contact a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+#contact i {
+    margin-right: 8px;
+}
+
+.footer-content .legal-links {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.footer-content .legal-links a {
+    color: #ddd;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 0.9em;
+}
+
+.footer-content .legal-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-content p {
+    margin: 10px 0;
+    text-align: left;
+    font-size: 0.8em; /* Réduit la taille du texte du copyright */
+}
+
+/* --- Fenêtre de Détails (anciennement Réservation) --- */
+.fenetre-details {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 10;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+    max-width: 90%; /* Pour la responsivité */
+    max-height: 90vh; /* Pour éviter le débordement */
+    overflow-y: auto; /* Barre de défilement si nécessaire */
+    width: 500px; /* Largeur fixe (ajustable) */
+}
+
+.fenetre-details img {
+    width: 100%; /* Image responsive */
+    max-height: 200px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+/* Conteneur pour les boutons (flexbox) */
+.fenetre-details .boutons-container {
+    display: flex;
+    flex-direction: row; /* Disposition horizontale */
+    flex-wrap: wrap; /* Permet le passage à la ligne */
+    gap: 10px; /* Espacement entre les boutons */
+    margin-top: 15px;
+    justify-content: center; /* Centrer les boutons */
+}
+
+/* Style individuel des boutons (plus besoin de width: 100%) */
+.fenetre-details .boutons-container button {
+   padding: 10px 15px;
+    background-color: #FFA500;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+/* Texte explicatif pour la réservation */
+.fenetre-details .reservation-info {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.fenetre-details .bouton-fermer {
+     padding: 10px 15px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.fenetre-details h3 {
+  text-align: center;
+}
+/* Section pour les informations détaillées (initialement cachée) */
+.fenetre-details .infos-logement {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+/* --- Media Queries (Responsive) --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    /* Header */
+    #menu-toggle {
+        padding: 8px 12px;
+        font-size: 1.2rem;
+    }
+
+    nav {
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+    }
+
+    nav a {
+        font-size: 1em;
+    }
+
+    /* Accueil */
+    .image-accueil {
+        height: 400px;
+        margin: 10px auto;
+    }
+
+    .accueil-text {
+        top: 10%;
+        padding: 10px;
+        width: 90%;
+    }
+
+    .accueil-text h2 {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+    }
+
+    .accueil-text p {
+        font-size: 1em;
+    }
+
+    /* Section Recherche */
+    #recherche-logement {
+        width: 95%;
+        max-width: none;
+        transform: none;
+        margin: 20px auto;
+        left: 0;
+        top: -50px;
+        margin-bottom: -30px;
+    }
+
+    #resultats-recherche {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        margin-top: 10px;
+    }
+     /* Section Comment ça Marche (Mobile) */
+    #comment-fonctionne .container {
+        padding: 15px;
+    }
+
+    #comment-fonctionne h2 {
+        font-size: 1.6em;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item {
+        flex-direction: column;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item:nth-child(odd),
+    #comment-fonctionne .comment-ca-marche-item:nth-child(even) {
+        flex-direction: column;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item i {
+        margin: 0 0 10px 0;
+        font-size: 2.5em;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item h4 {
+        font-size: 1em;
+    }
+
+    #comment-fonctionne .comment-ca-marche-item p {
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+      /* Styles pour la section Espace Administrateurs sur mobile */
+    #espace-administrateurs .container {
+        padding: 15px;
+    }
+
+    #espace-administrateurs h2 {
+        font-size: 1.6em;
+    }
+
+    #espace-administrateurs p {
+        font-size: 1em;
+    }
+
+    /* Carousel */
+    #derniers-logements .logement {
+        border: none;
+    }
+
+    .logement img, .bien img {
+        height: 200px;
+    }
+
+    /* Footer */
+    .footer-content {
+        text-align: left;
+        margin-left: 0;
+        padding: 20px 0 20px 10px;
+    }
+      #contact ul {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        margin-left: 10px;
+    }
+
+    #contact li {
+      margin: 5px 10px;
+    }
+     .footer-content p {
+        margin: 10px 0;
+        text-align: left;
+        margin-left: 10px;
+    }
+    .footer-content .legal-links a{
+      margin-left: 10px;
+    }
+
+    /* Section Témoignages (Mobile) */
+    .temoignage {
+        width: 90%;
+        margin: 10px auto;
+    }
+     .temoignages-container{
+        margin: 10px;
+        padding: 10px;
+    }
+     /* Fenêtre Détails (responsive) */
+    .fenetre-details {
+        width: 95%;
+        max-width: none;
+        padding: 10px;
+    }
+     /* Ajustement pour le formulaire d'ajout d'avis sur mobile */
+    #ajout-avis input[type="text"],
+    #ajout-avis input[type="email"] {
+        width: 100%;
+    }
+
+     #ajout-avis .input-group {
+       flex-direction: column;
+    }
+     /* Boutons dans la fenêtre détails (responsive) */
+    .fenetre-details .boutons-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+}
+.loading {
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
+    color: #888;
+}
+
+/* Styles pour la fenêtre modale de la politique de confidentialité */
+.modal {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    z-index: 1000; /* Au-dessus de tout */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Barre de défilement si nécessaire */
+    background-color: rgba(0,0,0,0.4); /* Fond semi-transparent */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* Centrage */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px; /* Largeur maximale */
+    overflow-y: auto;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+/* Styles spécifiques pour la politique et conditions */
+.modal-content h3 {
+    color: #003366;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.modal-content ul {
+    list-style: disc;
+    margin-left: 20px;
+}

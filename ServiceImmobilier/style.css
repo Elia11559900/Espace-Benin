@@ -1,0 +1,288 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f0f0f5;  /* Couleur de fond générale (à ajuster) */
+    color: #333; /* Couleur de texte générale */
+}
+
+.container {
+    max-width: 1500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff; /* Fond blanc pour le contenu principal */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+    color: #004aad; /* Bleu du logo (à ajuster) */
+}
+
+.form-container {
+    border: 3px solid #004aad; /* Bordure bleue (à ajuster) */
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: #f2f2f2;  /*Gris très clair, complémentaire */
+    border-radius: 10px;
+}
+
+/* Style spécifique pour le formulaire des biens */
+#form-bien {
+    border-color: #4CAF50; /* Vert, si vous voulez une couleur différente pour les biens */
+}
+
+
+form div {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="url"],
+input[type="email"],
+input[type="password"],
+input[type="file"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 24px;
+    background-color: #004aad; /* Bleu du logo (à ajuster) */
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transition plus douce */
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #fff; /* Blanc au survol */
+    color: #004aad;      /* Texte bleu au survol */
+    border: 1px solid #004aad;
+}
+
+
+.export-btn {
+    margin-right: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f0f0f0; /* Gris clair pour les en-têtes */
+}
+
+.action-buttons button {
+    margin: 0 5px;
+    padding: 5px 10px;
+     background-color: #f44336; /* Rouge (conserve) */
+    border-radius: 5px;
+    color: white; /* Texte blanc */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Ajout de la transition */
+
+}
+.action-buttons button:hover{
+     background-color: #ddd;
+     color: #f44336;
+ }
+
+.action-buttons button:first-child {
+    background-color: #008CBA; /* Bleu (conserve) */
+    color: white;
+}
+.action-buttons button:first-child:hover {
+      color: #008CBA;
+    background-color: #66b5ce;
+}
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #004aad;  /* Bleu du logo */
+    border-radius: 10px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000;
+    display: none;
+}
+
+.notification.success {
+    background-color: #4CAF50; /* Vert */
+}
+
+.notification.error {
+    background-color: #f44336; /* Rouge */
+}
+
+/* Styles pour le header */
+.header-content {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Conteneur pour le logo et le titre */
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centre horizontalement */
+    margin-bottom: 10px; /* Espace sous le logo/titre */
+}
+
+#logo {
+    max-width: 150px;  /* Ajustez la taille du logo */
+    height: auto;
+    margin-right: 20px; /* Espace entre le logo et le titre */
+}
+
+.header-content h1 {
+    margin-bottom: 10px;
+    display: inline-block; /* Pour aligner avec le logo */
+    vertical-align: middle; /* Alignement vertical avec le logo */
+}
+
+#header-image {
+    max-width: 500px;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+/* Styles pour le texte de bienvenue */
+#header-text {
+    font-size: 1.25rem; /* Augmente la taille de la police.  Ajustez selon vos besoins. */
+    /* 1.25rem est généralement équivalent à 20px, si la taille de base est 16px */
+    line-height: 1.5;  /* Améliore la lisibilité en augmentant l'espacement des lignes */
+    margin-bottom: 20px; /* Ajoute un peu d'espace sous le texte */
+}
+
+#entreprise-name {
+    font-weight: bold; /* Met le nom de l'entreprise en gras */
+}
+
+.not-bold {
+    font-weight: normal; /* Annule le gras */
+}
+
+/* Styles pour le menu */
+.menu {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu button {
+    margin: 0 10px;
+}
+
+/* Styles pour les statistiques */
+.statistiques {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.statistiques h3{
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.statistiques div{
+    margin-bottom: 5px;
+}
+
+/* Media queries pour les smartphones */
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+        padding: 10px;
+        border-radius: 0;
+    }
+
+    .form-container {
+        border: none;
+        padding: 10px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 5px;
+    }
+
+    .action-buttons button {
+        margin: 0 2px;
+        padding: 3px 6px;
+        font-size: 12px;
+    }
+
+    .export-btn {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    #header-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+     .menu button {
+        margin: 5px; /* Réduit l'espacement vertical sur mobile */
+        display: block; /* Affiche les boutons du menu comme des blocs */
+        width: 100%; /* Les boutons prennent toute la largeur */
+    }
+    /* Ajustement pour le logo sur mobile */
+    .logo-container {
+        flex-direction: column; /* Logo au-dessus du titre sur mobile */
+    }
+
+    #logo {
+        margin-right: 0; /* Pas de marge à droite sur mobile */
+        margin-bottom: 10px; /* Marge en dessous du logo */
+    }
+    .header-content h1{
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+      /* Augmente aussi la taille sur mobile, mais un peu moins */
+    #header-text {
+        font-size: 1.1rem;
+    }
+}
