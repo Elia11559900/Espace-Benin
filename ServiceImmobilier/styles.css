@@ -1,23 +1,185 @@
+/* --- START OF ENHANCED styles.css --- */
+:root {
+    --primary-color: #003366; /* Dark Blue */
+    --secondary-color: #FFA500; /* Orange */
+    --accent-color: #e69500; /* Darker Orange for hover */
+    --primary-darker: #002244; /* Even Darker Blue */
+
+    /* Light Theme */
+    --background-light: #ffffff;
+    --text-light: #333333;
+    --container-bg-light: #f8f9fa; /* Slightly off-white */
+    --card-bg-light: #ffffff;
+    --input-bg-light: #ffffff;
+    --input-text-light: #212529;
+    --border-light: #dee2e6;
+    --link-color-light: var(--primary-color);
+    --modal-bg-light: #ffffff;
+    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+    --shadow-hover-light: 0 8px 25px rgba(0, 0, 0, 0.12);
+
+    /* Dark Theme */
+    --background-dark: #121212;
+    --text-dark: #e0e0e0;
+    --container-bg-dark: #1a1a1a; /* Slightly lighter than background */
+    --card-bg-dark: #242424;
+    --input-bg-dark: #2c2c2c;
+    --input-text-dark: #f0f0f0;
+    --border-dark: #444444;
+    --link-color-dark: var(--secondary-color);
+    --modal-bg-dark: #282828;
+    --shadow-dark: 0 4px 15px rgba(0, 0, 0, 0.2);
+    --shadow-hover-dark: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+html {
+    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+}
+
 body {
-    font-family: sans-serif;
+    font-family: 'Poppins', sans-serif; /* Using Poppins font */
     margin: 0;
-    background-color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 16px; /* Slightly larger base font size */
+    line-height: 1.6; /* Improved readability */
+}
+
+body[data-theme='light'] {
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
+
+body[data-theme='dark'] {
+    background-color: var(--background-dark);
+    color: var(--text-dark);
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 20px 15px; /* Consistent padding */
     position: relative;
 }
 
+/* Headings */
 h2 {
-    margin-bottom: 20px;
+    font-weight: 600; /* Slightly bolder */
+    margin-bottom: 30px; /* More space below headings */
+    color: var(--primary-color);
+    text-align: center; /* Center section titles */
+    font-size: 2.2em; /* Larger section titles */
+}
+body[data-theme='dark'] h2 {
+     color: var(--secondary-color);
+}
+
+h3 {
+     font-weight: 600;
+     margin-bottom: 15px;
+}
+h4 {
+    font-weight: 500;
+     margin-bottom: 10px;
 }
 
 p {
-    font-size: 1.2em;
+    margin-bottom: 1rem; /* Consistent paragraph spacing */
 }
+
+a {
+     color: var(--link-color-light);
+     text-decoration: none;
+     transition: color 0.2s ease;
+}
+a:hover {
+     color: var(--accent-color);
+     text-decoration: underline;
+}
+body[data-theme='dark'] a {
+    color: var(--link-color-dark);
+}
+ body[data-theme='dark'] a:hover {
+     color: var(--accent-color); /* Keep hover color consistent */
+ }
+
+/* Buttons */
+button {
+    padding: 12px 25px; /* Slightly larger padding */
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border: none;
+    border-radius: 8px; /* Softer corners */
+    cursor: pointer;
+    font-weight: 600; /* Bolder text */
+    font-size: 1em;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+button:hover {
+     background-color: var(--accent-color);
+     transform: translateY(-2px); /* Subtle lift */
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+button:active {
+     transform: translateY(0);
+     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+body[data-theme='dark'] button {
+     color: var(--primary-darker); /* Darker text on orange for contrast */
+     background-color: var(--secondary-color);
+     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+ body[data-theme='dark'] button:hover {
+     background-color: var(--accent-color);
+     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+ }
+ button:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+ }
+ body[data-theme='dark'] button:disabled {
+    background-color: #555;
+    color: #aaa;
+ }
+
+/* Forms */
+input[type="text"], input[type="number"], input[type="email"], textarea, select {
+    padding: 12px 15px; /* Increased padding */
+    border: 1px solid var(--border-light);
+    border-radius: 8px; /* Softer corners */
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px; /* Increased spacing */
+    background-color: var(--input-bg-light);
+    color: var(--input-text-light);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input[type="text"]:focus, input[type="number"]:focus, input[type="email"]:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.2); /* Orange glow on focus */
+}
+body[data-theme='dark'] input[type="text"],
+body[data-theme='dark'] input[type="number"],
+body[data-theme='dark'] input[type="email"],
+body[data-theme='dark'] textarea,
+body[data-theme='dark'] select {
+    background-color: var(--input-bg-dark);
+    color: var(--input-text-dark);
+    border-color: var(--border-dark);
+}
+ body[data-theme='dark'] input[type="text"]:focus,
+ body[data-theme='dark'] input[type="number"]:focus,
+ body[data-theme='dark'] input[type="email"]:focus,
+ body[data-theme='dark'] textarea:focus,
+ body[data-theme='dark'] select:focus {
+     border-color: var(--secondary-color);
+     box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.3);
+ }
 
 .text-center {
     text-align: center;
@@ -25,82 +187,121 @@ p {
 
 /* --- Header --- */
 header {
-    background-color: #003366;
-    padding: 20px 0;
-    position: relative;
+    background-color: var(--primary-color);
+    padding: 10px 0; /* Slightly reduced padding */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* <<<<< Header z-index (base) */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px; /* Match container padding */
 }
 
 .logo img {
-    height: 50px;
+    height: 50px; /* Slightly larger logo */
+    vertical-align: middle;
 }
 
 #menu-toggle {
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #FFA500;
-    color: white;
+    display: none;
+    padding: 10px 14px;
+    background-color: var(--secondary-color);
+    color: var(--primary-darker); /* Darker text */
     border: none;
     cursor: pointer;
-    z-index: 2;
+    font-size: 1.3em;
+    border-radius: 8px;
+    box-shadow: none; /* Remove shadow from toggle */
+}
+body[data-theme='dark'] #menu-toggle {
+    color: var(--primary-darker);
 }
 
 nav {
-    position: absolute;
-    right: 0;
-    top: 100%;
     display: block;
-    width: auto;
-    z-index: 1000;
-    height: 800px;
-    width: 500px;
-    max-width: 80%;
-    overflow-y: auto;
 }
-
 nav ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    background-color: #fefefe;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    min-width: auto;
-    text-align: left;
-    box-sizing: border-box;
+    display: flex;
+    gap: 20px; /* More space between links */
 }
-
 nav li {
-    display: block;
-    margin: 0;
-    border-bottom: 1px solid #eee;
+    display: inline-block;
 }
-
-nav li:last-child {
-    border-bottom: none;
-}
-
 nav a {
     display: block;
-    padding: 15px 20px;
+    padding: 10px 8px;
     text-decoration: none;
-    color: #333;
-    font-weight: bold;
-    font-size: 1.1em;
+    color: white;
+    font-weight: 500; /* Medium weight */
+    font-size: 1em;
+    border-radius: 6px; /* Slightly softer radius */
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
-
 nav a:hover {
-    background-color: #f0f0f0;
+    background-color: rgba(255, 255, 255, 0.15);
+    text-decoration: none;
+    color: white; /* Ensure text stays white */
+}
+nav a.active { /* Style for active link (needs JS) */
+    color: var(--secondary-color);
+    font-weight: 600;
 }
 
-nav ul.hidden {
-    display: none;
+/* Mobile Menu Styles */
+@media (max-width: 992px) {
+    #menu-toggle { display: inline-block; }
+    nav {
+        position: absolute;
+        right: 15px; /* Align with container padding */
+        top: calc(100% + 5px); /* Position below header */
+        background-color: var(--background-light);
+        border: 1px solid var(--border-light);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        width: 280px;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        z-index: 999; /* Below sticky header */
+        display: none;
+        border-radius: 8px; /* Rounded corners */
+        padding: 10px 0; /* Padding top/bottom */
+    }
+     body[data-theme='dark'] nav {
+         background-color: var(--card-bg-dark); /* Use card background */
+         border-color: var(--border-dark);
+         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+     }
+    nav.visible { display: block; }
+    nav ul { display: block; width: 100%; gap: 0; }
+    nav li { display: block; border-bottom: 1px solid var(--border-light); }
+    body[data-theme='dark'] nav li { border-bottom-color: var(--border-dark); }
+    nav li:last-child { border-bottom: none; }
+    nav a {
+        padding: 15px 25px;
+        color: var(--text-light);
+        font-size: 1.1em;
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 0; /* No radius inside menu */
+    }
+    nav a:hover {
+        background-color: var(--container-bg-light);
+        color: var(--primary-color);
+    }
+    body[data-theme='dark'] nav a { color: var(--text-dark); }
+    body[data-theme='dark'] nav a:hover {
+         background-color: var(--input-bg-dark); /* Use input background for hover */
+         color: var(--secondary-color);
+    }
 }
 
 /* --- Section Accueil --- */
@@ -109,821 +310,1441 @@ nav ul.hidden {
     color: white;
     text-align: center;
     overflow: hidden;
+    margin-bottom: 0; /* Remove bottom margin, handled by search bar overlap */
+    min-height: 60vh; /* Ensure minimum height */
+    display: flex; /* Use flex for vertical centering if needed */
+    align-items: center;
 }
-
 #accueil .accueil-container {
-    position: relative;
-    padding-bottom: 0;
-}
-
-.image-accueil {
-    display: block;
+    padding: 0; /* No padding on the direct container */
+    position: static; /* Remove relative positioning here */
     width: 100%;
-    height: 700px;
+}
+.image-accueil {
+    position: absolute; /* Position background image absolutely */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    position: relative;
-    filter: brightness(80%);
-    border-radius: 1%;
+    filter: brightness(55%) contrast(1.1); /* Darker and slightly more contrast */
+    z-index: -1; /* Behind the text */
 }
-
 .accueil-text {
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative; /* Keep relative for z-index */
     z-index: 1;
-    width: 80%;
-    max-width: 800px;
+    width: 90%;
+    max-width: 750px; /* Slightly wider */
+    padding: 30px 40px; /* More padding */
+    background-color: rgba(0, 0, 0, 0.4); /* Slightly less transparent */
+    border-radius: 12px; /* Softer radius */
+    margin: 50px auto; /* Center horizontally and add top/bottom margin */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
-
 .accueil-text h2 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    font-size: 2.8em; /* Larger title */
+    margin-bottom: 15px;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+    font-weight: 700; /* Bolder */
 }
-
 .accueil-text p {
-    font-size: 1.3em;
+    font-size: 1.2em; /* Larger paragraph text */
+    color: #f0f0f0;
+    line-height: 1.7;
 }
 
 /* --- Section Recherche --- */
 #recherche-logement {
-  position: relative;
-  top: -100px;
-  margin-bottom: -100px;
+  position: relative; /* Keep relative */
+  margin-top: -80px; /* Increased overlap */
+  margin-bottom: 40px; /* Space below search bar before results */
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
-  max-width: 1000px;
-  background-color: #2d38bd;
+  max-width: 850px; /* Wider search bar */
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-darker)); /* Subtle gradient */
   color: white;
-  padding: 20px;
-  border-radius: 50px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-  margin-top: 20px;
+  padding: 30px 35px; /* More padding */
+  border-radius: 16px; /* Softer radius */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   text-align: center;
+  z-index: 5; /* <<<<< Above accueil image, below header */
 }
-
-#recherche-logement .recherche-container,
-#recherche-logement .container {
+body[data-theme='dark'] #recherche-logement {
+     background: linear-gradient(135deg, var(--primary-darker), #001a33); /* Darker gradient */
+     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+#recherche-logement .recherche-container { /* Keep these styles for inner container */
     max-width: 100%;
     padding: 0;
-    background-color: #2d38bd;
-    border-radius: 50px;
+    background-color: transparent;
+    border-radius: 0;
     color: white;
 }
-
-#recherche-logement h2,
-#recherche-logement p {
+#recherche-logement h2 {
+    font-size: 1.8em;
+    color: white;
+    margin-bottom: 25px; /* Increased space */
+}
+.choix-recherche {
+    margin-bottom: 25px;
     text-align: center;
 }
-
-/* Styles pour le sélecteur de type de recherche */
-.choix-recherche {
-    margin-bottom: 15px;
-    text-align: center; /* Centrer le contenu */
-}
-
 .choix-recherche label {
     margin-right: 10px;
-    font-weight: bold;
-    color: white;
+    font-weight: 500;
+    color: #eee; /* Lighter label color */
 }
-
 .choix-recherche select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 10px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
     font-size: 1em;
+    background-color: rgba(255, 255, 255, 0.1); /* Transparent background */
+    color: white;
+    min-width: 180px;
+    cursor: pointer;
 }
+.choix-recherche select option {
+     background-color: var(--background-light); /* Options background */
+     color: var(--text-light);
+}
+body[data-theme='dark'] .choix-recherche select {
+     border-color: rgba(255, 255, 255, 0.2);
+     background-color: rgba(0, 0, 0, 0.2);
+}
+ body[data-theme='dark'] .choix-recherche select option {
+      background-color: var(--input-bg-dark);
+      color: var(--text-dark);
+ }
 
 #form-recherche {
-    display: flex;
-    margin-bottom: 20px;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Slightly wider min */
+    gap: 20px; /* More gap */
+    margin-bottom: 25px;
+    align-items: end;
 }
-
 #form-recherche label {
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: white;
+    margin-bottom: 8px; /* More space */
+    font-weight: 500;
+    color: #eee;
     text-align: left;
+    display: block;
+    font-size: 0.95em; /* Slightly smaller label */
 }
-
-/* Champs de formulaire pleine largeur */
 #form-recherche input[type="number"],
 #form-recherche input[type="text"] {
-    margin-bottom: 15px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    color: black;
-    width: 100%;
-    box-sizing: border-box;
+    margin-bottom: 0; /* Remove margin as inputs are directly in grid */
+    padding: 12px 15px;
+    background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque */
+    color: #333;
+    border: 1px solid transparent; /* Remove border, rely on background */
+    border-radius: 8px;
 }
+ #form-recherche input[type="number"]:focus,
+ #form-recherche input[type="text"]:focus {
+     box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.3); /* Focus glow */
+     border-color: transparent; /* Keep border transparent */
+ }
 
-#form-recherche button {
-    padding: 10px 20px;
-    background-color: #FFA500;
-    color: black;
+#form-recherche button[type="submit"] {
+    padding: 12px 30px;
+    background-color: var(--secondary-color);
+    color: var(--primary-darker);
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    align-self: center;
-    width: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    grid-column: 1 / -1; /* Span full width */
+    justify-self: center; /* Center button horizontally */
+    width: auto; /* Allow button to size based on content/padding */
+    min-width: 200px; /* Minimum width */
+    font-size: 1.1em;
+    margin-top: 10px; /* Space above button */
 }
+ #form-recherche button[type="submit"]:hover {
+     background-color: var(--accent-color);
+ }
+ body[data-theme='dark'] #form-recherche button[type="submit"] {
+     color: var(--primary-darker);
+     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+ }
+ /* Dynamic fields styling */
+ /* Wrapper divs for dynamic fields */
+ #champs-communs, #champs-logements, #champs-biens {
+     display: contents; /* Make children direct grid items */
+ }
 
+ /* Hide/Show logic for dynamic fields container */
+ #champs-logements, #champs-biens {
+     /* visibility controlled by JS adding/removing 'visible' class */
+ }
+ #champs-logements:not(.visible), #champs-biens:not(.visible) {
+     display: none;
+ }
+
+
+/* --- Résultats de recherche --- */
 #resultats-recherche {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-    color: black;
+    margin-top: 40px; /* Space above results */
+    padding: 0; /* Remove padding, container handles it */
+    background-color: transparent; /* Results inherit container background */
+    border-radius: 0;
+    color: var(--text-light);
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Larger min width */
+    grid-gap: 30px; /* More space */
+    min-height: 150px; /* Minimum height to show loading/no results message */
 }
+body[data-theme='dark'] #resultats-recherche {
+     color: var(--text-dark);
+}
+ /* Style for "No results" message */
+ #resultats-recherche p:only-child {
+    grid-column: 1 / -1; /* Span full width */
+    text-align: center;
+    font-style: italic;
+    color: #888;
+     margin-top: 30px;
+     font-size: 1.1em;
+ }
+ body[data-theme='dark'] #resultats-recherche p:only-child {
+     color: #aaa;
+ }
 
-/* --- Styles Communs Logement/Bien --- */
+/* --- Styles Communs Cards (Logement/Bien/Témoignage) --- */
 .logement,
-.bien {
-    border: 1px solid #ccc;
-    padding: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+.bien,
+.temoignage {
+    border: 1px solid var(--border-light);
+    background-color: var(--card-bg-light);
+    border-radius: 12px; /* Softer radius */
+    box-shadow: var(--shadow-light);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Clip content like images */
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    color: var(--text-light);
+    height: 100%; /* Ensure cards in a row have same height */
 }
+ body[data-theme='dark'] .logement,
+ body[data-theme='dark'] .bien,
+ body[data-theme='dark'] .temoignage {
+     border-color: var(--border-dark);
+     background-color: var(--card-bg-dark);
+     color: var(--text-dark);
+     box-shadow: var(--shadow-dark);
+ }
 
+ .logement:hover,
+ .bien:hover,
+ .temoignage:hover {
+     transform: translateY(-6px); /* Slightly more lift */
+     box-shadow: var(--shadow-hover-light);
+ }
+  body[data-theme='dark'] .logement:hover,
+  body[data-theme='dark'] .bien:hover,
+  body[data-theme='dark'] .temoignage:hover {
+     box-shadow: var(--shadow-hover-dark);
+  }
+
+/* Images in Cards */
 .logement img,
 .bien img {
     width: 100%;
-    height: 200px;
+    height: 220px; /* Slightly taller image */
     object-fit: cover;
-    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-light); /* Subtle separator */
+    display: block; /* Remove extra space below image */
+}
+ body[data-theme='dark'] .logement img,
+ body[data-theme='dark'] .bien img {
+     border-bottom-color: var(--border-dark);
+ }
+
+/* Content within Cards */
+/* Use a specific container div for text content to manage padding */
+.logement > div:not(img):not(button), /* Select the div containing text */
+.bien > div:not(img):not(button),
+.temoignage > div {
+     padding: 20px; /* Padding inside the text container */
+     flex-grow: 1; /* Allow text area to grow and push button down */
+     display: flex;
+     flex-direction: column;
 }
 
-.logement h3,
-.bien h3,
-.logement p,
-.bien p,
-.logement button,
-.bien button {
-    text-align: center;
-    color: #333;
-    margin: 5px 0;
+
+ /* Target H3 specifically inside the text container */
+ .logement > div > h3,
+ .bien > div > h3 {
+     font-size: 1.3em; /* Larger title */
+     margin: 0 0 10px 0; /* Margin bottom only */
+     color: var(--primary-color);
+     font-weight: 600;
+ }
+ body[data-theme='dark'] .logement > div > h3,
+ body[data-theme='dark'] .bien > div > h3 {
+     color: var(--secondary-color);
+ }
+
+ /* Paragraphs inside the text container */
+ .logement > div p,
+ .bien > div p,
+ .temoignage > div p {
+     font-size: 0.95em;
+     line-height: 1.5;
+     color: #555;
+     margin-bottom: 8px;
+ }
+ body[data-theme='dark'] .logement > div p,
+ body[data-theme='dark'] .bien > div p,
+ body[data-theme='dark'] .temoignage > div p {
+     color: #bbb;
+ }
+
+ /* Price styling (Ensure this class is added in JS) */
+ .logement .prix,
+ .bien .prix {
+     font-weight: 700; /* Bolder price */
+     color: var(--primary-color);
+     font-size: 1.2em;
+     margin-top: 10px; /* Space above price */
+     margin-bottom: 5px;
+ }
+ body[data-theme='dark'] .logement .prix,
+ body[data-theme='dark'] .bien .prix {
+     color: var(--secondary-color);
+ }
+
+ /* Location styling (Ensure this class is added in JS) */
+ .logement .localisation,
+ .bien .localisation {
+      font-size: 0.9em;
+      color: #777;
+      margin-bottom: 15px; /* Space below location */
+ }
+  body[data-theme='dark'] .logement .localisation,
+  body[data-theme='dark'] .bien .localisation {
+      color: #aaa;
+  }
+  .logement .localisation i,
+  .bien .localisation i {
+      margin-right: 5px; /* Space after icon */
+      color: var(--secondary-color); /* Orange icon */
+      width: 1em; /* Ensure icon takes space */
+      text-align: center;
+  }
+  body[data-theme='dark'] .logement .localisation i,
+  body[data-theme='dark'] .bien .localisation i {
+       color: var(--secondary-color); /* Keep orange for icon */
+  }
+
+/* Button inside cards (Positioned after the text div) */
+.logement > button,
+.bien > button {
+    margin: 0 20px 20px 20px; /* Margin around the button */
+    margin-top: auto; /* Push button to bottom if card height allows */
+    padding: 10px 20px; /* Standard button padding */
+    width: calc(100% - 40px); /* Adjust width based on margin */
+    align-self: stretch; /* Make button full width relative to margins */
+    flex-shrink: 0; /* Prevent button from shrinking */
 }
-.logement button,
-.bien button{
-     margin-top: auto;
-    padding: 5px 10px;
-    background-color: #FFA500;
-    color: #333;
-    border: none;
-    cursor: pointer;
-}
+ body[data-theme='dark'] .logement > button,
+ body[data-theme='dark'] .bien > button {
+     color: var(--primary-darker); /* Consistent button text color */
+ }
+
 /* --- Section Dernières Publications --- */
-#derniere-publication .container {
-  border: none;
-  border-radius: 10px;
-  color: black;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
-  padding: 20px;
-  margin-bottom: 30px;
+#derniere-publication {
+    margin-top: 60px; /* More space above */
+    margin-bottom: 40px;
+    padding: 40px 0; /* Vertical padding, horizontal handled by container */
+    background-color: var(--container-bg-light);
+    border-top: 1px solid var(--border-light); /* Subtle separator */
+    border-bottom: 1px solid var(--border-light);
 }
-
+ body[data-theme='dark'] #derniere-publication {
+      background-color: var(--container-bg-dark);
+      border-color: var(--border-dark);
+ }
+#derniere-publication .container > div { /* Target the inner div containing h2 and carousel */
+    padding: 0; /* Reset padding if needed */
+}
+#derniere-publication h2 {
+     margin-bottom: 30px;
+}
 #derniers-logements {
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* Space before "Voir plus" */
     width: 100%;
-    height: 550px;
+    min-height: 480px; /* Ensure enough height for cards + padding */
     position: relative;
-    overflow: hidden;
+    overflow: hidden; /* Important for carousel items */
 }
-
 .logement-carousel {
     display: flex;
-    width: 300%;
-    transition: transform 0.8s ease-in-out;
-    position: relative;
-    height: 100%;
+    transition: transform 0.5s ease-in-out;
+    position: relative; /* Needed for absolute children if that logic is used */
+    /* Width is set by JS based on slide count */
+    left: 0; /* Start at the beginning */
+    height: 100%; /* Ensure carousel takes full height */
 }
 
-#derniers-logements .logement {
-    width: calc(100% / 3);
-    box-sizing: border-box;
-    margin: 0;
-    position: absolute;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    transition: opacity 0.8s ease-in-out;
-    height: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-}
+ /* --- Carousel Items (Mobile First) --- */
+ /* Default: Mobile (1 slide visible) */
+ #derniers-logements .logement,
+ #derniers-logements .bien {
+     flex-shrink: 0; /* Prevent items from shrinking */
+     width: 100%; /* Full width on mobile */
+     max-width: 100%;
+     box-sizing: border-box;
+     padding: 0 10px; /* Horizontal padding between slides on mobile */
+     opacity: 1;
+     transform: none;
+     margin: 0; /* Reset margin */
+     transition: opacity 0.5s ease, transform 0.5s ease;
+     height: 100%; /* Make slide take full height of container */
+     /* Ensure card inside takes full height too */
+     display: flex; /* Make the slide a flex container */
+     flex-direction: column;
+ }
 
-/*Carousel positioning */
-#derniers-logements .logement:nth-child(2) {
-    left: calc(50% - calc(100% / 6));
-    z-index: 2;
-}
+ /* Tablet/Desktop (>= 769px): 3 slides visible */
+ @media (min-width: 769px) {
+     #derniers-logements .logement,
+     #derniers-logements .bien {
+         /* Width calculation handled by JS setting flex-basis on carouselElement children */
+         padding: 0 15px; /* Padding for desktop */
+     }
+     /* JS will set flex-basis like: calc(100% / 3 / numSlides * 100) */
+     /* Example: If 9 slides, basis = calc(100% / 3) of the strip = 33.3% of strip */
+     /* Let's simplify: JS sets flex-basis directly based on % of the container */
+     #derniers-logements .logement,
+     #derniers-logements .bien {
+          /* The JS logic sets flex-basis: slideWidthPercent + '%' */
+          /* CSS mainly controls padding and internal layout */
+     }
+ }
 
-#derniers-logements .logement:first-child {
-    left: 0;
-    z-index: 1;
-}
-
-#derniers-logements .logement:last-child {
-    left: calc(100% - calc(100% / 3));
-    z-index: 1;
-}
 
 #voir-plus {
-    display: inline-block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #FFA500;
-    color: white;
-    border: none;
-    cursor: pointer;
+    display: block; /* Make it a block element */
+    margin: 20px auto; /* Center horizontally */
+    width: fit-content; /* Size based on content */
 }
 
-/* --- Section Services --- */
-#services .container,
-#apropos .container {
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    color: black;
-    border: none;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
-    padding: 20px;
-    margin-bottom: 30px;
+/* --- Sections (Services, A Propos, Comment, Admin, Temoignages) --- */
+#services, #apropos, #comment-fonctionne, #espace-administrateurs, #temoignages {
+    padding: 60px 15px; /* More vertical padding */
+    margin-bottom: 0; /* Remove bottom margin */
+    /* Alternate background colors for visual rhythm */
 }
+ #services, #espace-administrateurs, #apropos {
+    background-color: var(--background-light); /* White background */
+ }
+ #comment-fonctionne, #temoignages {
+    background-color: var(--container-bg-light); /* Off-white background */
+ }
 
+ body[data-theme='dark'] #services,
+ body[data-theme='dark'] #espace-administrateurs,
+ body[data-theme='dark'] #apropos {
+     background-color: var(--background-dark);
+ }
+ body[data-theme='dark'] #comment-fonctionne,
+ body[data-theme='dark'] #temoignages {
+     background-color: var(--container-bg-dark);
+ }
+
+
+ #services h2, #apropos h2, #comment-fonctionne h2, #espace-administrateurs h2, #temoignages h2 {
+     margin-bottom: 40px; /* More space below titles */
+ }
+
+/* Services List */
 #services ul {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 auto;
+    max-width: 700px;
     text-align: left;
 }
-
 #services li {
-    margin-bottom: 25px;
-    text-align: left;
-    font-size: 1.2em;
-    font-weight: normal;
-    padding-left: 25px;
+    margin-bottom: 18px;
+    font-size: 1.1em;
+    padding-left: 35px; /* More space for icon */
     position: relative;
+    line-height: 1.5;
 }
-
 #services li::before {
-    content: "";
-    display: block;
-    width: 15px;
-    height: 15px;
-    background-color: #1f2ab0;
-    border-radius: 50%;
+    content: "\f00c"; /* Font Awesome check */
+    font-family: "Font Awesome 5 Free"; /* Font Awesome family */
+    font-weight: 900;
+    display: inline-flex; /* Use flex for centering */
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* Icon container size */
+    height: 24px;
+    background-color: rgba(255, 165, 0, 0.15); /* Light orange background */
+    color: var(--secondary-color);
+    border-radius: 50%; /* Circular background */
     position: absolute;
     left: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 1px; /* Adjust vertical alignment */
+    font-size: 0.8em; /* Slightly smaller icon */
 }
+ body[data-theme='dark'] #services li::before {
+     background-color: rgba(255, 165, 0, 0.2);
+ }
 
 /* --- Section Comment ça Marche --- */
-#comment-fonctionne .container {
-    background-color: #003366;
-    border-radius: 10px;
-    color: white;
-    padding: 20px;
-    margin-bottom: 10px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9);
+/* Target inner container which is the grid */
+#comment-fonctionne .container > div > .container {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+     gap: 30px; /* More gap */
+     padding: 0; /* Padding handled by parent */
 }
-
-#comment-fonctionne h2 {
-    text-align: center;
-    font-size: 2.2em;
-    margin-bottom: 20px;
+/* Make H2 span full width */
+#comment-fonctionne .container > div > h2 {
+    grid-column: 1 / -1;
 }
-
 #comment-fonctionne .comment-ca-marche-item {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
+    text-align: center;
+    padding: 30px 25px; /* More padding */
+    background-color: var(--card-bg-light); /* Use card background */
+    border-radius: 12px; /* Match card radius */
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-light);
+     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-#comment-fonctionne .comment-ca-marche-item:nth-child(odd) {
-    flex-direction: row;
+ #comment-fonctionne .comment-ca-marche-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover-light);
+ }
+body[data-theme='dark'] #comment-fonctionne .comment-ca-marche-item {
+     background-color: var(--card-bg-dark);
+     border-color: var(--border-dark);
+     box-shadow: var(--shadow-dark);
 }
-
-#comment-fonctionne .comment-ca-marche-item:nth-child(even) {
-    flex-direction: row-reverse;
-}
-
+ body[data-theme='dark'] #comment-fonctionne .comment-ca-marche-item:hover {
+    box-shadow: var(--shadow-hover-dark);
+ }
 #comment-fonctionne .comment-ca-marche-item i {
-    margin: 0 20px;
-    flex-shrink: 0;
-    font-size: 4em;
+    font-size: 2.5em; /* Good size */
+    color: var(--primary-color);
+    margin-bottom: 20px;
+     /* Optional: Add background circle */
+     width: 70px;
+     height: 70px;
+     border-radius: 50%;
+     background-color: rgba(0, 51, 102, 0.08); /* Light blue background */
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
 }
-
+body[data-theme='dark'] #comment-fonctionne .comment-ca-marche-item i {
+    color: var(--secondary-color);
+    background-color: rgba(255, 165, 0, 0.1); /* Light orange background */
+}
 #comment-fonctionne .comment-ca-marche-item h4 {
-    text-transform: uppercase;
-    color: #FFA500;
-    font-size: 1.5em;
-    margin-bottom: 5px;
+    font-size: 1.25em; /* Slightly larger title */
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-weight: 600;
 }
-
-#comment-fonctionne .comment-ca-marche-item h4,
+ body[data-theme='dark'] #comment-fonctionne .comment-ca-marche-item h4 {
+    color: var(--secondary-color);
+}
 #comment-fonctionne .comment-ca-marche-item p {
-    text-align: left;
+    font-size: 0.95em;
+    color: #555;
+    line-height: 1.6;
+}
+ body[data-theme='dark'] #comment-fonctionne .comment-ca-marche-item p {
+    color: #bbb;
 }
 
 /* --- Section Espace Administrateurs --- */
-#espace-administrateurs .container {
-    background-color: #f8f8f8; /* Couleur de fond (ajuste) */
-    border-radius: 10px;
-    color: black; /* Couleur du texte */
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.9); /* Ombre */
-}
-
-#espace-administrateurs h2 {
-    text-align: center;
-    font-size: 2.2em;
-    margin-bottom: 20px;
-}
-
+#espace-administrateurs .container > div { text-align: center; }
 #espace-administrateurs p {
-    text-align: center;
-    font-size: 1.2em;
-    margin-bottom: 15px;
-}
-
-#admin-login-button {
-    display: block; /* Le bouton prend toute la largeur */
-    margin: 20px auto; /* Centrage horizontal */
-    padding: 10px 20px;
-    background-color: #FFA500; /* Couleur du bouton (ajuste) */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
     font-size: 1.1em;
+    margin-bottom: 20px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+     color: #555;
 }
+ body[data-theme='dark'] #espace-administrateurs p { color: #bbb; }
+#admin-login-button { margin-top: 25px; }
 
 /* --- Section Témoignages --- */
-#temoignages {
-    background-color: #f8f8f8;
-    padding: 20px 0;
-    margin-bottom: 20px;
-}
-
-#temoignages .container {
-    border: none;
-    box-shadow: none;
-    padding: 20px;
-}
-
 .temoignages-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Wider min width */
+    gap: 30px;
+    margin-bottom: 50px; /* More space before add form */
 }
-
-.temoignage {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px;
-    width: 30%;
-    min-width: 250px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    text-align: center;
+.temoignage { /* Inherits base card style */
+    padding: 0; /* Remove padding, handled by inner div */
 }
-
-.temoignage p {
+ /* Use the inner div for padding */
+.temoignage > div {
+     padding: 25px 30px; /* More padding */
+     position: relative; /* For quote icon */
+     display: flex; /* Ensure flex for author positioning */
+     flex-direction: column;
+     height: 100%; /* Make inner div take full card height */
+}
+.temoignage p:first-child { /* The quote text */
     font-style: italic;
     color: #555;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
+    flex-grow: 1; /* Allow quote to take available space */
+    font-size: 1em;
+    padding-left: 35px; /* Space for quote icon */
+     position: relative;
 }
+ .temoignage p:first-child::before {
+     content: "\f10d"; /* left quote */
+     font-family: "Font Awesome 5 Free";
+     font-weight: 900;
+     position: absolute;
+     left: 0;
+     top: -5px;
+     font-size: 1.5em;
+     color: var(--secondary-color);
+     opacity: 0.5;
+ }
+body[data-theme='dark'] .temoignage p:first-child { color: #bbb; }
+ body[data-theme='dark'] .temoignage p:first-child::before {
+     color: var(--secondary-color); /* Keep orange */
+ }
 
 .temoignage-auteur {
-    font-weight: bold;
-    color: #333;
+    font-weight: 600; /* Bolder author */
+    color: var(--primary-color);
     text-align: right;
+    font-size: 0.95em;
+    margin-top: auto; /* Push to bottom */
+    padding-top: 15px;
+     border-top: 1px dashed var(--border-light); /* Separator */
+     flex-shrink: 0; /* Prevent author from shrinking */
 }
-/* Formulaire d'ajout d'avis (caché par défaut) */
+ body[data-theme='dark'] .temoignage-auteur {
+    color: var(--secondary-color);
+    border-top-color: var(--border-dark);
+}
+
+/* Formulaire d'ajout d'avis */
 #ajout-avis {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    margin-top: 40px;
+    padding: 30px 35px;
+    background-color: var(--container-bg-light); /* Match section bg */
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: var(--shadow-light);
 }
-#ajout-avis textarea {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Important pour le padding/border */
+body[data-theme='dark'] #ajout-avis {
+     background-color: var(--card-bg-dark); /* Use card bg in dark mode */
+     border-color: var(--border-dark);
+     box-shadow: var(--shadow-dark);
 }
-
+#ajout-avis h3 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--primary-color);
+    font-size: 1.5em;
+     font-weight: 600;
+}
+ body[data-theme='dark'] #ajout-avis h3 { color: var(--secondary-color); }
+#ajout-avis textarea { min-height: 120px; margin-bottom: 15px; }
 #ajout-avis input[type="text"],
-#ajout-avis input[type="email"]
- {
-    width: 48%; /* Pour les mettre côte à côte, avec un peu d'espace */
-    margin-bottom: 10px;
-    padding: 8px;
-     border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-/* Disposition en ligne pour nom/email */
+#ajout-avis input[type="email"] { margin-bottom: 15px; }
 #ajout-avis .input-group {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr; /* Default single column */
+    gap: 15px;
+     margin-bottom: 0; /* Remove bottom margin from group */
 }
-
-#ajout-avis button {
-    padding: 10px 15px;
-    background-color: #FFA500;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+@media (min-width: 576px) {
+     #ajout-avis .input-group { grid-template-columns: 1fr 1fr; } /* Two columns on larger screens */
+     #ajout-avis input[type="text"],
+     #ajout-avis input[type="email"] {
+         margin-bottom: 0; /* Remove bottom margin when side-by-side */
+     }
+}
+#ajout-avis button[type="submit"] {
+    display: block;
+    margin: 25px auto 0; /* Center button */
+    width: auto; /* Auto width */
+    min-width: 180px; /* Minimum width */
 }
 
 /* --- Footer --- */
+footer {
+    background-color: var(--primary-darker); /* Darker blue */
+    padding: 50px 0; /* More padding */
+    color: #e0e0e0; /* Lighter text */
+    margin-top: 60px;
+     font-size: 0.95em;
+}
 .footer-content {
-    background-color: #003366;
-    padding: 20px 0 20px 20px;
-    color: white;
-    text-align: left;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+     gap: 40px; /* Increased gap */
+     text-align: left; /* Default alignment for grid items */
 }
-
-footer .container {
-    max-width: 1500px; /* Différent de .container général */
-    color: white;
-    text-align: left;
+footer h2 { /* Footer section titles */
+     color: var(--secondary-color);
+     margin-bottom: 20px;
+     font-size: 1.4em;
+     font-weight: 600;
+     text-align: left; /* Left align footer titles */
 }
-
-#contact {
-    margin-bottom: 15px;
-    text-align: left;
+footer p {
+     font-size: 1em;
+     margin-bottom: 12px;
+     color: #cccccc; /* Slightly dimmer text */
+     line-height: 1.7;
 }
-
-#contact ul {
+footer ul {
     list-style: none;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    margin: 0;
 }
-
-#contact li {
-    margin: 5px 10px;
+footer li {
+    margin-bottom: 10px;
 }
-
-#contact a {
-    color: white;
+footer a {
+    color: #ffffff; /* White links in footer */
     text-decoration: none;
-    display: flex;
+    display: inline-flex; /* Align icon and text */
     align-items: center;
+    transition: color 0.2s ease;
 }
-
-#contact i {
-    margin-right: 8px;
+footer a:hover {
+     color: var(--secondary-color);
+     text-decoration: none; /* No underline on hover */
 }
+footer i { /* Icons in contact/links */
+    margin-right: 12px;
+    font-size: 1.3em; /* Larger icons */
+    width: 25px; /* Fixed width for alignment */
+    text-align: center;
+     color: var(--secondary-color); /* Orange icons */
+}
+ /* Newsletter form */
+ #newsletter-form input[type="email"] {
+     background-color: rgba(255, 255, 255, 0.1);
+     border: 1px solid rgba(255, 255, 255, 0.3);
+     color: white;
+     margin-bottom: 10px;
+     padding: 10px 15px;
+     border-radius: 8px;
+ }
+  #newsletter-form input[type="email"]::placeholder { color: #bbb; }
+  #newsletter-form input[type="email"]:focus {
+     box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.3);
+     border-color: var(--secondary-color);
+  }
+ #newsletter-form button[type="submit"] {
+     width: 100%;
+     padding: 10px 15px;
+     font-size: 1em;
+     margin-top: 5px;
+ }
 
 .footer-content .legal-links {
-    margin-bottom: 10px;
-    text-align: left;
+    margin-top: 30px;
+    grid-column: 1 / -1; /* Span full width */
+    text-align: center; /* Center links */
+    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Subtle separator */
+    padding-top: 25px;
 }
-
 .footer-content .legal-links a {
-    color: #ddd;
+    color: #cccccc;
     text-decoration: none;
-    margin: 0 10px;
+    margin: 0 15px; /* Spacing between links */
     font-size: 0.9em;
+     transition: color 0.2s ease;
 }
-
 .footer-content .legal-links a:hover {
+    color: var(--secondary-color);
     text-decoration: underline;
 }
-
-.footer-content p {
-    margin: 10px 0;
-    text-align: left;
-    font-size: 0.8em; /* Réduit la taille du texte du copyright */
+.footer-content > p:last-child { /* Copyright */
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.85em;
+    color: #aaaaaa;
+    grid-column: 1 / -1; /* Span full width */
 }
 
-/* --- Fenêtre de Détails (anciennement Réservation) --- */
+
+/* --- Fenêtre de Détails --- */
 .fenetre-details {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 20px;
-    z-index: 10;
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-    max-width: 90%; /* Pour la responsivité */
-    max-height: 90vh; /* Pour éviter le débordement */
-    overflow-y: auto; /* Barre de défilement si nécessaire */
-    width: 500px; /* Largeur fixe (ajustable) */
+    background-color: var(--card-bg-light); /* Match card background */
+    border: 1px solid var(--border-light);
+    padding: 30px 35px; /* More padding */
+    z-index: 1020; /* <<<<< UPDATED z-index (higher than chatbot) */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+    max-width: 90%; /* Max width relative to viewport */
+    width: 650px; /* Default width */
+    max-height: 90vh; /* Max height relative to viewport */
+    overflow-y: auto; /* Enable scroll if content overflows */
+    border-radius: 12px; /* Softer radius */
+    color: var(--text-light);
 }
+ body[data-theme='dark'] .fenetre-details {
+     background-color: var(--card-bg-dark);
+     border-color: var(--border-dark);
+     color: var(--text-dark);
+     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+ }
+.fenetre-details .close-button.fenetre-close-button {
+     position: absolute;
+     top: 15px; /* Adjust position */
+     right: 20px;
+     font-size: 28px; /* Larger X */
+     color: #aaa;
+     background: none; /* No background */
+     border: none; /* No border */
+     cursor: pointer;
+     line-height: 1;
+     padding: 5px; /* Clickable area */
+      transition: color 0.2s ease;
+ }
+  body[data-theme='dark'] .fenetre-details .close-button.fenetre-close-button { color: #888; }
+ .fenetre-details .close-button.fenetre-close-button:hover { color: var(--primary-color); }
+  body[data-theme='dark'] .fenetre-details .close-button.fenetre-close-button:hover { color: var(--secondary-color); }
 
 .fenetre-details img {
-    width: 100%; /* Image responsive */
-    max-height: 200px;
+    width: 100%;
+    max-height: 300px; /* Limit image height */
     object-fit: cover;
-    margin-bottom: 10px;
+    margin-bottom: 25px;
+    border-radius: 8px; /* Rounded corners on image */
+    border: 1px solid var(--border-light);
+    display: block; /* Prevent extra space below */
 }
-
-/* Conteneur pour les boutons (flexbox) */
-.fenetre-details .boutons-container {
-    display: flex;
-    flex-direction: row; /* Disposition horizontale */
-    flex-wrap: wrap; /* Permet le passage à la ligne */
-    gap: 10px; /* Espacement entre les boutons */
-    margin-top: 15px;
-    justify-content: center; /* Centrer les boutons */
-}
-
-/* Style individuel des boutons (plus besoin de width: 100%) */
-.fenetre-details .boutons-container button {
-   padding: 10px 15px;
-    background-color: #FFA500;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-/* Texte explicatif pour la réservation */
-.fenetre-details .reservation-info {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.fenetre-details .bouton-fermer {
-     padding: 10px 15px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
+ body[data-theme='dark'] .fenetre-details img { border-color: var(--border-dark); }
 .fenetre-details h3 {
   text-align: center;
+  font-size: 1.8em; /* Larger title */
+  margin-bottom: 20px;
+  color: var(--primary-color);
+   font-weight: 600;
 }
-/* Section pour les informations détaillées (initialement cachée) */
+ body[data-theme='dark'] .fenetre-details h3 { color: var(--secondary-color); }
+ .fenetre-details p {
+     font-size: 1em;
+     margin-bottom: 12px; /* Consistent spacing */
+     line-height: 1.6;
+ }
+ .fenetre-details hr {
+     border: none;
+     border-top: 1px solid var(--border-light);
+     margin: 25px 0; /* More margin around hr */
+ }
+  body[data-theme='dark'] .fenetre-details hr { border-top-color: var(--border-dark); }
+
+/* Container for action buttons */
+.fenetre-details .boutons-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 15px; /* More gap */
+    margin-top: 25px;
+    justify-content: center; /* Center buttons */
+    border-top: 1px solid var(--border-light); /* Separator */
+    padding-top: 25px;
+}
+ body[data-theme='dark'] .fenetre-details .boutons-container { border-top-color: var(--border-dark); }
+
+/* Style for buttons within the modal */
+.fenetre-details .boutons-container button {
+   padding: 12px 20px; /* Slightly more padding */
+   flex-grow: 1; /* Allow buttons to grow */
+   flex-basis: 150px; /* Minimum base width before growing */
+   min-width: 150px; /* Min width for buttons */
+   font-size: 0.95em; /* Slightly smaller text */
+   box-shadow: none; /* Remove shadow from modal buttons initially */
+   display: inline-flex; /* Align icon and text */
+   align-items: center;
+   justify-content: center;
+   gap: 8px; /* Space between icon and text */
+}
+ .fenetre-details .boutons-container button:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1); /* Add shadow on hover */
+ }
+ body[data-theme='dark'] .fenetre-details .boutons-container button:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+ }
+
+/* Specific Button Styles in Modal */
+.fenetre-details .bouton-infos,
+.fenetre-details .bouton-reservation,
+.fenetre-details .bouton-payer-avance {
+     background-color: var(--primary-color);
+     color: white;
+}
+.fenetre-details .bouton-infos:hover,
+.fenetre-details .bouton-reservation:hover,
+.fenetre-details .bouton-payer-avance:hover {
+     background-color: var(--primary-darker);
+}
+body[data-theme='dark'] .fenetre-details .bouton-infos,
+body[data-theme='dark'] .fenetre-details .bouton-reservation,
+body[data-theme='dark'] .fenetre-details .bouton-payer-avance {
+     background-color: var(--secondary-color);
+     color: var(--primary-darker);
+}
+body[data-theme='dark'] .fenetre-details .bouton-infos:hover,
+body[data-theme='dark'] .fenetre-details .bouton-reservation:hover,
+body[data-theme='dark'] .fenetre-details .bouton-payer-avance:hover {
+     background-color: var(--accent-color);
+}
+
+.fenetre-details .bouton-discussion { /* WhatsApp Button */
+     background-color: #25D366;
+     color: white;
+}
+.fenetre-details .bouton-discussion:hover { background-color: #1DAE54; }
+
+.fenetre-details button:disabled { /* Keep disabled style */
+    background-color: #ccc !important; /* Use !important to override specific styles */
+    color: #888 !important;
+    cursor: not-allowed;
+     transform: none;
+     box-shadow: none;
+     opacity: 0.7;
+}
+ body[data-theme='dark'] .fenetre-details button:disabled {
+     background-color: #555 !important;
+     color: #aaa !important;
+ }
+
+/* Info/Reservation Sections in Modal */
+.fenetre-details .reservation-info,
 .fenetre-details .infos-logement {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    margin-top: 25px;
+    padding: 20px; /* More padding */
+    background-color: var(--container-bg-light); /* Use container background */
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
 }
-/* --- Media Queries (Responsive) --- */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
+ body[data-theme='dark'] .fenetre-details .reservation-info,
+ body[data-theme='dark'] .fenetre-details .infos-logement {
+     background-color: var(--container-bg-dark);
+     border-color: var(--border-dark);
+ }
+ .fenetre-details .reservation-info h4,
+ .fenetre-details .infos-logement h4 {
+     margin-top: 0;
+     margin-bottom: 15px; /* More space */
+     color: var(--primary-color);
+     font-size: 1.2em;
+     font-weight: 600;
+ }
+  body[data-theme='dark'] .fenetre-details .reservation-info h4,
+  body[data-theme='dark'] .fenetre-details .infos-logement h4 {
+      color: var(--secondary-color);
+  }
+  .fenetre-details .reservation-info ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+       list-style: disc; /* Use disc for clarity */
+  }
+   .fenetre-details .reservation-info li {
+       margin-bottom: 8px;
+       font-size: 0.95em;
+   }
+   .fenetre-details .infos-logement p {
+        margin-bottom: 8px;
+        font-size: 0.95em;
+   }
+   /* Style for the confirmation button inside reservation info */
+   .fenetre-details .confirmer-reservation {
+       display: block; /* Make it block to center easily */
+       margin: 15px auto 0; /* Center horizontally */
+       background-color: var(--secondary-color);
+       color: var(--primary-darker);
+       /* Inherits general button styles, override if needed */
+       flex-grow: 0; /* Don't allow it to grow like action buttons */
+       flex-basis: auto; /* Reset basis */
+       min-width: 180px;
+   }
+   .fenetre-details .confirmer-reservation:hover {
+        background-color: var(--accent-color);
+   }
+   body[data-theme='dark'] .fenetre-details .confirmer-reservation {
+         color: var(--primary-darker);
+   }
+   .fenetre-details .confirmer-reservation:disabled {
+        background-color: #ccc !important;
+        color: #888 !important;
+   }
+   body[data-theme='dark'] .fenetre-details .confirmer-reservation:disabled {
+        background-color: #555 !important;
+        color: #aaa !important;
+   }
 
-    /* Header */
-    #menu-toggle {
-        padding: 8px 12px;
-        font-size: 1.2rem;
-    }
 
-    nav {
-        width: 80%;
-        max-width: 300px;
-        height: 100vh;
-    }
-
-    nav a {
-        font-size: 1em;
-    }
-
-    /* Accueil */
-    .image-accueil {
-        height: 400px;
-        margin: 10px auto;
-    }
-
-    .accueil-text {
-        top: 10%;
-        padding: 10px;
-        width: 90%;
-    }
-
-    .accueil-text h2 {
-        font-size: 1.8em;
-        margin-bottom: 5px;
-    }
-
-    .accueil-text p {
-        font-size: 1em;
-    }
-
-    /* Section Recherche */
-    #recherche-logement {
-        width: 95%;
-        max-width: none;
-        transform: none;
-        margin: 20px auto;
-        left: 0;
-        top: -50px;
-        margin-bottom: -30px;
-    }
-
-    #resultats-recherche {
-        grid-template-columns: 1fr;
-        padding: 10px;
-        margin-top: 10px;
-    }
-     /* Section Comment ça Marche (Mobile) */
-    #comment-fonctionne .container {
-        padding: 15px;
-    }
-
-    #comment-fonctionne h2 {
-        font-size: 1.6em;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item {
-        flex-direction: column;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item:nth-child(odd),
-    #comment-fonctionne .comment-ca-marche-item:nth-child(even) {
-        flex-direction: column;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item i {
-        margin: 0 0 10px 0;
-        font-size: 2.5em;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item h4 {
-        font-size: 1em;
-    }
-
-    #comment-fonctionne .comment-ca-marche-item p {
-        font-size: 0.9em;
-        text-align: center;
-    }
-
-      /* Styles pour la section Espace Administrateurs sur mobile */
-    #espace-administrateurs .container {
-        padding: 15px;
-    }
-
-    #espace-administrateurs h2 {
-        font-size: 1.6em;
-    }
-
-    #espace-administrateurs p {
-        font-size: 1em;
-    }
-
-    /* Carousel */
-    #derniers-logements .logement {
-        border: none;
-    }
-
-    .logement img, .bien img {
-        height: 200px;
-    }
-
-    /* Footer */
-    .footer-content {
-        text-align: left;
-        margin-left: 0;
-        padding: 20px 0 20px 10px;
-    }
-      #contact ul {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0;
-        padding: 0;
-        margin-left: 10px;
-    }
-
-    #contact li {
-      margin: 5px 10px;
-    }
-     .footer-content p {
-        margin: 10px 0;
-        text-align: left;
-        margin-left: 10px;
-    }
-    .footer-content .legal-links a{
-      margin-left: 10px;
-    }
-
-    /* Section Témoignages (Mobile) */
-    .temoignage {
-        width: 90%;
-        margin: 10px auto;
-    }
-     .temoignages-container{
-        margin: 10px;
-        padding: 10px;
-    }
-     /* Fenêtre Détails (responsive) */
-    .fenetre-details {
-        width: 95%;
-        max-width: none;
-        padding: 10px;
-    }
-     /* Ajustement pour le formulaire d'ajout d'avis sur mobile */
-    #ajout-avis input[type="text"],
-    #ajout-avis input[type="email"] {
-        width: 100%;
-    }
-
-     #ajout-avis .input-group {
-       flex-direction: column;
-    }
-     /* Boutons dans la fenêtre détails (responsive) */
-    .fenetre-details .boutons-container {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-around;
-    }
-}
-.loading {
-    text-align: center;
-    margin-top: 20px;
-    font-style: italic;
-    color: #888;
-}
-
-/* Styles pour la fenêtre modale de la politique de confidentialité */
+/* --- Modales (Termes & Confidentialité) --- */
 .modal {
-    display: none; /* Caché par défaut */
+    display: none; /* Hidden by default */
     position: fixed;
-    z-index: 1000; /* Au-dessus de tout */
+    z-index: 1025; /* <<<<< UPDATED z-index (highest) */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Barre de défilement si nécessaire */
-    background-color: rgba(0,0,0,0.4); /* Fond semi-transparent */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.7); /* Darker overlay */
 }
-
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* Centrage */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 800px; /* Largeur maximale */
-    overflow-y: auto;
+    background-color: var(--modal-bg-light);
+    color: var(--text-light);
+    margin: 8% auto; /* Adjust vertical margin, centered horizontally */
+    padding: 35px 40px; /* More padding */
+    border: none; /* Remove border, rely on shadow */
+    width: 85%; /* Relative width */
+    max-width: 800px; /* Max width */
+    border-radius: 12px; /* Softer radius */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: relative; /* For close button positioning */
+    max-height: 85vh; /* Limit height */
+    overflow-y: auto; /* Scroll for content */
 }
-
-.close-button {
+ body[data-theme='dark'] .modal-content {
+     background-color: var(--modal-bg-dark);
+     color: var(--text-dark);
+     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+ }
+.modal-content .close-button {
     color: #aaa;
-    float: right;
-    font-size: 28px;
+    position: absolute;
+    top: 15px; /* Position */
+    right: 20px;
+    font-size: 30px; /* Larger X */
     font-weight: bold;
     cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s ease;
+    background: none; /* Ensure no background */
+    border: none; /* Ensure no border */
+    padding: 0; /* Reset padding */
 }
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+body[data-theme='dark'] .modal-content .close-button { color: #888; }
+.modal-content .close-button:hover,
+.modal-content .close-button:focus {
+    color: var(--primary-color); /* Match theme color */
 }
-
+ body[data-theme='dark'] .modal-content .close-button:hover,
+ body[data-theme='dark'] .modal-content .close-button:focus {
+    color: var(--secondary-color);
+}
 .modal-content h2 {
     margin-top: 0;
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+     font-size: 1.8em;
+     font-weight: 600;
 }
-
-/* Styles spécifiques pour la politique et conditions */
+ body[data-theme='dark'] .modal-content h2 { color: var(--secondary-color); }
 .modal-content h3 {
-    color: #003366;
+    color: var(--primary-color); /* Use primary */
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+    font-size: 1.3em;
+     font-weight: 600;
+     border-bottom: 1px solid var(--border-light);
+     padding-bottom: 5px;
+}
+ body[data-theme='dark'] .modal-content h3 {
+    color: var(--secondary-color);
+    border-bottom-color: var(--border-dark);
+}
+ .modal-content h4 {
+    color: #444;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
-}
-
+    font-size: 1.1em;
+     font-weight: 600;
+ }
+ body[data-theme='dark'] .modal-content h4 { color: #ddd; }
 .modal-content ul {
     list-style: disc;
-    margin-left: 20px;
+    margin-left: 25px;
+    margin-bottom: 1.5em;
 }
+ .modal-content li {
+    margin-bottom: 0.8em;
+    line-height: 1.6;
+ }
+ .modal-content p {
+    line-height: 1.7; /* More line height */
+    margin-bottom: 1.2em;
+    font-size: 1em; /* Standard size */
+ }
+
+/* --- Indicateur de chargement --- */
+.loading {
+    text-align: center;
+    padding: 30px 15px; /* More padding */
+    font-style: italic;
+    color: #888;
+    font-size: 1.1em;
+}
+body[data-theme='dark'] .loading { color: #aaa; }
+
+/* --- Chatbot Flottant --- */
+#chatbot-toggle {
+    position: fixed;
+    bottom: 25px; /* Slightly higher */
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-darker)); /* Gradient */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px; /* Adjusted size */
+    cursor: pointer;
+    z-index: 1010; /* <<<<< UPDATED z-index */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+#chatbot-toggle:hover {
+     background: linear-gradient(135deg, var(--primary-darker), var(--primary-color));
+     transform: scale(1.1); /* Scale up on hover */
+}
+body[data-theme='dark'] #chatbot-toggle {
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    color: var(--primary-darker);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+ body[data-theme='dark'] #chatbot-toggle:hover {
+    background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+ }
+
+.chatbot-window {
+    position: fixed;
+    bottom: 100px; /* Above toggle */
+    right: 25px;
+    width: 370px; /* Slightly wider */
+    height: 580px; /* Taller */
+    background-color: var(--background-light);
+    border: 1px solid var(--border-light);
+    border-radius: 15px; /* Softer radius */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1015; /* <<<<< UPDATED z-index (higher than header) */
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    overflow: hidden; /* Clip content */
+}
+.chatbot-window.visible { display: flex; } /* Show when class is added */
+body[data-theme='dark'] .chatbot-window {
+    background-color: var(--card-bg-dark); /* Use card bg */
+    border-color: var(--border-dark);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.chatbot-header {
+    padding: 12px 20px; /* More padding */
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 15px; /* Match window radius */
+    border-top-right-radius: 15px;
+    flex-shrink: 0; /* Prevent header from shrinking */
+}
+ body[data-theme='dark'] .chatbot-header { background-color: var(--primary-darker); }
+.chatbot-header h4 {
+    margin: 0;
+    font-size: 1.15em; /* Slightly larger title */
+    font-weight: 600;
+}
+#chatbot-close {
+    cursor: pointer;
+    font-size: 24px; /* Larger close */
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0 5px;
+     transition: color 0.2s ease;
+}
+ #chatbot-close:hover { color: white; }
+
+#chatbot-messages {
+    flex-grow: 1; /* Take available space */
+    overflow-y: auto; /* Scroll for messages */
+    padding: 20px; /* More padding */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Space between messages */
+     scrollbar-width: thin; /* Firefox scrollbar */
+     scrollbar-color: #ccc var(--background-light); /* Firefox scrollbar */
+}
+ #chatbot-messages::-webkit-scrollbar { width: 6px; } /* Webkit scrollbar */
+ #chatbot-messages::-webkit-scrollbar-track { background: var(--background-light); }
+ #chatbot-messages::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 3px; }
+
+ body[data-theme='dark'] #chatbot-messages {
+     scrollbar-color: #555 var(--card-bg-dark);
+ }
+  body[data-theme='dark'] #chatbot-messages::-webkit-scrollbar-track { background: var(--card-bg-dark); }
+  body[data-theme='dark'] #chatbot-messages::-webkit-scrollbar-thumb { background-color: #555; }
+
+/* Chat messages */
+.chatbot-window .message {
+    padding: 10px 15px; /* More padding */
+    border-radius: 18px; /* More rounded */
+    max-width: 85%; /* Slightly wider max */
+    word-wrap: break-word; /* Wrap long words */
+    line-height: 1.5;
+    clear: both; /* Ensure messages don't overlap strangely if floats were used */
+    font-size: 0.95em; /* Slightly smaller text */
+    align-self: flex-start; /* Default align left (AI) */
+}
+.chatbot-window .user-message {
+    background-color: var(--primary-color); /* User messages in primary blue */
+    color: white;
+    align-self: flex-end; /* Align user messages to the right */
+    border-bottom-right-radius: 6px; /* Tail effect */
+    border-bottom-left-radius: 18px; /* Keep other corners rounded */
+}
+.chatbot-window .ai-message {
+    background-color: var(--container-bg-light); /* AI messages in off-white */
+    color: var(--text-light);
+    align-self: flex-start; /* Align AI messages to the left */
+    border: 1px solid var(--border-light);
+    border-bottom-left-radius: 6px; /* Tail effect */
+    border-bottom-right-radius: 18px; /* Keep other corners rounded */
+}
+ body[data-theme='dark'] .chatbot-window .user-message {
+     background-color: var(--secondary-color); /* User messages orange */
+     color: var(--primary-darker);
+ }
+  body[data-theme='dark'] .chatbot-window .ai-message {
+      background-color: var(--input-bg-dark); /* AI messages dark input bg */
+      color: var(--text-dark);
+      border-color: var(--border-dark);
+  }
+   /* Typing indicator dots styling is within the keyframes and indicator class below */
+
+.chatbot-input-area {
+    padding: 15px; /* More padding */
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    align-items: center; /* Vertically align items */
+    gap: 10px; /* More gap */
+    flex-shrink: 0; /* Prevent input area from shrinking */
+    background-color: var(--background-light); /* Ensure background match */
+}
+ body[data-theme='dark'] .chatbot-input-area {
+     border-top-color: var(--border-dark);
+     background-color: var(--card-bg-dark);
+ }
+
+#chatbot-input {
+    flex-grow: 1; /* Take available space */
+    resize: none; /* Disable manual resize */
+    border: 1px solid var(--border-light);
+    border-radius: 25px; /* Fully rounded */
+    padding: 10px 18px; /* More padding */
+    max-height: 100px; /* Increased max height */
+    overflow-y: auto; /* Scroll if content exceeds max height */
+    font-size: 1em; /* Standard font size */
+     background-color: var(--input-bg-light);
+     color: var(--input-text-light);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      line-height: 1.4; /* Adjust line height for textarea */
+}
+ #chatbot-input:focus {
+     outline: none;
+     border-color: var(--secondary-color);
+     box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.2);
+ }
+body[data-theme='dark'] #chatbot-input {
+     background-color: var(--input-bg-dark);
+     color: var(--input-text-dark);
+     border-color: var(--border-dark);
+}
+ body[data-theme='dark'] #chatbot-input:focus {
+     border-color: var(--secondary-color);
+     box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.3);
+ }
+
+#chatbot-send {
+    padding: 0; /* Remove padding, use width/height */
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--primary-darker);
+    width: 44px; /* Slightly larger button */
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* Prevent button shrinking */
+     transition: background-color 0.2s ease;
+}
+ #chatbot-send:hover { background-color: var(--accent-color); }
+ #chatbot-send:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+ }
+ body[data-theme='dark'] #chatbot-send:disabled {
+     background-color: #555;
+ }
+
+#chatbot-send i { font-size: 1.2em; /* Larger icon */ }
+body[data-theme='dark'] #chatbot-send { color: var(--primary-darker); }
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) { /* Adjusted breakpoint */
+    body { font-size: 15px; } /* Slightly smaller base on mobile */
+    h2 { font-size: 1.8em; margin-bottom: 25px;}
+    .container { padding: 15px 10px; }
+
+    #accueil { min-height: 50vh; }
+    .image-accueil { /* Already absolute, no change needed */ }
+    .accueil-text { padding: 20px; margin: 30px auto; max-width: 95%; }
+    .accueil-text h2 { font-size: 2em; }
+    .accueil-text p { font-size: 1em; }
+
+    #recherche-logement {
+        margin-top: -50px; /* Adjust overlap */
+        padding: 20px 15px;
+        border-radius: 12px;
+        max-width: 95%;
+    }
+    #form-recherche {
+        grid-template-columns: 1fr; /* Single column on mobile */
+        gap: 15px;
+    }
+    /* Ensure wrappers use contents on mobile too */
+    #champs-communs, #champs-logements, #champs-biens {
+        display: contents;
+    }
+     /* Force dynamic fields to be hidden if not visible class */
+     #champs-logements:not(.visible), #champs-biens:not(.visible) {
+        display: none;
+     }
+
+    #form-recherche button[type="submit"] { min-width: 180px; font-size: 1em; }
+
+
+    #resultats-recherche { grid-template-columns: 1fr; gap: 20px; }
+
+    /* Carousel handled by main CSS rules and @media (min-width: 769px) */
+
+    #services, #apropos, #comment-fonctionne, #espace-administrateurs, #temoignages { padding: 40px 10px; }
+    /* Adjust comment-fonctionne grid for mobile */
+    #comment-fonctionne .container > div > .container {
+         grid-template-columns: 1fr;
+         gap: 20px;
+    }
+    #comment-fonctionne .comment-ca-marche-item { padding: 25px 20px; }
+
+    .temoignages-container { grid-template-columns: 1fr; gap: 20px; }
+    #ajout-avis { padding: 25px 20px; max-width: 95%; }
+     #ajout-avis .input-group { grid-template-columns: 1fr; } /* Force single column */
+     #ajout-avis input[type="text"], #ajout-avis input[type="email"] {
+         margin-bottom: 15px; /* Restore bottom margin when stacked */
+     }
+
+
+    footer { padding: 40px 0; }
+    .footer-content { grid-template-columns: 1fr; text-align: center; gap: 30px; }
+    footer h2 { text-align: center; } /* Center footer titles on mobile */
+    #contact ul {
+        justify-content: center; /* Center contact items */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+     }
+     #contact li {
+         display: flex;
+         justify-content: center; /* Center individual contact items */
+      }
+     #newsletter-form { max-width: 350px; margin: 0 auto; } /* Center newsletter form */
+
+     /* Modal adjustments */
+     .fenetre-details { width: 95%; padding: 20px; }
+     .fenetre-details img { max-height: 200px; }
+     .fenetre-details h3 { font-size: 1.5em; }
+     /* Ensure modal buttons wrap nicely */
+      .fenetre-details .boutons-container {
+          gap: 10px;
+      }
+      .fenetre-details .boutons-container button {
+          flex-basis: calc(50% - 10px); /* Aim for 2 buttons per row */
+          min-width: 120px; /* Adjust min-width */
+      }
+
+     .modal-content { width: 92%; margin: 10% auto; padding: 20px 15px; }
+
+    /* Chatbot adjustments */
+     #chatbot-toggle { width: 55px; height: 55px; font-size: 24px; bottom: 15px; right: 15px; }
+     .chatbot-window {
+         width: calc(100% - 30px); /* Full width minus padding */
+         height: 75vh; /* Adjust height */
+         bottom: 80px; /* Position above toggle */
+         right: 15px;
+         left: 15px; /* Center horizontally */
+         border-radius: 12px;
+      }
+     .chatbot-header { padding: 10px 15px; }
+     #chatbot-messages { padding: 15px; }
+     .chatbot-input-area { padding: 10px; }
+     #chatbot-input { padding: 8px 15px; }
+     #chatbot-send { width: 40px; height: 40px; }
+}
+
+/* Keyframes for typing indicator */
+@keyframes typing {
+    0%, 100% { opacity: 0.3; transform: scale(0.7); }
+    50% { opacity: 1; transform: scale(1); }
+}
+ /* Styling for typing indicator dots container */
+.typing-indicator {
+     display: flex;
+     padding: 5px 0; /* Add some vertical space */
+ }
+/* Styling for individual typing indicator dots */
+.typing-indicator span {
+     height: 8px;
+     width: 8px;
+     background-color: #aaa; /* Base color */
+     border-radius: 50%;
+     display: inline-block;
+     margin: 0 2px; /* Space between dots */
+     animation: typing 1s infinite ease-in-out;
+ }
+.typing-indicator span:nth-child(1) { animation-delay: 0.1s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+ /* Dark mode color for typing dots */
+ body[data-theme='dark'] .typing-indicator span {
+     background-color: #777;
+ }

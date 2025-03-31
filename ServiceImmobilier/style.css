@@ -1,7 +1,7 @@
 body {
     font-family: sans-serif;
     margin: 0;
-    background-color: #f0f0f5;  /* Couleur de fond générale (à ajuster) */
+    background-color: #f0f0f5;  /* Couleur de fond générale */
     color: #333; /* Couleur de texte générale */
 }
 
@@ -14,23 +14,32 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Titres généraux */
 h1, h2 {
     margin-bottom: 20px;
-    color: #004aad; /* Bleu du logo (à ajuster) */
+    color: #004aad; /* Bleu du logo (couleur titre principale) */
+    text-align: center; /* Centre les titres H1/H2 par défaut */
+}
+#main-content-section h1 { /* Spécifique pour le titre principal admin */
+     text-align: left; /* Réaligne le titre principal à gauche */
+     display: inline-block; /* Pour aligner avec le logo */
+     vertical-align: middle; /* Alignement vertical avec le logo */
+     margin-bottom: 10px;
 }
 
+
 .form-container {
-    border: 3px solid #004aad; /* Bordure bleue (à ajuster) */
+    border: 3px solid #004aad; /* Bordure bleue */
     padding: 20px;
     margin-bottom: 30px;
-    background-color: #f2f2f2;  /*Gris très clair, complémentaire */
+    background-color: #f2f2f2;  /* Gris très clair */
     border-radius: 10px;
 }
 
-/* Style spécifique pour le formulaire des biens */
-#form-bien {
-    border-color: #4CAF50; /* Vert, si vous voulez une couleur différente pour les biens */
-}
+/* Style spécifique pour le formulaire des biens (Optionnel) */
+/* #form-bien {
+    border-color: #4CAF50;
+} */
 
 
 form div {
@@ -59,74 +68,124 @@ select {
     font-size: 16px;
 }
 
-button {
+/* --- STYLING DES BOUTONS --- */
+
+/* Style général pour les boutons HORS de main-content-section (Login/Signup) */
+#login-section button,
+#signup-section button {
     padding: 12px 24px;
-    background-color: #004aad; /* Bleu du logo (à ajuster) */
+    /* Défaut : bleu foncé - si vous voulez un autre style pour login/signup, modifiez ici */
+    background-color: #003366;
     color: white;
     border: none;
     cursor: pointer;
     margin-bottom: 10px;
     border-radius: 5px;
     font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transition plus douce */
+    transition: background-color 0.3s ease, color 0.3s ease;
     font-size: 16px;
 }
 
-button:hover {
-    background-color: #fff; /* Blanc au survol */
-    color: #004aad;      /* Texte bleu au survol */
-    border: 1px solid #004aad;
+#login-section button:hover,
+#signup-section button:hover {
+    background-color: #0055aa; /* Un bleu légèrement plus clair au survol */
 }
 
 
+/* Style spécifique pour TOUS les boutons DANS main-content-section */
+#main-content-section button {
+    padding: 12px 24px;
+    background-color: #004aad; /* Bleu du titre principal */
+    color: white;
+    border: 1px solid #004aad; /* Bordure initiale de la même couleur */
+    cursor: pointer;
+    margin-bottom: 10px; /* Garde la marge */
+     margin-right: 5px; /* Ajoute un petit espace à droite */
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Ajout transition bordure */
+    font-size: 16px;
+    vertical-align: middle; /* Aide à aligner les boutons en ligne */
+}
+
+/* Style au survol pour TOUS les boutons DANS main-content-section */
+#main-content-section button:hover {
+    background-color: #fff; /* Fond blanc */
+    color: #004aad;      /* Texte bleu */
+    border-color: #004aad; /* Bordure bleue visible */
+}
+
+/* Style pour les boutons désactivés (peut s'appliquer partout) */
+button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    border-color: #ccc;
+}
+#main-content-section button:disabled:hover { /* Empêche le style hover sur les boutons désactivés */
+     background-color: #ccc;
+     color: #666;
+     border-color: #ccc;
+}
+
+/* Style pour les boutons d'export (hérite de #main-content-section button) */
 .export-btn {
-    margin-right: 10px;
+    margin-right: 10px; /* Garde la marge droite spécifique */
+     /* Pas besoin de redéfinir les couleurs ici, elles sont héritées */
 }
+
+/* Styles pour les boutons d'action dans les tableaux */
+.action-buttons button {
+    margin: 0 5px; /* Espace horizontal entre les boutons d'action */
+    padding: 5px 10px; /* Padding plus petit pour les actions */
+    font-size: 14px; /* Taille de police plus petite */
+     /* Les couleurs de fond par défaut sont maintenant gérées par #main-content-section button */
+     /* On supprime les anciennes couleurs spécifiques ici */
+     /* background-color: #f44336; */ /* Supprimé */
+     /* background-color: #008CBA; */ /* Supprimé */
+}
+
+/* Le :hover des boutons d'action est maintenant aussi géré par #main-content-section button:hover */
+/* .action-buttons button:hover { ... } */ /* Plus nécessaire sauf si besoin d'un hover différent */
+/* .action-buttons button:first-child:hover { ... } */ /* Plus nécessaire */
+
+/* --- FIN STYLING DES BOUTONS --- */
+
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    table-layout: auto; /* ou fixed si besoin de largeurs fixes */
 }
 
 th, td {
     text-align: left;
     padding: 10px;
     border: 1px solid #ddd;
+    vertical-align: middle; /* Centre verticalement le contenu */
 }
 
 th {
     background-color: #f0f0f0; /* Gris clair pour les en-têtes */
+    font-weight: bold; /* Met les entêtes en gras */
 }
 
-.action-buttons button {
-    margin: 0 5px;
-    padding: 5px 10px;
-     background-color: #f44336; /* Rouge (conserve) */
-    border-radius: 5px;
-    color: white; /* Texte blanc */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Ajout de la transition */
+td img { /* Style pour les images dans les cellules */
+     max-width: 60px; /* Limite la largeur max */
+     height: auto; /* Garde les proportions */
+     display: block; /* Empêche l'espace extra en dessous */
+     margin: 0 auto; /* Centre l'image si la cellule est plus large */
+     border-radius: 4px; /* Coins arrondis légers */
+}
 
-}
-.action-buttons button:hover{
-     background-color: #ddd;
-     color: #f44336;
- }
 
-.action-buttons button:first-child {
-    background-color: #008CBA; /* Bleu (conserve) */
-    color: white;
-}
-.action-buttons button:first-child:hover {
-      color: #008CBA;
-    background-color: #66b5ce;
-}
 footer {
     text-align: center;
-    margin-top: 20px;
-    padding: 10px;
+    margin-top: 40px; /* Plus d'espace avant le footer */
+    padding: 15px;
     background-color: #004aad;  /* Bleu du logo */
-    border-radius: 10px;
+    border-radius: 0 0 10px 10px; /* Arrondir seulement les coins du bas si le footer est collé au container */
     font-weight: bold;
     color: white;
 }
@@ -141,6 +200,8 @@ footer {
     color: white;
     z-index: 1000;
     display: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    font-weight: bold;
 }
 
 .notification.success {
@@ -155,6 +216,8 @@ footer {
 .header-content {
     text-align: center;
     margin-bottom: 30px;
+    border-bottom: 2px solid #eee; /* Ligne de séparation */
+    padding-bottom: 20px;
 }
 
 /* Conteneur pour le logo et le titre */
@@ -162,38 +225,38 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center; /* Centre horizontalement */
-    margin-bottom: 10px; /* Espace sous le logo/titre */
+    margin-bottom: 15px; /* Espace sous le logo/titre */
+    flex-wrap: wrap; /* Permet le retour à la ligne sur petit écran */
 }
 
 #logo {
-    max-width: 150px;  /* Ajustez la taille du logo */
+    max-width: 120px;  /* Taille du logo ajustée */
     height: auto;
     margin-right: 20px; /* Espace entre le logo et le titre */
 }
 
-.header-content h1 {
-    margin-bottom: 10px;
-    display: inline-block; /* Pour aligner avec le logo */
-    vertical-align: middle; /* Alignement vertical avec le logo */
-}
 
 #header-image {
-    max-width: 500px;
+    max-width: 100%; /* Prend toute la largeur */
+    max-height: 250px; /* Limite la hauteur */
     height: auto;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    object-fit: cover; /* Recouvre la zone sans déformer */
+    margin-bottom: 20px;
+    border-radius: 8px; /* Coins arrondis */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
 /* Styles pour le texte de bienvenue */
 #header-text {
-    font-size: 1.25rem; /* Augmente la taille de la police.  Ajustez selon vos besoins. */
-    /* 1.25rem est généralement équivalent à 20px, si la taille de base est 16px */
-    line-height: 1.5;  /* Améliore la lisibilité en augmentant l'espacement des lignes */
-    margin-bottom: 20px; /* Ajoute un peu d'espace sous le texte */
+    font-size: 1.2rem; /* Taille de police */
+    line-height: 1.5;
+    margin-bottom: 0; /* Pas de marge en bas car c'est le dernier élément */
+    color: #555;
 }
 
 #entreprise-name {
     font-weight: bold; /* Met le nom de l'entreprise en gras */
+    color: #004aad; /* Couleur bleue pour le nom */
 }
 
 .not-bold {
@@ -203,86 +266,204 @@ footer {
 /* Styles pour le menu */
 .menu {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* Plus d'espace après le menu */
+    padding-bottom: 20px;
+     border-bottom: 1px solid #eee;
 }
 
 .menu button {
-    margin: 0 10px;
+    margin: 5px 10px; /* Espace autour des boutons du menu */
+     /* Le style général #main-content-section button s'applique ici */
 }
+.menu button.active { /* Style pour le bouton actif */
+     background-color: #fff;
+     color: #004aad;
+     border-color: #004aad;
+     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Effet enfoncé léger */
+}
+
 
 /* Styles pour les statistiques */
 .statistiques {
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    padding: 10px;
+    margin: 20px 0 30px 0; /* Espace avant/après */
+    border: 1px solid #e0e0e0;
+    padding: 15px;
     background-color: #f9f9f9;
+    border-radius: 8px;
+    display: flex; /* Aligner les stats horizontalement */
+    flex-wrap: wrap; /* Permettre le retour à la ligne */
+    gap: 15px 30px; /* Espacement vertical et horizontal */
+    justify-content: space-around; /* Espacer équitablement */
 }
 
-.statistiques h3{
+.statistiques h3 {
+    width: 100%; /* Le titre prend toute la largeur */
     margin-top: 0;
     margin-bottom: 10px;
+    text-align: center; /* Centrer le titre des stats */
+    font-size: 1.1rem;
+    color: #333;
 }
-.statistiques div{
-    margin-bottom: 5px;
+.statistiques div {
+    margin-bottom: 0; /* Supprimer la marge du bas car géré par gap */
+    text-align: center; /* Centrer chaque stat */
 }
+.statistiques span {
+     display: block; /* Afficher label et valeur sur lignes séparées */
+}
+.statistiques span:first-child { /* Le label (Libres:, Réservés:, etc.) */
+     font-size: 0.9rem;
+     color: #666;
+     margin-bottom: 3px;
+}
+.statistiques span:last-child { /* La valeur numérique */
+     font-size: 1.2rem;
+     font-weight: bold;
+     color: #004aad;
+}
+
+/* Modales Admin */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1050; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* 10% from the top and centered */
+    padding: 25px 30px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 700px; /* Maximum width */
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative; /* For close button positioning */
+}
+
+.modal-content .close-button {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.modal-content .close-button:hover,
+.modal-content .close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-content h2 {
+    text-align: center;
+    margin-top: 0;
+    color: #004aad; /* Use main title color */
+}
+.modal-content p {
+     line-height: 1.6;
+     margin-bottom: 1em;
+}
+
 
 /* Media queries pour les smartphones */
 @media (max-width: 768px) {
     .container {
         max-width: 100%;
         padding: 10px;
+        margin: 10px 0;
         border-radius: 0;
+        box-shadow: none;
     }
+
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.4rem; }
 
     .form-container {
-        border: none;
-        padding: 10px;
+        border-width: 2px;
+        padding: 15px;
     }
 
+    input, select, textarea { font-size: 15px; }
+
+    #main-content-section button { /* Ajustement padding boutons admin sur mobile */
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+    .action-buttons button {
+        padding: 4px 8px;
+        font-size: 13px;
+        margin: 0 3px;
+    }
+     .export-btn {
+         margin-right: 5px;
+         margin-bottom: 8px; /* Ajouter marge en bas si ça wrap */
+         display: inline-block; /* S'assurer qu'ils peuvent wrapper */
+     }
+
     table {
-        font-size: 14px;
+        font-size: 13px; /* Réduit la taille de police du tableau */
     }
 
     th, td {
-        padding: 5px;
+        padding: 6px; /* Réduit le padding des cellules */
     }
+     td img { max-width: 40px; }
 
-    .action-buttons button {
-        margin: 0 2px;
-        padding: 3px 6px;
-        font-size: 12px;
-    }
-
-    .export-btn {
-        margin-right: 5px;
-        margin-bottom: 5px;
-    }
     #header-image {
-        max-width: 100%;
-        height: auto;
-        margin-bottom: 10px;
+        max-height: 180px; /* Réduit hauteur max de l'image header */
     }
-     .menu button {
-        margin: 5px; /* Réduit l'espacement vertical sur mobile */
-        display: block; /* Affiche les boutons du menu comme des blocs */
-        width: 100%; /* Les boutons prennent toute la largeur */
-    }
-    /* Ajustement pour le logo sur mobile */
-    .logo-container {
+
+     /* Ajustement pour le logo sur mobile */
+     .logo-container {
         flex-direction: column; /* Logo au-dessus du titre sur mobile */
-    }
-
-    #logo {
-        margin-right: 0; /* Pas de marge à droite sur mobile */
-        margin-bottom: 10px; /* Marge en dessous du logo */
-    }
-    .header-content h1{
+        margin-bottom: 10px;
+     }
+     #logo {
+         margin-right: 0;
+         margin-bottom: 10px;
+         max-width: 100px; /* Réduit taille logo */
+     }
+     #main-content-section h1 {
         display: block;
+        text-align: center; /* Centre le titre sous le logo */
         margin-bottom: 1rem;
+        font-size: 1.5rem; /* Taille ajustée */
+     }
+
+     #header-text { font-size: 1rem; } /* Taille texte bienvenue */
+
+     /* Menu sur mobile */
+     .menu { padding-bottom: 15px; margin-bottom: 20px;}
+     .menu button {
+        margin: 5px; /* Réduit l'espacement */
+        display: block; /* Affiche les boutons comme des blocs */
+        width: calc(100% - 10px); /* Prend presque toute la largeur */
     }
 
-      /* Augmente aussi la taille sur mobile, mais un peu moins */
-    #header-text {
-        font-size: 1.1rem;
-    }
+     /* Statistiques sur mobile */
+     .statistiques {
+          padding: 10px;
+          gap: 10px 15px; /* Réduit l'espacement */
+          justify-content: center; /* Centre les éléments */
+     }
+      .statistiques h3 { font-size: 1rem; }
+      .statistiques span:first-child { font-size: 0.8rem;}
+      .statistiques span:last-child { font-size: 1rem; }
+
+      /* Modales sur mobile */
+       .modal-content {
+           width: 90%;
+           margin: 15% auto;
+           padding: 20px;
+       }
+
 }
