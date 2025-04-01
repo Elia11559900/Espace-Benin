@@ -1,56 +1,65 @@
+/* Global Styles */
 body {
-    font-family: sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     margin: 0;
-    background-color: #f0f0f5;  /* Couleur de fond générale */
-    color: #333; /* Couleur de texte générale */
+    background-color: #f0f2f5; /* Slightly softer background */
+    color: #1c1e21; /* Darker text for better contrast */
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 .container {
     max-width: 1500px;
     margin: 20px auto;
-    padding: 20px;
-    background-color: #fff; /* Fond blanc pour le contenu principal */
+    padding: 25px;
+    background-color: #ffffff; /* Pure white background */
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-/* Titres généraux */
+/* Headings */
 h1, h2 {
+    margin-top: 0;
     margin-bottom: 20px;
-    color: #004aad; /* Bleu du logo (couleur titre principale) */
-    text-align: center; /* Centre les titres H1/H2 par défaut */
+    color: #004aad; /* Keep brand blue */
+    font-weight: 600; /* Slightly bolder */
 }
-#main-content-section h1 { /* Spécifique pour le titre principal admin */
-     text-align: left; /* Réaligne le titre principal à gauche */
-     display: inline-block; /* Pour aligner avec le logo */
-     vertical-align: middle; /* Alignement vertical avec le logo */
-     margin-bottom: 10px;
-}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; margin-top: 30px; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px; }
 
-
+/* Forms */
 .form-container {
-    border: 3px solid #004aad; /* Bordure bleue */
-    padding: 20px;
+    border: 1px solid #ccd0d5; /* Lighter border */
+    padding: 25px;
     margin-bottom: 30px;
-    background-color: #f2f2f2;  /* Gris très clair */
-    border-radius: 10px;
+    background-color: #f8f9fa; /* Very light grey */
+    border-radius: 8px;
 }
-
-/* Style spécifique pour le formulaire des biens (Optionnel) */
-/* #form-bien {
-    border-color: #4CAF50;
-} */
-
 
 form div {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 6px;
+    font-weight: 500; /* Medium weight */
+    color: #4b4f56; /* Slightly lighter label color */
 }
+
+/* Make checkbox label clickable */
+label input[type="checkbox"] {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+label[for="terms-checkbox"] a { /* Specific styling for links in terms label */
+    color: #004aad;
+    text-decoration: none;
+}
+label[for="terms-checkbox"] a:hover {
+    text-decoration: underline;
+}
+
 
 input[type="text"],
 input[type="number"],
@@ -61,133 +70,154 @@ input[type="file"],
 textarea,
 select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 10px 12px;
+    border: 1px solid #ccd0d5;
     box-sizing: border-box;
-    border-radius: 5px;
+    border-radius: 6px;
     font-size: 16px;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* --- STYLING DES BOUTONS --- */
+input:focus, textarea:focus, select:focus {
+    border-color: #004aad;
+    box-shadow: 0 0 0 2px rgba(0, 74, 173, 0.2); /* Subtle focus ring */
+    outline: none;
+}
 
-/* Style général pour les boutons HORS de main-content-section (Login/Signup) */
-#login-section button,
-#signup-section button {
-    padding: 12px 24px;
-    /* Défaut : bleu foncé - si vous voulez un autre style pour login/signup, modifiez ici */
-    background-color: #003366;
+input[type="file"] {
+    padding: 8px 12px; /* Adjust padding for file input */
+    background-color: #f0f2f5;
+}
+input[readonly] {
+    background-color: #e9ecef; /* Indicate readonly */
+    cursor: not-allowed;
+}
+
+
+textarea {
+    min-height: 80px; /* Minimum height for text areas */
+    resize: vertical; /* Allow vertical resize */
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px; /* Slightly smaller padding */
+    background-color: #004aad;
     color: white;
     border: none;
     cursor: pointer;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-bottom: 10px; /* Add space below buttons */
+    border-radius: 6px;
+    font-weight: 600;
     font-size: 16px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: inline-block; /* Ensure buttons align nicely */
+    vertical-align: middle;
 }
 
-#login-section button:hover,
-#signup-section button:hover {
-    background-color: #0055aa; /* Un bleu légèrement plus clair au survol */
+button:hover {
+    background-color: #003d8f; /* Darker blue on hover */
+}
+button:active {
+    transform: scale(0.98); /* Slight press effect */
 }
 
-
-/* Style spécifique pour TOUS les boutons DANS main-content-section */
-#main-content-section button {
-    padding: 12px 24px;
-    background-color: #004aad; /* Bleu du titre principal */
-    color: white;
-    border: 1px solid #004aad; /* Bordure initiale de la même couleur */
-    cursor: pointer;
-    margin-bottom: 10px; /* Garde la marge */
-     margin-right: 5px; /* Ajoute un petit espace à droite */
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Ajout transition bordure */
-    font-size: 16px;
-    vertical-align: middle; /* Aide à aligner les boutons en ligne */
-}
-
-/* Style au survol pour TOUS les boutons DANS main-content-section */
-#main-content-section button:hover {
-    background-color: #fff; /* Fond blanc */
-    color: #004aad;      /* Texte bleu */
-    border-color: #004aad; /* Bordure bleue visible */
-}
-
-/* Style pour les boutons désactivés (peut s'appliquer partout) */
 button:disabled {
-    background-color: #ccc;
-    color: #666;
+    background-color: #a0b3c7;
     cursor: not-allowed;
-    border-color: #ccc;
-}
-#main-content-section button:disabled:hover { /* Empêche le style hover sur les boutons désactivés */
-     background-color: #ccc;
-     color: #666;
-     border-color: #ccc;
 }
 
-/* Style pour les boutons d'export (hérite de #main-content-section button) */
+/* Export buttons */
 .export-btn {
-    margin-right: 10px; /* Garde la marge droite spécifique */
-     /* Pas besoin de redéfinir les couleurs ici, elles sont héritées */
+    margin-right: 10px;
+    background-color: #6c757d; /* Grey for export */
+    font-size: 14px;
+    padding: 8px 15px;
+}
+.export-btn:hover {
+    background-color: #5a6268;
 }
 
-/* Styles pour les boutons d'action dans les tableaux */
-.action-buttons button {
-    margin: 0 5px; /* Espace horizontal entre les boutons d'action */
-    padding: 5px 10px; /* Padding plus petit pour les actions */
-    font-size: 14px; /* Taille de police plus petite */
-     /* Les couleurs de fond par défaut sont maintenant gérées par #main-content-section button */
-     /* On supprime les anciennes couleurs spécifiques ici */
-     /* background-color: #f44336; */ /* Supprimé */
-     /* background-color: #008CBA; */ /* Supprimé */
-}
-
-/* Le :hover des boutons d'action est maintenant aussi géré par #main-content-section button:hover */
-/* .action-buttons button:hover { ... } */ /* Plus nécessaire sauf si besoin d'un hover différent */
-/* .action-buttons button:first-child:hover { ... } */ /* Plus nécessaire */
-
-/* --- FIN STYLING DES BOUTONS --- */
-
-
+/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    table-layout: auto; /* ou fixed si besoin de largeurs fixes */
+    margin-top: 25px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden; /* For rounded corners */
 }
 
 th, td {
     text-align: left;
-    padding: 10px;
-    border: 1px solid #ddd;
-    vertical-align: middle; /* Centre verticalement le contenu */
+    padding: 12px 15px; /* More padding */
+    border-bottom: 1px solid #e0e0e0; /* Lighter border */
+    vertical-align: middle; /* Align content vertically */
 }
 
 th {
-    background-color: #f0f0f0; /* Gris clair pour les en-têtes */
-    font-weight: bold; /* Met les entêtes en gras */
+    background-color: #f8f9fa; /* Light grey header */
+    font-weight: 600;
+    color: #333;
+    font-size: 14px; /* Slightly smaller header text */
+    text-transform: uppercase; /* Uppercase headers */
+    letter-spacing: 0.5px;
 }
 
-td img { /* Style pour les images dans les cellules */
-     max-width: 60px; /* Limite la largeur max */
-     height: auto; /* Garde les proportions */
-     display: block; /* Empêche l'espace extra en dessous */
-     margin: 0 auto; /* Centre l'image si la cellule est plus large */
-     border-radius: 4px; /* Coins arrondis légers */
+tr:last-child td {
+    border-bottom: none; /* Remove border on last row */
+}
+tr:hover {
+    background-color: #f0f2f5; /* Row hover effect */
 }
 
+td img {
+    display: block; /* Prevent extra space below images */
+    border-radius: 4px; /* Rounded images */
+    max-width: 50px; /* Ensure image doesn't break layout */
+    height: auto;
+}
 
+/* Action Buttons in Table */
+.action-buttons {
+    white-space: nowrap; /* Prevent buttons wrapping */
+    text-align: center; /* Center buttons */
+}
+
+.action-buttons button {
+    margin: 0 4px;
+    padding: 6px 8px; /* Smaller buttons */
+    background-color: transparent; /* Transparent background */
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #6c757d; /* Default grey color */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    line-height: 1; /* Ensure icon vertical alignment */
+}
+.action-buttons button svg {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+}
+
+/* Specific button colors */
+.action-buttons button[title="Éditer"]:hover { background-color: #e6f2ff; color: #0056b3; } /* Light Blue */
+.action-buttons button[title="Supprimer"]:hover { background-color: #fdeaea; color: #dc3545; } /* Light Red */
+.action-buttons button[title="Changer Statut"]:hover { background-color: #e6f8f0; color: #28a745; } /* Light Green */
+
+
+/* Footer */
 footer {
     text-align: center;
-    margin-top: 40px; /* Plus d'espace avant le footer */
+    margin-top: 40px;
     padding: 15px;
-    background-color: #004aad;  /* Bleu du logo */
-    border-radius: 0 0 10px 10px; /* Arrondir seulement les coins du bas si le footer est collé au container */
-    font-weight: bold;
+    background-color: #004aad;
+    border-radius: 0 0 10px 10px; /* Round bottom corners */
+    font-weight: 500;
     color: white;
+    font-size: 14px;
 }
 
 /* Notifications */
@@ -195,159 +225,167 @@ footer {
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 15px 20px;
-    border-radius: 5px;
+    padding: 15px 25px;
+    border-radius: 6px;
     color: white;
     z-index: 1000;
     display: none;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 16px;
+    font-weight: 500;
 }
 
-.notification.success {
-    background-color: #4CAF50; /* Vert */
-}
+.notification.success { background-color: #28a745; } /* Green */
+.notification.error { background-color: #dc3545; } /* Red */
+.notification.warning { background-color: #ffc107; color: #333; } /* Yellow */
+.notification.info { background-color: #17a2b8; } /* Teal */
 
-.notification.error {
-    background-color: #f44336; /* Rouge */
-}
 
-/* Styles pour le header */
+/* Header Content */
 .header-content {
     text-align: center;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eee; /* Ligne de séparation */
+    margin-bottom: 40px;
     padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-/* Conteneur pour le logo et le titre */
 .logo-container {
     display: flex;
     align-items: center;
-    justify-content: center; /* Centre horizontalement */
-    margin-bottom: 15px; /* Espace sous le logo/titre */
-    flex-wrap: wrap; /* Permet le retour à la ligne sur petit écran */
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 15px; /* Space between logo and title */
 }
 
 #logo {
-    max-width: 120px;  /* Taille du logo ajustée */
+    max-width: 100px; /* Adjusted size */
     height: auto;
-    margin-right: 20px; /* Espace entre le logo et le titre */
 }
 
+.header-content h1 {
+    margin: 0; /* Reset margin */
+    border-bottom: none; /* Remove default border */
+    padding-bottom: 0;
+    font-size: 1.8rem; /* Adjusted size */
+}
 
 #header-image {
-    max-width: 100%; /* Prend toute la largeur */
-    max-height: 250px; /* Limite la hauteur */
+    max-width: 100%; /* Make image responsive */
+    max-height: 250px; /* Limit height */
     height: auto;
-    object-fit: cover; /* Recouvre la zone sans déformer */
-    margin-bottom: 20px;
-    border-radius: 8px; /* Coins arrondis */
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+    border-radius: 8px;
+    object-fit: cover; /* Cover the area nicely */
 }
 
-/* Styles pour le texte de bienvenue */
 #header-text {
-    font-size: 1.2rem; /* Taille de police */
-    line-height: 1.5;
-    margin-bottom: 0; /* Pas de marge en bas car c'est le dernier élément */
-    color: #555;
+    font-size: 1.15rem; /* Slightly larger welcome text */
+    color: #4b4f56;
+    margin-bottom: 0;
 }
+#entreprise-name { font-weight: 600; color: #004aad; }
+.not-bold { font-weight: normal; }
 
-#entreprise-name {
-    font-weight: bold; /* Met le nom de l'entreprise en gras */
-    color: #004aad; /* Couleur bleue pour le nom */
-}
-
-.not-bold {
-    font-weight: normal; /* Annule le gras */
-}
-
-/* Styles pour le menu */
+/* Menu */
 .menu {
     text-align: center;
-    margin-bottom: 30px; /* Plus d'espace après le menu */
+    margin-bottom: 30px;
     padding-bottom: 20px;
-     border-bottom: 1px solid #eee;
+    /* border-bottom: 1px solid #e0e0e0; */
 }
-
 .menu button {
-    margin: 5px 10px; /* Espace autour des boutons du menu */
-     /* Le style général #main-content-section button s'applique ici */
-}
-.menu button.active { /* Style pour le bouton actif */
-     background-color: #fff;
-     color: #004aad;
-     border-color: #004aad;
-     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Effet enfoncé léger */
+    margin: 5px 8px; /* Spacing around menu buttons */
 }
 
-
-/* Styles pour les statistiques */
+/* Statistiques */
 .statistiques {
-    margin: 20px 0 30px 0; /* Espace avant/après */
+    margin-bottom: 25px;
     border: 1px solid #e0e0e0;
     padding: 15px;
-    background-color: #f9f9f9;
+    background-color: #f8f9fa;
     border-radius: 8px;
-    display: flex; /* Aligner les stats horizontalement */
-    flex-wrap: wrap; /* Permettre le retour à la ligne */
-    gap: 15px 30px; /* Espacement vertical et horizontal */
-    justify-content: space-around; /* Espacer équitablement */
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 15px; /* Space between stat items */
 }
-
 .statistiques h3 {
-    width: 100%; /* Le titre prend toute la largeur */
-    margin-top: 0;
-    margin-bottom: 10px;
-    text-align: center; /* Centrer le titre des stats */
+    width: 100%; /* Make title span full width */
+    margin: 0 0 10px 0;
     font-size: 1.1rem;
-    color: #333;
+    color: #004aad;
+    border-bottom: none;
+    padding-bottom: 0;
 }
 .statistiques div {
-    margin-bottom: 0; /* Supprimer la marge du bas car géré par gap */
-    text-align: center; /* Centrer chaque stat */
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    flex-grow: 1; /* Allow items to grow */
+    text-align: center;
+    min-width: 100px; /* Ensure minimum width */
 }
-.statistiques span {
-     display: block; /* Afficher label et valeur sur lignes séparées */
+.statistiques div span:first-child {
+    font-weight: 500;
+    color: #555;
+    display: block; /* Label on top */
+    margin-bottom: 4px;
+    font-size: 0.9rem;
 }
-.statistiques span:first-child { /* Le label (Libres:, Réservés:, etc.) */
-     font-size: 0.9rem;
-     color: #666;
-     margin-bottom: 3px;
-}
-.statistiques span:last-child { /* La valeur numérique */
-     font-size: 1.2rem;
-     font-weight: bold;
-     color: #004aad;
+.statistiques div span:last-child {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #004aad;
 }
 
-/* Modales Admin */
+/* Statut Specific Styles */
+.statut-libre { color: #28a745; font-weight: 600; } /* Green */
+.statut-réservé { color: #ffc107; font-weight: 600; } /* Yellow */
+.statut-occupé { color: #dc3545; font-weight: 600; } /* Red */
+.statut-paiement-en-attente { color: #ffc107; font-weight: 600; }
+.statut-paiement-payé { color: #28a745; font-weight: 600; }
+.statut-paiement-refusé { color: #dc3545; font-weight: 600; }
+
+
+/* Profile Form Specific Styles */
+#form-profil small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Modals */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1050; /* Sit on top */
+    display: none;
+    position: fixed;
+    z-index: 1001; /* Above notification */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+    padding-top: 60px;
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 10% auto; /* 10% from the top and centered */
-    padding: 25px 30px;
+    margin: 5% auto;
+    padding: 30px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 700px; /* Maximum width */
+    width: 80%;
+    max-width: 700px; /* Max width for modal */
     border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     position: relative; /* For close button positioning */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.modal-content h2 {
+    margin-top: 0;
+    color: #004aad;
 }
 
-.modal-content .close-button {
+.close-button {
     color: #aaa;
     position: absolute;
     top: 10px;
@@ -355,115 +393,144 @@ footer {
     font-size: 28px;
     font-weight: bold;
     line-height: 1;
-}
-
-.modal-content .close-button:hover,
-.modal-content .close-button:focus {
-    color: black;
-    text-decoration: none;
     cursor: pointer;
 }
-.modal-content h2 {
-    text-align: center;
-    margin-top: 0;
-    color: #004aad; /* Use main title color */
-}
-.modal-content p {
-     line-height: 1.6;
-     margin-bottom: 1em;
-}
+.close-button:hover, .close-button:focus { color: black; text-decoration: none; }
 
-
-/* Media queries pour les smartphones */
-@media (max-width: 768px) {
+/* Media Queries */
+@media (max-width: 992px) {
     .container {
-        max-width: 100%;
-        padding: 10px;
-        margin: 10px 0;
+        max-width: 95%;
+        padding: 20px;
+    }
+    .statistiques {
+        gap: 10px;
+    }
+    .statistiques div {
+        padding: 8px 12px;
+    }
+     .statistiques div span:last-child {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
+
+    .container {
+        margin: 10px auto;
+        padding: 15px;
+        border-radius: 0; /* Full width on mobile */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    /* Stack menu buttons vertically */
+    .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Space between stacked buttons */
+    }
+    .menu button {
+        width: 100%; /* Full width buttons */
+        margin: 0; /* Remove horizontal margins */
+    }
+
+    /* Responsive Tables */
+    table {
+        border: 0; /* Remove main table border */
         border-radius: 0;
         box-shadow: none;
     }
 
-    h1 { font-size: 1.6rem; }
-    h2 { font-size: 1.4rem; }
-
-    .form-container {
-        border-width: 2px;
-        padding: 15px;
+    thead {
+        display: none; /* Hide table headers */
     }
 
-    input, select, textarea { font-size: 15px; }
+    tr {
+        display: block; /* Make rows block elements */
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        background-color: #fff; /* Ensure background */
+    }
 
-    #main-content-section button { /* Ajustement padding boutons admin sur mobile */
-        padding: 10px 15px;
-        font-size: 15px;
+    td {
+        display: block; /* Make cells block elements */
+        text-align: right; /* Align content to the right */
+        padding-left: 50%; /* Make space for the label */
+        position: relative; /* For pseudo-element positioning */
+        border-bottom: 1px solid #eee; /* Separator between cells */
+        min-height: 30px; /* Ensure minimum height */
+        word-wrap: break-word; /* Allow long content to wrap */
     }
-    .action-buttons button {
-        padding: 4px 8px;
-        font-size: 13px;
-        margin: 0 3px;
+    td:last-child {
+        border-bottom: 0; /* Remove border on last cell */
     }
+
+    td::before {
+        content: attr(data-label); /* Use data-label for the text */
+        position: absolute;
+        left: 10px;
+        width: 45%; /* Adjust width as needed */
+        padding-right: 10px;
+        text-align: left; /* Align label text left */
+        font-weight: bold;
+        color: #555;
+        white-space: nowrap; /* Prevent label wrapping */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Add ellipsis if label is too long */
+    }
+
+     /* Special handling for action buttons cell */
+    td.action-buttons {
+        text-align: center; /* Center buttons */
+        padding-left: 10px; /* Reset padding */
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    td.action-buttons::before {
+        content: ""; /* Remove label for actions */
+    }
+    td.action-buttons button {
+         margin: 2px;
+     }
+
+     /* Special handling for image cell */
+    td img {
+         max-width: 40px; /* Smaller image */
+         float: right; /* Align image right */
+         margin-left: 10px; /* Space between image and label */
+    }
+
+     /* Make export buttons full width */
      .export-btn {
-         margin-right: 5px;
-         margin-bottom: 8px; /* Ajouter marge en bas si ça wrap */
-         display: inline-block; /* S'assurer qu'ils peuvent wrapper */
-     }
-
-    table {
-        font-size: 13px; /* Réduit la taille de police du tableau */
-    }
-
-    th, td {
-        padding: 6px; /* Réduit le padding des cellules */
-    }
-     td img { max-width: 40px; }
-
-    #header-image {
-        max-height: 180px; /* Réduit hauteur max de l'image header */
-    }
-
-     /* Ajustement pour le logo sur mobile */
-     .logo-container {
-        flex-direction: column; /* Logo au-dessus du titre sur mobile */
-        margin-bottom: 10px;
-     }
-     #logo {
-         margin-right: 0;
-         margin-bottom: 10px;
-         max-width: 100px; /* Réduit taille logo */
-     }
-     #main-content-section h1 {
         display: block;
-        text-align: center; /* Centre le titre sous le logo */
-        margin-bottom: 1rem;
-        font-size: 1.5rem; /* Taille ajustée */
+        width: 100%;
+        margin: 5px 0;
+        text-align: center;
      }
 
-     #header-text { font-size: 1rem; } /* Taille texte bienvenue */
-
-     /* Menu sur mobile */
-     .menu { padding-bottom: 15px; margin-bottom: 20px;}
-     .menu button {
-        margin: 5px; /* Réduit l'espacement */
-        display: block; /* Affiche les boutons comme des blocs */
-        width: calc(100% - 10px); /* Prend presque toute la largeur */
+    .header-content {
+        margin-bottom: 20px;
     }
+    .logo-container {
+        flex-direction: column; /* Stack logo and title */
+        gap: 10px;
+    }
+    #logo { max-width: 80px; }
+    .header-content h1 { font-size: 1.5rem; }
+    #header-text { font-size: 1rem; }
 
-     /* Statistiques sur mobile */
-     .statistiques {
-          padding: 10px;
-          gap: 10px 15px; /* Réduit l'espacement */
-          justify-content: center; /* Centre les éléments */
-     }
-      .statistiques h3 { font-size: 1rem; }
-      .statistiques span:first-child { font-size: 0.8rem;}
-      .statistiques span:last-child { font-size: 1rem; }
-
-      /* Modales sur mobile */
-       .modal-content {
-           width: 90%;
-           margin: 15% auto;
-           padding: 20px;
-       }
-
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+        margin: 10% auto;
+    }
 }

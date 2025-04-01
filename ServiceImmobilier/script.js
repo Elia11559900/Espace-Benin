@@ -1,10 +1,8 @@
-// --- START OF COMPLETE script.js ---
+// --- Section 1: ESPACE BENIN Real Estate Logic (Firebase, Search, Modals, etc.) ---
 
-// --- Section 1: Core Real Estate Logic ---
-
-// Configuration de Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyAwHqU_XLmDz9VbsxVGN3wbru3-hLDiyNI", // Replace with your actual API key if different
+// Configuration de Firebase (ESPACE BENIN)
+const firebaseConfigEspaceBenin = {
+    apiKey: "AIzaSyAwHqU_XLmDz9VbsxVGN3wbru3-hLDiyNI", // Clé de ESPACE BENIN
     authDomain: "microfinance-68811.firebaseapp.com",
     databaseURL: "https://microfinance-68811-default-rtdb.firebaseio.com",
     projectId: "microfinance-68811",
@@ -14,99 +12,138 @@ const firebaseConfig = {
     measurementId: "G-RBQJH93VWE"
 };
 
-// Initialiser Firebase
-let app;
-if (!firebase.apps.length) {
-    app = firebase.initializeApp(firebaseConfig);
-} else {
-    app = firebase.app();
-}
-const database = firebase.database();
-
-// Function to show/hide loading indicator
-function toggleLoading(show) {
-    const loadingIndicator = document.getElementById("loading-indicator");
-    if (loadingIndicator) {
-        loadingIndicator.style.display = show ? "block" : "none";
+// Initialiser Firebase pour ESPACE BENIN (avec un nom unique)
+let espaceBeninApp;
+let databaseEspaceBenin;
+try {
+    // Make sure firebase object is available from the SDK script loaded in HTML
+    if (typeof firebase !== 'undefined') {
+        espaceBeninApp = firebase.initializeApp(firebaseConfigEspaceBenin, "espaceBenin");
+        databaseEspaceBenin = espaceBeninApp.database();
+        console.log("Firebase for EspaceBenin initialized successfully.");
+    } else {
+        throw new Error("Firebase SDK not loaded before script.js execution.");
     }
+} catch (error) {
+    console.error("Firebase (EspaceBenin) initialization failed:", error);
+    alert("Erreur critique: Impossible d'initialiser la connexion à la base de données Espace Benin. Certaines fonctionnalités seront indisponibles.");
+    const derniersLogementsContainerError = document.getElementById("derniers-logements");
+    const temoignagesContainerError = document.querySelector(".temoignages-container");
+    if(derniersLogementsContainerError) derniersLogementsContainerError.innerHTML = "<p style='color:red; text-align:center;'>Erreur connexion données.</p>";
+    if(temoignagesContainerError) temoignagesContainerError.innerHTML = "<p style='color:red; text-align:center;'>Erreur connexion données.</p>";
 }
 
-// Generic search function
+// --- DOM Element References ---
+const loadingIndicator = document.getElementById("loading-indicator");
+const resultatsRechercheContainer = document.getElementById("resultats-recherche");
+const typeRechercheSelect = document.getElementById("type-recherche");
+const champsLogementsDiv = document.getElementById("champs-logements");
+const champsBiensDiv = document.getElementById("champs-biens");
+const derniersLogementsContainer = document.getElementById("derniers-logements");
+const voirPlusButton = document.getElementById("voir-plus");
+const dernierePublicationSection = document.getElementById('derniere-publication');
+const menuToggle = document.getElementById("menu-toggle");
+const mainNav = document.getElementById("main-nav");
+const temoignagesContainer = document.querySelector(".temoignages-container");
+const formAjoutAvis = document.getElementById("form-ajout-avis");
+const adminLoginButton = document.getElementById('admin-login-button');
+const detailsModalContainer = document.getElementById('details-modal-container');
+
+// --- State Variable ---
+let isAllPublicationsVisible = false; // Tracks if all publications are currently shown
+
+// --- Utility Functions ---
+function toggleLoading(show) { if (loadingIndicator) loadingIndicator.style.display = show ? "flex" : "none"; }
+function formatCurrency(amount) { if (amount == null || isNaN(Number(amount))) return "Prix non spécifié"; const num = Number(amount); return num.toLocaleString('fr-FR') + " FCFA"; }
+function getStatusClass(status) { status = status?.toLowerCase().trim() || 'non spécifié'; switch (status) { case 'payé': return 'status-paye'; case 'réservé': return 'status-reserve'; case 'disponible': case 'libre': return 'status-disponible'; default: return 'status-non-specifie'; } }
+
+
+// --- Core Functionality (Espace Benin) ---
+
+// Fonction de recherche générique
 async function effectuerRecherche(budget, quartier, ville, typeLogement) {
     toggleLoading(true);
     const resultats = {};
     const maintenant = Date.now();
-    const typeRechercheSelect = document.getElementById("type-recherche");
     const typeRechercheSelectionne = typeRechercheSelect ? typeRechercheSelect.value : 'logements';
+    const VINGT_QUATRE_HEURES_MS = 24 * 60 * 60 * 1000;
+
+    if (!databaseEspaceBenin) {
+         console.error("DB EspaceBenin non init.");
+         toggleLoading(false);
+         return {};
+     }
 
     try {
-        const entreprisesSnapshot = await database.ref('entreprises').once('value');
+        const entreprisesSnapshot = await databaseEspaceBenin.ref('entreprises').once('value');
         const entreprisesData = entreprisesSnapshot.val();
+        if (!entreprisesData) return {};
 
-        if (!entreprisesData) {
-            console.log("Aucune entreprise trouvée.");
-            return {};
-        }
+        const fetchPromises = Object.keys(entreprisesData).map(async (entrepriseKey) => {
+            const entrepriseNom = entreprisesData[entrepriseKey]?.nom || 'Nom Inconnu';
+            // ---> NOUVEAU: Store whatsapp number for later use in cards if needed, though modal is better <---
+            const entrepriseWhatsappNum = entreprisesData[entrepriseKey]?.whatsapp || ''; // Store it here
+            // ---> FIN NOUVEAU <---
+            const itemsRef = databaseEspaceBenin.ref(`entreprises/${entrepriseKey}/${typeRechercheSelectionne}`);
+            const itemsSnapshot = await itemsRef.once('value');
+            const itemsData = itemsSnapshot.val();
+            if (!itemsData) return;
 
-        const entreprisePromises = Object.keys(entreprisesData).map(async (entrepriseKey) => {
-            const entrepriseNomSnapshot = await database.ref(`entreprises/${entrepriseKey}/nom`).once('value');
-            const entrepriseNom = entrepriseNomSnapshot.val() || "Entreprise inconnue";
-            const typesToSearch = [typeRechercheSelectionne];
-
-            for (const typeRecherche of typesToSearch) {
-                const itemsRef = database.ref(`entreprises/${entrepriseKey}/${typeRecherche}`);
-                const itemsSnapshot = await itemsRef.once('value');
-                const itemsData = itemsSnapshot.val();
-
-                if (!itemsData) continue;
-
-                for (const itemKey of Object.keys(itemsData)) {
+            for (const itemKey in itemsData) {
+                 if (Object.hasOwnProperty.call(itemsData, itemKey)) {
                     const item = itemsData[itemKey];
-                    if (typeof item !== 'object' || item === null || typeof item.prix === 'undefined') {
-                        console.warn(`Skipping invalid item: entreprise=${entrepriseKey}, type=${typeRecherche}, key=${itemKey}`);
-                        continue;
-                    }
+                    if (typeof item !== 'object' || item === null) continue;
 
                     let isPaidAndUnavailable = false;
                     if (item.statut === "Payé" && item.datePaiement) {
                         try {
-                            const datePaiement = new Date(item.datePaiement);
-                            const vingtQuatreHeures = 24 * 60 * 60 * 1000;
-                            if (!isNaN(datePaiement.getTime()) && (maintenant - datePaiement.getTime() < vingtQuatreHeures)) {
+                            const dp = new Date(item.datePaiement).getTime();
+                            // Mark as unavailable only if paid WITHIN the last 24 hours
+                            if (!isNaN(dp) && (maintenant - dp < VINGT_QUATRE_HEURES_MS)) {
                                 isPaidAndUnavailable = true;
                             }
-                        } catch (e) { console.warn("Invalid date format for item:", itemKey, item.datePaiement); }
+                        } catch(e){ /* Ignore date parsing errors */ }
                     }
-                    if (isPaidAndUnavailable) continue;
+                    // Also consider "Occupé" as unavailable for new searches
+                    if (isPaidAndUnavailable || item.statut === "Occupé") {
+                         continue; // Skip if paid recently or occupied
+                    }
 
-                    const itemPrice = Number(item.prix);
-                    const budgetMatch = (budget === null || isNaN(itemPrice) || itemPrice <= budget);
-                    const quartierMatch = (quartier === null || !quartier || (typeof item.quartier === 'string' && item.quartier.toLowerCase().includes(quartier.toLowerCase())));
-                    const villeMatch = (ville === null || !ville || (typeof item.ville === 'string' && item.ville.toLowerCase().includes(ville.toLowerCase())));
+                    const itemPrixNum = item.prix != null ? parseFloat(String(item.prix).replace(/[^0-9.,]+/g, "").replace(',', '.')) : null;
+                    const budgetMatch = budget === null || (itemPrixNum !== null && !isNaN(itemPrixNum) && itemPrixNum <= budget);
+                    const quartierMatch = quartier === null || !quartier || (typeof item.quartier === 'string' && item.quartier.toLowerCase().includes(quartier.toLowerCase()));
+                    const villeMatch = ville === null || !ville || (typeof item.ville === 'string' && item.ville.toLowerCase().includes(ville.toLowerCase()));
 
-                    if (budgetMatch && quartierMatch && villeMatch) {
-                        const typeLogementMatch = !(typeRecherche === 'logements' && typeLogement !== null && typeLogement !== "" && (typeof item.type !== 'string' || !item.type.toLowerCase().includes(typeLogement.toLowerCase())));
+                    let typeMatch = true;
+                    if (typeRechercheSelectionne === 'logements' && typeLogement) {
+                       typeMatch = typeof item.type === 'string' && item.type.toLowerCase().includes(typeLogement.toLowerCase());
+                    }
 
-                        if (typeLogementMatch) {
-                            resultats[itemKey + '_' + typeRecherche] = {
-                                ...item,
-                                entrepriseId: entrepriseKey,
-                                entrepriseNom: entrepriseNom,
-                                statut: item.statut || "Non spécifié",
-                                typeRecherche: typeRecherche,
-                                id: itemKey
-                            };
-                        }
+                    if (budgetMatch && quartierMatch && villeMatch && typeMatch) {
+                        let datePub = 0;
+                        try { if(item.datePublication) { datePub = new Date(item.datePublication).getTime(); if(isNaN(datePub)) datePub = 0; } } catch(e){ datePub = 0;}
+                        resultats[itemKey + '_' + typeRechercheSelectionne] = {
+                            ...item,
+                            id: itemKey,
+                            entrepriseId: entrepriseKey,
+                            entrepriseNom,
+                            // ---> NOUVEAU: Pass whatsapp number to item data if needed here <---
+                            // entrepriseWhatsapp: entrepriseWhatsappNum, // Optional: pass for direct card usage (not recommended)
+                            // ---> FIN NOUVEAU <---
+                            typeRecherche: typeRechercheSelectionne,
+                            statut: item.statut || "Libre", // Default to Libre if missing
+                            datePublicationTimestamp: datePub
+                        };
                     }
                 }
             }
         });
 
-        await Promise.all(entreprisePromises);
+        await Promise.all(fetchPromises);
         return resultats;
 
     } catch (error) {
-        console.error(`Erreur lors de la récupération des données:`, error);
+        console.error(`Erreur lors de la recherche ${typeRechercheSelectionne}:`, error);
         alert(`Une erreur est survenue lors de la recherche. Veuillez réessayer.`);
         return {};
     } finally {
@@ -114,1066 +151,1070 @@ async function effectuerRecherche(budget, quartier, ville, typeLogement) {
     }
 }
 
-// Function to display search results
+// Fonction pour afficher les résultats de recherche (ou tous les biens) dans la page
 function afficherResultatsDansLaPage(resultats) {
-    const resultatsRechercheDiv = document.getElementById("resultats-recherche");
-    if (!resultatsRechercheDiv) {
-        console.error("Element #resultats-recherche not found!");
-        return;
-    }
+    if (!resultatsRechercheContainer) return;
+    resultatsRechercheContainer.innerHTML = "";
+    resultatsRechercheContainer.style.display = "grid"; // Make sure it's displayed as grid
 
-    resultatsRechercheDiv.innerHTML = "";
-    resultatsRechercheDiv.style.display = "grid";
-
-    if (Object.keys(resultats).length === 0) {
-        resultatsRechercheDiv.innerHTML = `<p>Aucun résultat ne correspond à vos critères.</p>`;
+    const resultKeys = Object.keys(resultats);
+    if (resultKeys.length === 0) {
+        resultatsRechercheContainer.innerHTML = "<p class='text-center' style='grid-column: 1 / -1;'>Aucun résultat ne correspond à vos critères.</p>";
     } else {
-        for (const uniqueKey in resultats) {
-            const item = resultats[uniqueKey];
-             if (typeof item === 'object' && item !== null && item.typeRecherche) {
+        // Sort results by publication date (newest first) before displaying
+        const sortedResults = Object.values(resultats).sort((a, b) => {
+             // Handle cases where timestamp might be missing or invalid
+             const dateA = a.datePublicationTimestamp || 0;
+             const dateB = b.datePublicationTimestamp || 0;
+             return dateB - dateA;
+         });
+
+        sortedResults.forEach(item => {
+            if (typeof item === 'object' && item !== null && item.typeRecherche) {
                 const divItem = item.typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
                 if (divItem) {
-                   resultatsRechercheDiv.appendChild(divItem);
+                   resultatsRechercheContainer.appendChild(divItem);
                 }
-            } else {
-                 console.warn("Skipping invalid item in results:", item);
             }
-        }
+        });
     }
 }
 
-// Search form listener
-const formRecherche = document.getElementById("form-recherche");
-if (formRecherche) {
-    formRecherche.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const budgetInput = document.getElementById("budget");
-        const quartierInput = document.getElementById("quartier");
-        const villeInput = document.getElementById("ville");
-        const typeInput = document.getElementById("type");
-
-        const budget = budgetInput && budgetInput.value ? parseInt(budgetInput.value) : null;
-        const quartier = quartierInput ? quartierInput.value.trim() || null : null;
-        const ville = villeInput ? villeInput.value.trim() || null : null;
-        const typeLogementInput = typeInput ? typeInput.value.trim() || null : null;
-
-        const typeRechercheSelect = document.getElementById("type-recherche");
-        const selectedType = typeRechercheSelect ? typeRechercheSelect.value : 'logements';
-
-        let finalTypeLogementFilter = null;
-        if (selectedType === 'logements') {
-            finalTypeLogementFilter = typeLogementInput;
-        }
-
-        const resultatsRechercheDiv = document.getElementById("resultats-recherche");
-        if (resultatsRechercheDiv) {
-            resultatsRechercheDiv.innerHTML = '';
-            resultatsRechercheDiv.style.display = 'none';
-        }
-        toggleLoading(true);
-
-        try {
-            const resultats = await effectuerRecherche(budget, quartier, ville, finalTypeLogementFilter);
-            afficherResultatsDansLaPage(resultats);
-             if (resultatsRechercheDiv) {
-                 resultatsRechercheDiv.style.display = 'grid';
-             }
-        } catch (error) {
-            console.error("Erreur pendant la recherche:", error);
-            if (resultatsRechercheDiv) {
-                resultatsRechercheDiv.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: red;">Erreur lors de la recherche.</p>';
-                resultatsRechercheDiv.style.display = 'grid';
-            }
-        } finally {
-            toggleLoading(false);
-        }
-    });
-} else {
-     console.error("Search form (#form-recherche) not found!");
-}
-
-// Function to create a 'Bien' card
+// Fonction pour créer l'affichage d'un BIEN
 function creerDivBien(bien) {
-    if (!bien || typeof bien !== 'object') return null;
+    if (!bien || typeof bien !== 'object' || !bien.id) return null;
     const divBien = document.createElement("div");
     divBien.classList.add("bien");
+    const statusClass = getStatusClass(bien.statut || 'Libre'); // Default to Libre
+    const imageUrl = bien.image || 'img/placeholder.png';
+    const descCourte = bien.description ? bien.description.substring(0, 80) + (bien.description.length > 80 ? '...' : '') : 'Pas de description.';
 
-    if (bien.image) {
-         const imgBien = document.createElement("img");
-         imgBien.src = bien.image;
-         imgBien.alt = bien.titre || 'Image du bien';
-         imgBien.loading = 'lazy';
-         imgBien.onerror = (e) => { e.target.style.display='none'; console.warn(`Image failed to load: ${bien.image}`); };
-         divBien.appendChild(imgBien);
-    } else {
-         const placeholder = document.createElement('div');
-         placeholder.style.cssText = "height: 220px; background-color: #eee; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic;";
-         placeholder.textContent = 'Pas d\'image';
-         divBien.appendChild(placeholder);
+    divBien.innerHTML = `
+        <img src="${imageUrl}" alt="${bien.titre || 'Bien Divers'}" loading="lazy" onerror="this.src='img/placeholder.png';">
+        <div class="card-content">
+            <h3>${bien.titre || 'Titre non disponible'}</h3>
+            <p><span class="detail-label">Description:</span> ${descCourte}</p>
+            <p class="price">${formatCurrency(bien.prix)}</p>
+            ${bien.quartier || bien.ville ? `<p class="localisation"><i class="fas fa-map-marker-alt"></i> ${bien.quartier || ''}${bien.quartier && bien.ville ? ', ' : ''}${bien.ville || ''}</p>` : ''}
+            <p><span class="detail-label">Statut:</span> <span class="status ${statusClass}">${bien.statut || 'Libre'}</span></p> <!-- Default to Libre -->
+            <button class="button-details" data-item-id="${bien.id}" data-type="biens">
+                <i class="fas fa-info-circle"></i> Voir les Détails
+            </button>
+        </div>`;
+
+    const btn = divBien.querySelector('.button-details');
+    if(btn) {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Pass the full item object
+            afficherFenetreDetails(bien);
+        });
     }
-
-    const textContainer = document.createElement('div');
-    const titreBien = document.createElement("h3");
-    titreBien.textContent = bien.titre || 'Bien sans titre';
-    textContainer.appendChild(titreBien);
-
-    if (bien.description) {
-        const descriptionBien = document.createElement("p");
-        descriptionBien.textContent = bien.description.substring(0, 80) + (bien.description.length > 80 ? '...' : '');
-        textContainer.appendChild(descriptionBien);
-    }
-
-    const prixBien = document.createElement("p");
-    prixBien.classList.add("prix");
-    const prixNum = Number(bien.prix);
-    prixBien.textContent = (!isNaN(prixNum) ? `${prixNum.toLocaleString('fr-FR')} FCFA` : 'Prix non spécifié');
-    textContainer.appendChild(prixBien);
-
-    if (bien.ville || bien.quartier) {
-        const localisation = document.createElement("p");
-        localisation.classList.add("localisation");
-        const villeText = bien.ville || '';
-        const quartierText = bien.quartier || '';
-        localisation.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${quartierText}${quartierText && villeText ? ', ' : ''}${villeText}`;
-        textContainer.appendChild(localisation);
-    }
-
-    const statutBien = document.createElement("p");
-    statutBien.style.fontSize = '0.9em';
-    statutBien.innerHTML = `<strong>Statut:</strong> ${bien.statut || 'Non spécifié'}`;
-    textContainer.appendChild(statutBien);
-
-    const entrepriseNomParagraphe = document.createElement("p");
-    entrepriseNomParagraphe.style.fontSize = '0.85em';
-    entrepriseNomParagraphe.style.color = '#888';
-    entrepriseNomParagraphe.textContent = `Agence: ${bien.entrepriseNom || 'N/A'}`;
-    textContainer.appendChild(entrepriseNomParagraphe);
-
-    divBien.appendChild(textContainer);
-
-    const boutonDetailsBien = document.createElement("button");
-    boutonDetailsBien.textContent = "Voir les Détails";
-    boutonDetailsBien.addEventListener("click", () => {
-        afficherFenetreDetails(bien);
-    });
-    divBien.appendChild(boutonDetailsBien);
-
     return divBien;
 }
 
-// Function to create a 'Logement' card
+// Fonction pour créer l'affichage d'un LOGEMENT
 function creerDivLogement(logement) {
-    if (!logement || typeof logement !== 'object') return null;
+    if (!logement || typeof logement !== 'object' || !logement.id) return null;
     const divLogement = document.createElement("div");
     divLogement.classList.add("logement");
+    const statusClass = getStatusClass(logement.statut || 'Libre'); // Default to Libre
+    const imageUrl = logement.image || 'img/placeholder.png';
+    const descCourte = logement.description ? logement.description.substring(0, 80) + (logement.description.length > 80 ? '...' : '') : 'Pas de description.';
 
-    if (logement.image) {
-        const imgLogement = document.createElement("img");
-        imgLogement.src = logement.image;
-        imgLogement.alt = logement.titre || 'Image du logement';
-        imgLogement.loading = 'lazy';
-        imgLogement.onerror = (e) => { e.target.style.display='none'; console.warn(`Image failed to load: ${logement.image}`); };
-        divLogement.appendChild(imgLogement);
-    } else {
-         const placeholder = document.createElement('div');
-         placeholder.style.cssText = "height: 220px; background-color: #eee; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic;";
-         placeholder.textContent = 'Pas d\'image';
-         divLogement.appendChild(placeholder);
-    }
+    divLogement.innerHTML = `
+        <img src="${imageUrl}" alt="${logement.titre || 'Logement'}" loading="lazy" onerror="this.src='img/placeholder.png';">
+        <div class="card-content">
+            <h3>${logement.titre || 'Titre non disponible'}</h3>
+            <p><span class="detail-label">Type:</span> ${logement.type || 'N/A'}</p>
+            <p><span class="detail-label">Description:</span> ${descCourte}</p>
+            <p class="price">${formatCurrency(logement.prix)}</p>
+            ${logement.quartier || logement.ville ? `<p class="localisation"><i class="fas fa-map-marker-alt"></i> ${logement.quartier || ''}${logement.quartier && logement.ville ? ', ' : ''}${logement.ville || ''}</p>` : ''}
+            <p><span class="detail-label">Statut:</span> <span class="status ${statusClass}">${logement.statut || 'Libre'}</span></p> <!-- Default to Libre -->
+            <button class="button-details" data-item-id="${logement.id}" data-type="logements">
+                <i class="fas fa-info-circle"></i> Voir les Détails
+            </button>
+        </div>`;
 
-    const textContainer = document.createElement('div');
-    const titreLogement = document.createElement("h3");
-    titreLogement.textContent = logement.titre || 'Logement sans titre';
-    textContainer.appendChild(titreLogement);
-
-    if (logement.description) {
-        const descriptionLogement = document.createElement("p");
-        descriptionLogement.textContent = logement.description.substring(0, 80) + (logement.description.length > 80 ? '...' : '');
-        textContainer.appendChild(descriptionLogement);
-    }
-
-    const prixLogement = document.createElement("p");
-    prixLogement.classList.add("prix");
-    const prixNum = Number(logement.prix);
-    prixLogement.textContent = (!isNaN(prixNum) ? `${prixNum.toLocaleString('fr-FR')} FCFA` : 'Prix non spécifié');
-    textContainer.appendChild(prixLogement);
-
-    if (logement.type) {
-         const typeLogementP = document.createElement("p");
-         typeLogementP.style.fontSize = '0.9em';
-         typeLogementP.innerHTML = `<strong>Type :</strong> ${logement.type}`;
-         textContainer.appendChild(typeLogementP);
-    }
-
-    if (logement.ville || logement.quartier) {
-         const localisation = document.createElement("p");
-         localisation.classList.add("localisation");
-         const villeText = logement.ville || '';
-         const quartierText = logement.quartier || '';
-         localisation.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${quartierText}${quartierText && villeText ? ', ' : ''}${villeText}`;
-         textContainer.appendChild(localisation);
-    }
-
-    const statutLogement = document.createElement("p");
-    statutLogement.style.fontSize = '0.9em';
-    statutLogement.innerHTML = `<strong>Statut:</strong> ${logement.statut || 'Non spécifié'}`;
-    textContainer.appendChild(statutLogement);
-
-    const entrepriseNomParagraphe = document.createElement("p");
-    entrepriseNomParagraphe.style.fontSize = '0.85em';
-    entrepriseNomParagraphe.style.color = '#888';
-    entrepriseNomParagraphe.textContent = `Agence: ${logement.entrepriseNom || 'N/A'}`;
-    textContainer.appendChild(entrepriseNomParagraphe);
-
-    divLogement.appendChild(textContainer);
-
-    const boutonDetails = document.createElement("button");
-    boutonDetails.textContent = "Voir les Détails";
-    boutonDetails.addEventListener("click", () => {
-        afficherFenetreDetails(logement);
-    });
-    divLogement.appendChild(boutonDetails);
-
+    const btn = divLogement.querySelector('.button-details');
+     if(btn) {
+         btn.addEventListener('click', (e) => {
+             e.stopPropagation();
+             // Pass the full item object
+             afficherFenetreDetails(logement);
+         });
+     }
     return divLogement;
 }
 
-// Function to display latest publications
+// Fonction pour afficher les dernières publications (carousel)
 async function afficherDernieresPublications() {
-    const derniersLogementsContainer = document.getElementById("derniers-logements");
-    if (!derniersLogementsContainer) return;
+    if (!derniersLogementsContainer || !dernierePublicationSection) return;
+    if (!databaseEspaceBenin) {
+         console.error("DB EspaceBenin non init.");
+         if(derniersLogementsContainer) derniersLogementsContainer.innerHTML = "<p style='color:red; text-align:center;'>Erreur connexion données.</p>";
+         return;
+     }
 
-    derniersLogementsContainer.innerHTML = '<p class="loading" style="text-align:center; padding: 20px;">Chargement des publications...</p>';
+    dernierePublicationSection.classList.remove('hidden'); // Ensure CSS hidden class is removed
+
+    derniersLogementsContainer.innerHTML = '<p class="loading" style="text-align:center;">Chargement des publications...</p>';
     let allItems = [];
     const maintenant = Date.now();
+    const VINGT_QUATRE_HEURES_MS = 86400000; // 24 hours in milliseconds
 
     try {
-        const entreprisesSnapshot = await database.ref('entreprises').once('value');
+        const entreprisesSnapshot = await databaseEspaceBenin.ref('entreprises').once('value');
         const entreprisesData = entreprisesSnapshot.val();
         if (!entreprisesData) {
-            derniersLogementsContainer.innerHTML = "<p style='text-align:center; padding: 20px;'>Aucune publication récente.</p>";
+            derniersLogementsContainer.innerHTML = "<p style='text-align:center;'>Aucune publication récente.</p>";
+            if (voirPlusButton) voirPlusButton.style.display = 'none';
             return;
         }
 
-        const fetchPromises = Object.keys(entreprisesData).map(async (entrepriseKey) => {
-            const entrepriseNomSnapshot = await database.ref(`entreprises/${entrepriseKey}/nom`).once('value');
-            const entrepriseNom = entrepriseNomSnapshot.val() || "Entreprise inconnue";
-            const logementsSnapshot = await database.ref(`entreprises/${entrepriseKey}/logements`).once('value');
-            const biensSnapshot = await database.ref(`entreprises/${entrepriseKey}/biens`).once('value');
-            return { entrepriseKey, entrepriseNom, logementsData: logementsSnapshot.val(), biensData: biensSnapshot.val() };
-        });
+        const entrepriseNomMap = {};
+        for (const key in entreprisesData) {
+            if (Object.hasOwnProperty.call(entreprisesData, key)) {
+                entrepriseNomMap[key] = entreprisesData[key]?.nom || "Entreprise inconnue";
+            }
+        }
 
-        const results = await Promise.all(fetchPromises);
+        // Fetch latest items based on datePublication (requires indexing in Firebase for efficiency)
+        const itemPromises = Object.keys(entreprisesData).flatMap(key =>
+             ['logements', 'biens'].map(async type => ({
+                 key, type, data: (await databaseEspaceBenin.ref(`entreprises/${key}/${type}`)
+                                      .orderByChild('datePublication') // Order by date
+                                      .limitToLast(10) // Limit to recent ones per category per partner
+                                      .once('value')
+                                 ).val()
+             }))
+        );
+        const snapshots = await Promise.all(itemPromises);
 
-        results.forEach(({ entrepriseKey, entrepriseNom, logementsData, biensData }) => {
-            const processItems = (itemsData, typeRecherche) => {
-                if (!itemsData) return;
-                for (const itemKey of Object.keys(itemsData)) {
-                    const item = itemsData[itemKey];
+        snapshots.forEach(({ key, type, data }) => {
+            if (!data) return;
+            const nom = entrepriseNomMap[key];
+            for (const itemKey in data) {
+                if (Object.hasOwnProperty.call(data, itemKey)) {
+                    const item = data[itemKey];
                     if (typeof item !== 'object' || item === null) continue;
 
-                    let isPaidAndUnavailable = false;
+                    let paidRecently = false;
                     if (item.statut === "Payé" && item.datePaiement) {
                          try {
-                            const datePaiement = new Date(item.datePaiement);
-                            const vingtQuatreHeures = 24 * 60 * 60 * 1000;
-                            if (!isNaN(datePaiement.getTime()) && (maintenant - datePaiement.getTime() < vingtQuatreHeures)) {
-                                isPaidAndUnavailable = true;
-                            }
-                         } catch(e) {}
+                             const dp = new Date(item.datePaiement).getTime();
+                             if (!isNaN(dp) && (maintenant - dp < VINGT_QUATRE_HEURES_MS)) { paidRecently = true; }
+                         } catch(e){ /* ignore date parsing errors */ }
                     }
 
-                    if (!isPaidAndUnavailable) {
+                    // Skip if paid recently OR occupied
+                    if (!paidRecently && item.statut !== "Occupé") {
                         let datePub = 0;
-                        if(item.datePublication) {
-                             try { datePub = new Date(item.datePublication).getTime(); } catch(e) { datePub = 0; }
-                        }
-                        if (isNaN(datePub) || datePub === 0) { datePub = new Date(0).getTime(); }
-
-                        allItems.push({
-                            ...item,
-                            entrepriseId: entrepriseKey,
-                            entrepriseNom: entrepriseNom,
-                            id: itemKey,
-                            statut: item.statut || "Non spécifié",
-                            typeRecherche: typeRecherche,
-                            datePublicationTimestamp: datePub
-                        });
+                        try { if (item.datePublication) { datePub = new Date(item.datePublication).getTime(); if (isNaN(datePub)) datePub = 0; } } catch(e){ datePub = 0;}
+                        allItems.push({ ...item, entrepriseId: key, entrepriseNom: nom, id: itemKey, statut: item.statut || "Libre", typeRecherche: type, datePublicationTimestamp: datePub });
                     }
                 }
-            };
-            processItems(logementsData, 'logements');
-            processItems(biensData, 'biens');
+            }
         });
 
-        allItems.sort((a, b) => b.datePublicationTimestamp - a.datePublicationTimestamp);
+        allItems.sort((a, b) => (b.datePublicationTimestamp || 0) - (a.datePublicationTimestamp || 0)); // Sort all collected items by date
+        const MAX_ITEMS = 9; // Max items for the carousel
+        const recent = allItems.slice(0, MAX_ITEMS); // Take the most recent ones
+        derniersLogementsContainer.innerHTML = ''; // Clear loading message
 
-        const MAX_CAROUSEL_ITEMS = 9;
-        const recentItems = allItems.slice(0, MAX_CAROUSEL_ITEMS);
-        derniersLogementsContainer.innerHTML = '';
-
-        if (recentItems.length > 0) {
-            const itemCarousel = document.createElement("div");
-            itemCarousel.classList.add("logement-carousel");
-
-            recentItems.forEach((item) => {
-                const divItem = item.typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
-                if (divItem) {
-                     divItem.style.height = '100%'; // Ensure card takes full slide height
-                     itemCarousel.appendChild(divItem);
-                }
+        if (recent.length > 0) {
+            const carousel = document.createElement("div");
+            carousel.classList.add("logement-carousel");
+            recent.forEach(item => {
+                const div = item.typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
+                if (div) carousel.appendChild(div);
             });
-            derniersLogementsContainer.appendChild(itemCarousel);
-            setupCarousel(itemCarousel);
+            derniersLogementsContainer.appendChild(carousel);
+            setupCarousel(carousel);
+             if (voirPlusButton) voirPlusButton.style.display = 'block'; // Show button if there are items
         } else {
-            derniersLogementsContainer.innerHTML = "<p style='text-align:center; padding: 20px;'>Aucune publication récente.</p>";
+            derniersLogementsContainer.innerHTML = "<p style='text-align:center;'>Aucune publication récente.</p>";
+            if (voirPlusButton) voirPlusButton.style.display = 'none'; // Hide button if no items
         }
 
     } catch (error) {
         console.error("Erreur lors de l'affichage des dernières publications:", error);
-        derniersLogementsContainer.innerHTML = "<p style='text-align:center; padding: 20px; color: red;'>Erreur chargement publications.</p>";
+        derniersLogementsContainer.innerHTML = "<p style='text-align:center; color:red;'>Erreur lors du chargement des publications.</p>";
+         if (voirPlusButton) voirPlusButton.style.display = 'none';
     }
 }
 
-// Enhanced carousel setup function
+// Fonction pour configurer et animer le carousel
 function setupCarousel(carouselElement) {
     const slides = Array.from(carouselElement.children);
     const numSlides = slides.length;
     const container = carouselElement.parentElement;
     if (!container || numSlides <= 1) {
-        applyCarouselStylesStatic();
-        console.log("Carousel: Not enough slides or container not found.");
-        return;
+         const visibleCount = getVisibleSlidesCount();
+         if (numSlides <= visibleCount) console.log("Carousel: Not enough slides to scroll.");
+          applyCarouselStyles();
+         return;
     }
 
     let currentItemIndex = 0;
     const intervalTime = 5000;
     let slideInterval;
 
-    function getVisibleSlidesCount() {
-        if (window.innerWidth < 769) return 1;
-        return 3;
-    }
+    function getVisibleSlidesCount() { return window.innerWidth < 769 ? 1 : 3; }
 
-    function applyCarouselStyles(behavior = 'smooth') {
+    function applyCarouselStyles() {
         const visibleCount = getVisibleSlidesCount();
-        const slideWidthPercent = 100 / numSlides;
-        carouselElement.style.width = `${numSlides * 100}%`;
+        const slideWidthPercent = 100 / visibleCount;
 
         slides.forEach((slide) => {
-             slide.style.flex = `0 0 ${slideWidthPercent}%`;
-             slide.style.maxWidth = `${slideWidthPercent}%`;
-             slide.style.boxSizing = 'border-box';
-             slide.style.height = '100%';
+            slide.style.flex = `0 0 ${slideWidthPercent}%`;
+            slide.style.maxWidth = `${slideWidthPercent}%`;
+            slide.style.boxSizing = 'border-box';
         });
-
-         const offsetPercent = -(currentItemIndex * slideWidthPercent);
-         carouselElement.style.transition = (behavior === 'smooth') ? 'transform 0.5s ease-in-out' : 'none';
-         carouselElement.style.transform = `translateX(${offsetPercent}%)`;
-
-         if (behavior !== 'smooth') {
-            carouselElement.offsetHeight;
-            setTimeout(() => {
-                if (carouselElement) {
-                   carouselElement.style.transition = 'transform 0.5s ease-in-out';
-                }
-            }, 50);
-         }
+        goToSlide(currentItemIndex, 'auto'); // Apply initial position
     }
 
-     function applyCarouselStylesStatic() {
-         const visibleCount = getVisibleSlidesCount();
-         const slideWidthPercent = 100 / visibleCount;
-         carouselElement.style.width = `100%`;
-         carouselElement.style.transform = `translateX(0%)`;
-         carouselElement.style.transition = 'none';
+    function goToSlide(index, behavior = 'smooth') {
+        const visibleCount = getVisibleSlidesCount();
+        const maxIndex = Math.max(0, numSlides - visibleCount);
+        currentItemIndex = Math.min(index, maxIndex); // Correct index clamping
+        currentItemIndex = Math.max(0, currentItemIndex); // Ensure index is not negative
 
-         slides.forEach((slide) => {
-             slide.style.flex = `0 0 ${slideWidthPercent}%`;
-             slide.style.maxWidth = `${slideWidthPercent}%`;
-             slide.style.boxSizing = 'border-box';
-             slide.style.height = '100%';
-         });
-     }
+        const slideWidthPercent = 100 / visibleCount;
+        const offsetPercent = -(currentItemIndex * slideWidthPercent);
+
+        carouselElement.style.transition = (behavior === 'smooth') ? 'transform 0.5s ease-in-out' : 'none';
+        carouselElement.style.transform = `translateX(${offsetPercent}%)`;
+
+        if (behavior !== 'smooth') {
+            carouselElement.offsetHeight; // Force reflow
+            setTimeout(() => { carouselElement.style.transition = 'transform 0.5s ease-in-out'; }, 50);
+        }
+    }
 
     function nextSlide() {
-        currentItemIndex = (currentItemIndex + 1) % numSlides;
-        applyCarouselStyles('smooth');
+        const visibleCount = getVisibleSlidesCount();
+        const maxIndex = Math.max(0, numSlides - visibleCount);
+        let nextIndex = currentItemIndex + 1;
+        if (nextIndex > maxIndex) {
+            nextIndex = 0; // Wrap around
+        }
+        goToSlide(nextIndex, 'smooth');
     }
 
-     if (numSlides > getVisibleSlidesCount()) {
-        applyCarouselStyles('auto');
+    applyCarouselStyles(); // Initial setup
+
+    clearInterval(slideInterval);
+    if (numSlides > getVisibleSlidesCount()) {
         slideInterval = setInterval(nextSlide, intervalTime);
-     } else {
-         applyCarouselStylesStatic();
-     }
+    }
 
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            console.log("Resizing carousel...");
             clearInterval(slideInterval);
+            applyCarouselStyles();
             if (numSlides > getVisibleSlidesCount()) {
-                applyCarouselStyles('auto');
-                slideInterval = setInterval(nextSlide, intervalTime);
-            } else {
-                 applyCarouselStylesStatic();
+                 slideInterval = setInterval(nextSlide, intervalTime);
             }
         }, 250);
     });
 
-    container.addEventListener('mouseenter', () => {
-        if (slideInterval) clearInterval(slideInterval);
-    });
+    container.addEventListener('mouseenter', () => clearInterval(slideInterval));
     container.addEventListener('mouseleave', () => {
          if (numSlides > getVisibleSlidesCount()) {
-             clearInterval(slideInterval);
-             slideInterval = setInterval(nextSlide, intervalTime);
+              clearInterval(slideInterval);
+              slideInterval = setInterval(nextSlide, intervalTime);
          }
     });
+    console.log("Carousel setup complete.");
 }
 
-// Function to display all items
-async function afficherTout() {
-    toggleLoading(true);
-    const resultatsRechercheDiv = document.getElementById("resultats-recherche");
-    if (resultatsRechercheDiv) resultatsRechercheDiv.innerHTML = '';
 
-    let allItemsMap = {};
+// Fonction pour afficher TOUTES les publications (logements + biens)
+async function afficherTousLesLogementsEtBiens() {
+    if (!resultatsRechercheContainer || !loadingIndicator) {
+        console.error("Missing required elements for afficherTousLesLogementsEtBiens.");
+        return;
+    }
+    toggleLoading(true);
+    resultatsRechercheContainer.innerHTML = ''; // Clear previous results
+    resultatsRechercheContainer.style.display = 'none'; // Hide initially
+
+    if (!databaseEspaceBenin) {
+         console.error("DB EspaceBenin non init.");
+         resultatsRechercheContainer.innerHTML = "<p style='grid-column: 1 / -1; text-align: center; color: red;'>Erreur de connexion.</p>";
+         resultatsRechercheContainer.style.display = 'grid'; // Show error
+         toggleLoading(false);
+         return;
+     }
+
+    const resultats = {};
     const maintenant = Date.now();
+    const VINGT_QUATRE_HEURES_MS = 86400000;
 
     try {
-        const entreprisesSnapshot = await database.ref('entreprises').once('value');
+        const entreprisesSnapshot = await databaseEspaceBenin.ref('entreprises').once('value');
         const entreprisesData = entreprisesSnapshot.val();
         if (!entreprisesData) {
-             if(resultatsRechercheDiv) resultatsRechercheDiv.innerHTML = "<p style='grid-column: 1 / -1; text-align: center;'>Aucun élément à afficher.</p>";
-            toggleLoading(false);
+            afficherResultatsDansLaPage({}); // Show "no results" message
             return;
         }
 
-        const fetchPromises = Object.keys(entreprisesData).map(async (entrepriseKey) => {
-             const entrepriseNomSnapshot = await database.ref(`entreprises/${entrepriseKey}/nom`).once('value');
-             const entrepriseNom = entrepriseNomSnapshot.val() || "Entreprise inconnue";
-             const logementsSnapshot = await database.ref(`entreprises/${entrepriseKey}/logements`).once('value');
-             const biensSnapshot = await database.ref(`entreprises/${entrepriseKey}/biens`).once('value');
-             return { entrepriseKey, entrepriseNom, logementsData: logementsSnapshot.val(), biensData: biensSnapshot.val() };
-        });
+        const fetchPromises = Object.keys(entreprisesData).map(async (key) => {
+             const nom = entreprisesData[key]?.nom || 'Entreprise Inconnue';
+             const types = ['logements', 'biens']; // Fetch both types
+             for (const type of types) {
+                 const itemsRef = databaseEspaceBenin.ref(`entreprises/${key}/${type}`);
+                 const itemsSnapshot = await itemsRef.once('value'); // Fetch all items of this type
+                 const itemsData = itemsSnapshot.val();
+                 if (!itemsData) continue;
 
-        const results = await Promise.all(fetchPromises);
+                 for (const itemKey in itemsData) {
+                     if (Object.hasOwnProperty.call(itemsData, itemKey)) {
+                         const item = itemsData[itemKey];
+                         if (typeof item !== 'object' || item === null) continue;
 
-        results.forEach(({ entrepriseKey, entrepriseNom, logementsData, biensData }) => {
-             const processItems = (itemsData, typeRecherche) => {
-                 if (!itemsData) return;
-                 for (const itemKey of Object.keys(itemsData)) {
-                     const item = itemsData[itemKey];
-                     if (typeof item !== 'object' || item === null) continue;
-
-                     let isPaidAndUnavailable = false;
-                     if (item.statut === "Payé" && item.datePaiement) {
-                         try {
-                             const datePaiement = new Date(item.datePaiement);
-                             const vingtQuatreHeures = 24 * 60 * 60 * 1000;
-                             if (!isNaN(datePaiement.getTime()) && (maintenant - datePaiement.getTime() < vingtQuatreHeures)) {
-                                isPaidAndUnavailable = true;
-                             }
-                         } catch(e) {}
-                     }
-
-                     if (!isPaidAndUnavailable) {
-                         let datePub = 0;
-                         if(item.datePublication) {
-                             try { datePub = new Date(item.datePublication).getTime(); } catch(e) { datePub = 0; }
+                         let paidRecently = false;
+                         if (item.statut === "Payé" && item.datePaiement) {
+                             try { const dp = new Date(item.datePaiement).getTime(); if (!isNaN(dp) && (maintenant - dp < VINGT_QUATRE_HEURES_MS)) paidRecently = true; } catch(e){}
                          }
-                         if (isNaN(datePub) || datePub === 0) { datePub = new Date(0).getTime(); }
 
-                         allItemsMap[itemKey + '_' + typeRecherche] = {
-                             ...item,
-                             entrepriseId: entrepriseKey,
-                             entrepriseNom: entrepriseNom,
-                             id: itemKey,
-                             statut: item.statut || "Non spécifié",
-                             typeRecherche: typeRecherche,
-                             datePublicationTimestamp: datePub
-                         };
+                         // Skip if paid recently OR occupied
+                         if (!paidRecently && item.statut !== "Occupé") {
+                             let datePub = 0;
+                             try { if(item.datePublication) { datePub = new Date(item.datePublication).getTime(); if(isNaN(datePub)) datePub = 0; } } catch(e){ datePub = 0;}
+                             resultats[itemKey + '_' + type] = { ...item, id: itemKey, entrepriseId: key, entrepriseNom: nom, typeRecherche: type, statut: item.statut || "Libre", datePublicationTimestamp: datePub };
+                         }
                      }
                  }
-             };
-             processItems(logementsData, 'logements');
-             processItems(biensData, 'biens');
+             }
         });
 
-        let allItemsArray = Object.values(allItemsMap);
-        allItemsArray.sort((a, b) => b.datePublicationTimestamp - a.datePublicationTimestamp);
+        await Promise.all(fetchPromises);
 
-        const sortedItemsMap = allItemsArray.reduce((acc, item) => {
-            acc[item.id + '_' + item.typeRecherche] = item;
-            return acc;
-        }, {});
-
-        afficherResultatsDansLaPage(sortedItemsMap);
-         if (resultatsRechercheDiv) {
-                resultatsRechercheDiv.style.display = 'grid';
-         }
+        // Pass the unsorted map directly, sorting happens in afficherResultatsDansLaPage
+        afficherResultatsDansLaPage(resultats);
 
     } catch (error) {
         console.error("Erreur lors de l'affichage de tous les éléments:", error);
-        if(resultatsRechercheDiv) resultatsRechercheDiv.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: red;">Erreur chargement.</p>';
+        alert("Une erreur est survenue lors du chargement de tous les biens. Veuillez réessayer.");
+        afficherResultatsDansLaPage({}); // Show empty results on error
     } finally {
         toggleLoading(false);
     }
 }
 
-// "Voir plus" button listener
-const voirPlusButton = document.getElementById("voir-plus");
-if (voirPlusButton) {
-    voirPlusButton.addEventListener("click", () => {
-        const resultSection = document.getElementById('recherche-logement');
-        if (resultSection) {
-           window.scrollTo({
-               top: resultSection.offsetTop + resultSection.offsetHeight + 20,
-               behavior: 'smooth'
-           });
-        }
-        afficherTout();
-    });
-} else {
-     console.error("Button #voir-plus not found!");
-}
 
-// Function to display the details modal (CORRECTED WhatsApp Button Logic)
+// Fonction pour afficher la fenêtre de détails
 async function afficherFenetreDetails(item) {
-    const existingFenetre = document.querySelector(".fenetre-details");
-    if (existingFenetre) {
-        document.body.removeChild(existingFenetre);
+    if (!item || !item.entrepriseId || !detailsModalContainer || !databaseEspaceBenin) {
+        console.error("Données item/modal/DB manquantes pour afficher détails.");
+         if(!databaseEspaceBenin) alert("Erreur de connexion DB.");
+        return;
     }
+    toggleLoading(true);
 
-    const fenetreDetails = document.createElement("div");
-    fenetreDetails.classList.add("fenetre-details");
-
-    let prixNumerique = 0;
-    if (typeof item.prix === 'number') {
-        prixNumerique = item.prix;
-    } else if (typeof item.prix === 'string') {
-        prixNumerique = parseFloat(String(item.prix).replace(/[^0-9.,]+/g, "").replace(',', '.'));
-    }
-    if (isNaN(prixNumerique)) prixNumerique = 0;
-
-    let entrepriseWhatsapp = null;
     try {
-        const entrepriseSnapshot = await database.ref(`entreprises/${item.entrepriseId}`).once('value');
+        // ---> NOUVEAU: Fetch entreprise data to get WhatsApp number <---
+        const entrepriseRef = databaseEspaceBenin.ref(`entreprises/${item.entrepriseId}`);
+        const entrepriseSnapshot = await entrepriseRef.once('value');
         const entrepriseData = entrepriseSnapshot.val();
-        if (entrepriseData && entrepriseData.whatsapp) {
-             let rawNumber = String(entrepriseData.whatsapp).replace(/[^0-9]/g, '');
-             if (rawNumber.length === 8) {
-                 entrepriseWhatsapp = '229' + rawNumber;
-             } else if (rawNumber.startsWith('229') && rawNumber.length >= 9) {
-                 entrepriseWhatsapp = rawNumber;
+        if (!entrepriseData) {
+            throw new Error(`Entreprise ${item.entrepriseId} non trouvée.`);
+        }
+
+        // ---> NOUVEAU: Get and format WhatsApp number <---
+        let entrepriseWhatsapp = entrepriseData.whatsapp || ''; // Use 'whatsapp' field from admin profile
+
+        if (entrepriseWhatsapp) {
+             // Basic formatting: remove non-digits and add country code if needed (assuming Benin format)
+             entrepriseWhatsapp = entrepriseWhatsapp.replace(/[^0-9+]/g, ''); // Allow '+' sign
+             if (entrepriseWhatsapp.startsWith('+')) {
+                // Assume international format is correct
+             } else if (entrepriseWhatsapp.length === 8) { // Assuming 8 digits is local Benin length
+                 entrepriseWhatsapp = '229' + entrepriseWhatsapp;
+             } else if (entrepriseWhatsapp.length === 11 && entrepriseWhatsapp.startsWith('229')) {
+                 // Already has Benin code, do nothing
+             } else {
+                 // Number format might be unknown or invalid, clear it to disable button
+                 console.warn(`Format WhatsApp inconnu pour ${item.entrepriseNom}: ${entrepriseWhatsapp}. Bouton désactivé.`);
+                 entrepriseWhatsapp = '';
              }
+         }
+         // ---> FIN NOUVEAU <---
+
+
+        let prixNumerique = NaN;
+        if (item.prix != null) {
+             if (typeof item.prix === 'number') prixNumerique = item.prix;
+             else if (typeof item.prix === 'string') prixNumerique = parseFloat(item.prix.replace(/[^0-9.,]+/g, "").replace(',', '.'));
         }
-    } catch(error) {
-       console.error("Erreur récupération infos entreprise:", error);
-    }
 
-    const demarcheurNom = item.demarcheur || "Non spécifié";
-    const proprietaireNom = item.proprietaire || "Non spécifié";
-    const itemStatut = item.statut || 'Non spécifié';
-    const maintenant = Date.now();
-    let isPaidRecently = false;
-    if (itemStatut === "Payé" && item.datePaiement) {
-        try {
-            const datePaiement = new Date(item.datePaiement);
-            if (!isNaN(datePaiement.getTime()) && (maintenant - datePaiement.getTime() < (24 * 60 * 60 * 1000))) {
-                 isPaidRecently = true;
-            }
-        } catch(e) {}
-    }
+        const demarcheurNom = item.demarcheur || "Non spécifié";
+        const proprietaireNom = item.proprietaire || "Non spécifié";
+        const texteBoutonPayerAvance = (item.typeRecherche === 'logements') ? "Payer Loyer" : "Payer Bien";
+        const statusClass = getStatusClass(item.statut || 'Libre'); // Default to Libre
 
-    let isReservable = itemStatut !== 'Réservé' && itemStatut !== 'Payé' && !isPaidRecently;
-    let isPayable = itemStatut !== 'Payé' && !isPaidRecently;
-    let texteBoutonPayerAvance = (item.typeRecherche === 'logements') ? "Payer Loyer" : "Payer Bien";
+         let fraisReservation = 25000; // Default for > 50k
+         if (!isNaN(prixNumerique)) {
+             if (prixNumerique <= 5000) fraisReservation = 2000;
+             else if (prixNumerique <= 10000) fraisReservation = 3000;
+             else if (prixNumerique <= 15000) fraisReservation = 5000;
+             else if (prixNumerique <= 25000) fraisReservation = 10000;
+             else if (prixNumerique <= 50000) fraisReservation = 15000;
+         } else fraisReservation = null;
 
-    // --- Build Modal HTML (WhatsApp button ALWAYS active visually) ---
-    fenetreDetails.innerHTML = `
-        <button class="close-button fenetre-close-button" title="Fermer">×</button>
-        <h3>${item.titre || 'Détails'}</h3>
-        ${item.image ? `<img src="${item.image}" alt="${item.titre || 'Image'}">` : '<div style="height: 200px; background: #eee; text-align: center; line-height: 200px; color: #aaa; border-radius: 8px; border: 1px solid var(--border-light);">Pas d\'image</div>'}
-        <p>${item.description || 'Pas de description.'}</p>
-        <hr>
-        <p><strong>Prix :</strong> <span class="prix">${prixNumerique > 0 ? prixNumerique.toLocaleString('fr-FR') + ' FCFA' : 'Non spécifié'}</span></p>
-        <p><strong>Agence :</strong> ${item.entrepriseNom || 'N/A'}</p>
-        <p><strong>Statut :</strong> <span class="item-statut">${itemStatut}</span></p>
-        <p class="localisation"><i class="fas fa-map-marker-alt"></i> ${item.quartier || ''}${item.quartier && item.ville ? ', ' : ''}${item.ville || 'Non spécifiée'}</p>
-        <div class="boutons-container">
-            <button class="bouton-discussion" title="${entrepriseWhatsapp ? 'Contacter via WhatsApp' : 'WhatsApp non disponible'}"><i class="fab fa-whatsapp"></i> Discuter</button>
-            <button class="bouton-infos" title="Afficher plus d'informations">Plus d'Infos</button>
-            <button class="bouton-reservation" ${isReservable ? '' : 'disabled'} title="${isReservable ? 'Réserver ce bien' : 'Non réservable'}">Réserver</button>
-            <button class="bouton-payer-avance" ${isPayable ? '' : 'disabled'} title="${isPayable ? 'Payer le montant total' : 'Non payable'}">${texteBoutonPayerAvance}</button>
-        </div>
-        <div class="reservation-info" style="display: none;">
-             <hr><h4>Conditions de Réservation</h4>
-             <p>Frais de réservation uniques (non remboursables) basés sur le prix :</p>
-             <ul><li>Prix <= 5.000 FCFA : <strong>2.000 FCFA</strong></li><li>Prix 5.001 - 10.000 FCFA : <strong>3.000 FCFA</strong></li><li>Prix 10.001 - 15.000 FCFA : <strong>5.000 FCFA</strong></li><li>Prix 15.001 - 25.000 FCFA : <strong>10.000 FCFA</strong></li><li>Prix 25.001 - 50.000 FCFA : <strong>15.000 FCFA</strong></li><li>Prix > 50.000 FCFA : <strong>25.000 FCFA</strong></li></ul>
-             <p>Ces frais vous donnent une priorité limitée. Confirmer vous redirigera vers FedaPay.</p><p><small>NB: Ces frais sont <strong>non remboursables</strong>.</small></p>
-             <button class="confirmer-reservation" ${isReservable ? '' : 'disabled'}>Confirmer et Payer les Frais</button>
-        </div>
-        <div class="infos-logement" style="display: none;">
-             <hr><h4>Informations détaillées</h4>
-             <p><strong>Titre :</strong> ${item.titre || 'N/A'}</p>${item.typeRecherche === 'logements' && item.type ? `<p><strong>Type :</strong> ${item.type}</p>` : ''}<p><strong>Description :</strong> ${item.description || 'N/A'}</p><p><strong>État :</strong> ${item.etat || 'Non spécifié'}</p>
-             <p><strong>Prix :</strong> ${prixNumerique > 0 ? prixNumerique.toLocaleString('fr-FR') + ' FCFA' : 'Non spécifié'}</p><p><strong>Démarcheur :</strong> ${demarcheurNom}</p><p><strong>Propriétaire :</strong> ${proprietaireNom}</p><p><strong>Quartier :</strong> ${item.quartier || 'N/A'}</p>
-             <p><strong>Ville :</strong> ${item.ville || 'N/A'}</p><p><strong>Agence :</strong> ${item.entrepriseNom || 'N/A'}</p><p><strong>Statut :</strong> <span class="item-statut">${itemStatut}</span></p>${item.datePublication ? `<p><strong>Publié :</strong> ${new Date(item.datePublication).toLocaleDateString('fr-FR')}</p>` : ''}
-        </div>`;
-    document.body.appendChild(fenetreDetails);
+        const currentStatut = item.statut || 'Libre';
+        const isReservable = currentStatut !== 'Réservé' && currentStatut !== 'Payé' && currentStatut !== 'Occupé' && fraisReservation !== null;
+        const isPayable = currentStatut !== 'Payé' && currentStatut !== 'Occupé' && !isNaN(prixNumerique) && prixNumerique > 0;
 
-    // Add Event Listeners for Modal Elements
-    const closeButton = fenetreDetails.querySelector(".fenetre-close-button");
-    if (closeButton) {
-        closeButton.addEventListener("click", () => fenetreDetails.remove());
-    }
+        const modalContentDiv = document.createElement('div');
+        modalContentDiv.classList.add('fenetre-details');
 
-    // CORRECTED WhatsApp Discussion Button Listener
-    const discussionButton = fenetreDetails.querySelector(".bouton-discussion");
-    if (discussionButton) { // Check if button exists
-        discussionButton.addEventListener("click", () => {
-            if (entrepriseWhatsapp) { // Check if number is valid *inside* the listener
-                const message = `Bonjour ${item.entrepriseNom || ''}, intéressé par "${item.titre || 'ce bien'}" (ID: ${item.id}) vu sur ESPACE BENIN.`;
-                window.open(`https://wa.me/${entrepriseWhatsapp}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
-            } else {
-                // Number not available, inform the user
-                alert("Le numéro WhatsApp de cette agence n'est pas disponible pour le moment.");
-            }
-        });
-    }
+        modalContentDiv.innerHTML = `
+            <button class="modal-close-button" title="Fermer">×</button>
+            <h3>${item.titre || 'Détails'}</h3>
+            ${item.image ? `<img src="${item.image}" alt="${item.titre || 'Image'}" onerror="this.src='img/placeholder.png';">` : ''}
+            <p>${item.description || 'Aucune description.'}</p><hr>
+            <p><span class="detail-label">Prix:</span> <span class="detail-price">${formatCurrency(prixNumerique)}</span></p>
+            <p><span class="detail-label">Entreprise:</span> ${item.entrepriseNom || 'N/A'}</p>
+            <p><span class="detail-label">Statut:</span> <span class="status ${statusClass} item-statut">${currentStatut}</span></p>
+            ${item.quartier || item.ville ? `<p><span class="detail-label">Localisation:</span> ${item.quartier || ''}${item.quartier && item.ville ? ', ' : ''}${item.ville || 'N/A'}</p>` : ''}
+            <div class="boutons-container">
+                <button class="bouton-discussion" ${entrepriseWhatsapp ? '' : 'disabled'} title="${entrepriseWhatsapp ? 'Contacter via WhatsApp' : 'WhatsApp non disponible'}"><i class="fab fa-whatsapp"></i> Discuter</button>
+                <button class="bouton-infos" title="Afficher/Masquer les informations détaillées"><i class="fas fa-info-circle"></i> Plus d'Infos</button>
+                <button class="bouton-reservation" ${isReservable ? '' : 'disabled'} title="${isReservable ? 'Afficher conditions de réservation' : (currentStatut === 'Réservé' || currentStatut === 'Payé' || currentStatut === 'Occupé' ? 'Déjà ' + currentStatut.toLowerCase() : 'Non réservable')}"><i class="fas fa-calendar-alt"></i> Réserver</button>
+                <button class="bouton-payer-avance" ${isPayable ? '' : 'disabled'} title="${isPayable ? 'Payer le montant total via FedaPay' : (currentStatut === 'Payé' || currentStatut === 'Occupé' ? 'Déjà ' + currentStatut.toLowerCase() : 'Non payable')}"><i class="fas fa-credit-card"></i> ${texteBoutonPayerAvance}</button>
+            </div>
+            <div class="infos-logement" style="display: none;"></div>
+            <div class="reservation-info" style="display: none;"></div>`;
 
-    const infoButton = fenetreDetails.querySelector(".bouton-infos");
-    const infoDiv = fenetreDetails.querySelector(".infos-logement");
-    const reservDiv = fenetreDetails.querySelector(".reservation-info");
-    if (infoButton && infoDiv && reservDiv) {
-        infoButton.addEventListener("click", () => {
-           reservDiv.style.display = "none";
-           infoDiv.style.display = infoDiv.style.display === "none" ? "block" : "none";
-        });
-    }
+         const infosLogementDiv = modalContentDiv.querySelector(".infos-logement");
+         const reservationInfoDiv = modalContentDiv.querySelector(".reservation-info");
 
-    const reservButton = fenetreDetails.querySelector(".bouton-reservation");
-    if (reservButton && reservDiv && infoDiv && !reservButton.disabled) {
-        reservButton.addEventListener("click", () => {
-            infoDiv.style.display = "none";
-            reservDiv.style.display = "block";
-        });
-    }
+         // Regenerate content for infosLogementDiv and reservationInfoDiv
+         infosLogementDiv.innerHTML = `<hr>
+                <h4>Informations Détaillées</h4>
+                <p><strong>Titre:</strong> ${item.titre || 'N/A'}</p>
+                ${item.typeRecherche === 'logements' && item.type ? `<p><strong>Type:</strong> ${item.type}</p>` : ''}
+                <p><strong>Description complète:</strong> ${item.description || 'N/A'}</p>
+                <p><strong>État:</strong> ${item.etat || 'N/A'}</p>
+                <p><strong>Prix:</strong> ${formatCurrency(prixNumerique)}</p>
+                <p><strong>Démarcheur:</strong> ${demarcheurNom}</p>
+                <p><strong>Propriétaire:</strong> ${proprietaireNom}</p>
+                <p><strong>Quartier:</strong> ${item.quartier || 'N/A'}</p>
+                <p><strong>Ville:</strong> ${item.ville || 'N/A'}</p>
+                <p><strong>Partenaire:</strong> ${item.entrepriseNom || 'N/A'}</p>
+                <p><strong>Statut actuel:</strong> <span class="status ${getStatusClass(currentStatut)} item-statut">${currentStatut}</span></p>`;
 
-    const confirmReservButton = fenetreDetails.querySelector(".confirmer-reservation");
-    if (confirmReservButton && !confirmReservButton.disabled) {
-       confirmReservButton.addEventListener("click", async () => {
-           let fraisReservation = 0;
-           if (prixNumerique <= 5000) fraisReservation = 2000;
-           else if (prixNumerique <= 10000) fraisReservation = 3000;
-           else if (prixNumerique <= 15000) fraisReservation = 5000;
-           else if (prixNumerique <= 25000) fraisReservation = 10000;
-           else if (prixNumerique <= 50000) fraisReservation = 15000;
-           else if (prixNumerique > 50000) fraisReservation = 25000;
-           else { alert("Impossible de calculer les frais."); return; }
+        reservationInfoDiv.innerHTML = `<hr>
+                <h4>Conditions de Réservation ${fraisReservation !== null ? `(Frais: ${formatCurrency(fraisReservation)})` : '(Frais non applicables)'}</h4>
+                ${fraisReservation !== null ? `
+                    <p>Frais de réservation uniques (non remboursables) basés sur le prix:</p>
+                    <ul>
+                        <li>Prix <= 5.000 FCFA: <strong>2.000 FCFA</strong></li>
+                        <li>Prix 5.001 - 10.000 FCFA: <strong>3.000 FCFA</strong></li>
+                        <li>Prix 10.001 - 15.000 FCFA: <strong>5.000 FCFA</strong></li>
+                        <li>Prix 15.001 - 25.000 FCFA: <strong>10.000 FCFA</strong></li>
+                        <li>Prix 25.001 - 50.000 FCFA: <strong>15.000 FCFA</strong></li>
+                        <li>Prix > 50.000 FCFA: <strong>25.000 FCFA</strong></li>
+                    </ul>
+                    <p>Ces frais vous donnent une priorité pour une durée limitée. Confirmer vous redirigera vers la page de paiement sécurisée FedaPay.</p>
+                    <button class="button-success confirmer-reservation" ${isReservable ? '' : 'disabled'}><i class="fas fa-check-circle"></i> Confirmer et Payer Frais</button>
+                ` : `<p>La réservation directe avec frais n'est pas disponible pour cet article (prix non défini ou statut incompatible: ${currentStatut}).</p>`}`;
 
-           const confirmation = confirm(`Payer ${fraisReservation.toLocaleString('fr-FR')} FCFA (frais NON REMBOURSABLES) pour "${item.titre}" via FedaPay ?`);
-           if (!confirmation) return;
+         const closeButton = modalContentDiv.querySelector('.modal-close-button');
+         const boutonDiscussion = modalContentDiv.querySelector(".bouton-discussion");
+         const boutonInfos = modalContentDiv.querySelector(".bouton-infos");
+         const boutonReservation = modalContentDiv.querySelector(".bouton-reservation");
+         const boutonPayerAvance = modalContentDiv.querySelector(".bouton-payer-avance");
+         const statutSpans = modalContentDiv.querySelectorAll(".item-statut");
+         // Re-select the reservation button after regenerating HTML
+         const confirmerReservationButtonActual = reservationInfoDiv.querySelector(".confirmer-reservation");
 
-           confirmReservButton.disabled = true;
-           confirmReservButton.textContent = "Traitement...";
-           if(reservButton) reservButton.disabled = true;
-           const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.typeRecherche}/${item.id}`);
+        const paymentLink = "https://me.fedapay.com/mon_loyer";
 
-           try {
-               const fedaPayPublicKey = 'pk_live_TfSz212W0xSMKK7oPEogkFmp'; // YOUR KEY
-               if (!fedaPayPublicKey || !fedaPayPublicKey.startsWith('pk_')) throw new Error("Clé FedaPay invalide.");
-               if (typeof FedaPay === 'undefined') throw new Error("FedaPay SDK manquant.");
+        closeButton.addEventListener('click', () => { detailsModalContainer.classList.remove('visible'); detailsModalContainer.innerHTML = ''; });
 
-               FedaPay.init(confirmReservButton, {
-                   public_key: fedaPayPublicKey,
-                   transaction: { amount: fraisReservation, description: `Frais Réservation (${item.id}): ${item.titre.substring(0,45)}...` },
-                   customer: { email: 'client@reserve.espacebenin.com' },
-                   onComplete: async (resp) => {
-                       console.log("FedaPay Response (Fees):", resp);
-                       if (resp.status === 'approved' || resp.reason === FedaPay.CHECKOUT_COMPLETED) {
-                           try {
-                               await itemRef.update({ statut: "Réservé", dateReservation: new Date().toISOString(), transactionFraisId: resp.id });
-                               fenetreDetails.querySelectorAll(".item-statut").forEach(el => el.textContent = "Réservé");
-                               if(reservButton) reservButton.disabled = true;
-                               if(confirmReservButton) confirmReservButton.style.display = 'none';
-                               if(reservDiv) reservDiv.innerHTML = "<p style='color:green;font-weight:bold;'>Frais payés ! Bien réservé.</p>";
-                               alert("Frais de réservation payés !");
-                           } catch (dbError) {
-                               console.error("Erreur MAJ Firebase (frais):", dbError);
-                               alert("Paiement réussi, erreur MAJ statut. Support: " + (resp.id || 'N/A'));
-                           }
-                       } else {
-                           alert(`Paiement frais échoué (${resp.reason || '?'}, Statut: ${resp.status || '?'}).`);
-                           confirmReservButton.disabled = false;
-                           confirmReservButton.textContent = "Confirmer et Payer les Frais";
-                           if(reservButton) reservButton.disabled = false;
-                       }
-                   }
-               });
-           } catch (error) {
-               console.error("Erreur FedaPay Init (frais):", error);
-               alert("Erreur paiement frais : " + error.message);
-               confirmReservButton.disabled = false;
-               confirmReservButton.textContent = "Confirmer et Payer les Frais";
-               if(reservButton) reservButton.disabled = false;
-           }
-       });
-    }
-
-    const payerButton = fenetreDetails.querySelector(".bouton-payer-avance");
-    if (payerButton && !payerButton.disabled) {
-        payerButton.addEventListener("click", async () => {
-           if (prixNumerique <= 0) { alert("Prix invalide."); return; }
-           const confirmation = confirm(`Payer ${prixNumerique.toLocaleString('fr-FR')} FCFA pour "${item.titre}" via FedaPay ?`);
-           if (!confirmation) return;
-
-           payerButton.disabled = true;
-           payerButton.textContent = "Traitement...";
-           if(reservButton) reservButton.disabled = true;
-           if(confirmReservButton) confirmReservButton.disabled = true;
-           const itemRef = database.ref(`entreprises/${item.entrepriseId}/${item.typeRecherche}/${item.id}`);
-
-           try {
-               const fedaPayPublicKey = 'pk_live_TfSz212W0xSMKK7oPEogkFmp'; // YOUR KEY
-               if (!fedaPayPublicKey || !fedaPayPublicKey.startsWith('pk_')) throw new Error("Clé FedaPay invalide.");
-               if (typeof FedaPay === 'undefined') throw new Error("FedaPay SDK manquant.");
-
-               FedaPay.init(payerButton, {
-                   public_key: fedaPayPublicKey,
-                   transaction: { amount: prixNumerique, description: `Paiement (${item.id}): ${item.titre.substring(0,50)}` },
-                   customer: { email: 'client@paiement.espacebenin.com' },
-                   onComplete: async (resp) => {
-                        console.log("FedaPay Response (Full):", resp);
-                       if (resp.status === 'approved' || resp.reason === FedaPay.CHECKOUT_COMPLETED) {
-                           try {
-                               await itemRef.update({ statut: "Payé", datePaiement: new Date().toISOString(), transactionPaiementId: resp.id });
-                               fenetreDetails.querySelectorAll(".item-statut").forEach(el => el.textContent = "Payé");
-                               if(payerButton) payerButton.disabled = true;
-                               if(reservButton) reservButton.disabled = true;
-                               if(confirmReservButton) confirmReservButton.disabled = true;
-                               if(reservDiv) reservDiv.style.display = 'none';
-                               alert("Paiement effectué !");
-                           } catch (dbError) {
-                               console.error("Erreur MAJ Firebase (total):", dbError);
-                               alert("Paiement réussi, erreur MAJ statut. Support: " + (resp.id || 'N/A'));
-                           }
-                       } else {
-                           alert(`Paiement échoué (${resp.reason || '?'}, Statut: ${resp.status || '?'}).`);
-                            payerButton.disabled = false;
-                            payerButton.textContent = texteBoutonPayerAvance;
-                            const initialReservable = itemStatut !== 'Réservé' && itemStatut !== 'Payé' && !isPaidRecently;
-                            if (initialReservable) {
-                                if(reservButton) reservButton.disabled = false;
-                                if(confirmReservButton) confirmReservButton.disabled = false;
-                            }
-                       }
-                   }
-               });
-           } catch (error) {
-               console.error("Erreur FedaPay Init (total):", error);
-               alert("Erreur paiement total : " + error.message);
-               payerButton.disabled = false;
-               payerButton.textContent = texteBoutonPayerAvance;
-               const initialReservable = itemStatut !== 'Réservé' && itemStatut !== 'Payé' && !isPaidRecently;
-               if (initialReservable) {
-                  if(reservButton) reservButton.disabled = false;
-                  if(confirmReservButton) confirmReservButton.disabled = false;
-               }
-           }
-       });
-    }
-} // --- End afficherFenetreDetails ---
-
-// Mobile menu toggle logic
-const menuToggle = document.getElementById("menu-toggle");
-const mainNav = document.getElementById("main-nav");
-const menu = document.getElementById("menu");
-
-if (menuToggle && mainNav && menu) {
-    menuToggle.addEventListener("click", () => mainNav.classList.toggle("visible"));
-    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mainNav.classList.remove('visible')));
-    document.addEventListener('click', (event) => {
-        if (!mainNav.contains(event.target) && !menuToggle.contains(event.target) && mainNav.classList.contains('visible')) {
-            mainNav.classList.remove('visible');
+        // ---> NOUVEAU: Event Listener for WhatsApp Button <---
+        if (boutonDiscussion && entrepriseWhatsapp && !boutonDiscussion.disabled) {
+             boutonDiscussion.addEventListener("click", () => {
+                 const msg = encodeURIComponent(`Bonjour ${item.entrepriseNom || ''}, je suis intéressé par "${item.titre || 'votre bien'}" (${formatCurrency(prixNumerique)}) vu sur ESPACE BENIN.`);
+                 const whatsappLink = `https://wa.me/${entrepriseWhatsapp}?text=${msg}`;
+                 window.open(whatsappLink, '_blank', 'noopener,noreferrer');
+            });
         }
-    });
-} else {
-    console.warn("Menu elements not found.");
+        // ---> FIN NOUVEAU <---
+
+        boutonInfos.addEventListener("click", () => {
+            infosLogementDiv.style.display = infosLogementDiv.style.display === "none" ? "block" : "none";
+            if (infosLogementDiv.style.display === "block") reservationInfoDiv.style.display = "none";
+        });
+
+        // Add event listeners only if buttons exist and are enabled
+        if (isReservable && boutonReservation) {
+            boutonReservation.addEventListener("click", () => {
+                 reservationInfoDiv.style.display = reservationInfoDiv.style.display === "none" ? "block" : "none";
+                 if (reservationInfoDiv.style.display === "block") infosLogementDiv.style.display = "none";
+             });
+        }
+
+        if (isReservable && confirmerReservationButtonActual) {
+             confirmerReservationButtonActual.addEventListener("click", async () => {
+                 if (fraisReservation === null || fraisReservation <= 0) return;
+                 const confirmationText = `Vous allez être redirigé vers FedaPay pour payer les frais de réservation (${formatCurrency(fraisReservation)}).\n\nIMPORTANT: Sur la page FedaPay, vous devrez entrer MANUELLEMENT :\n- Montant : ${fraisReservation} FCFA\n- Référence/Note : Frais Résa - ${item.titre.substring(0,30)} (ID:${item.id})\n\nContinuer ?`;
+                 if (!confirm(confirmationText)) return;
+
+                 confirmerReservationButtonActual.disabled = true; confirmerReservationButtonActual.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mise à jour...';
+                 if (boutonReservation) boutonReservation.disabled = true;
+                 if (boutonPayerAvance) boutonPayerAvance.disabled = true;
+
+                 const itemRef = databaseEspaceBenin.ref(`entreprises/${item.entrepriseId}/${item.typeRecherche}/${item.id}`);
+                 try {
+                     await itemRef.update({ statut: "Réservé", dateReservation: new Date().toISOString() });
+                     // Update status visually in the modal
+                     statutSpans.forEach(span => { span.textContent = 'Réservé'; span.className = `status ${getStatusClass('Réservé')} item-statut`; });
+                     if(boutonReservation) boutonReservation.disabled = true;
+                     if(confirmerReservationButtonActual) confirmerReservationButtonActual.style.display = 'none'; // Hide button after use
+
+                     reservationInfoDiv.innerHTML += `<p style='color:orange; font-weight:bold; margin-top:15px;'>Statut mis à jour (Réservé). Redirection vers FedaPay...</p><p>N'oubliez pas d'entrer le montant (${fraisReservation} FCFA) et la référence : Frais Résa - ${item.titre.substring(0,30)} (ID:${item.id})</p>`;
+                     alert(`Redirection vers FedaPay...\nMontant: ${fraisReservation} FCFA\nRéférence: Frais Résa - ${item.titre.substring(0,30)} (ID:${item.id})`);
+                     window.location.href = paymentLink; // Redirect after confirmation
+                 } catch (dbErr) {
+                     console.error("Erreur MAJ DB (Réservation):", dbErr); alert("Erreur lors de la mise à jour du statut. Le paiement n'a pas été initié.");
+                     // Re-enable buttons on error
+                     confirmerReservationButtonActual.disabled = false; confirmerReservationButtonActual.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer et Payer Frais';
+                     if (boutonReservation && isReservable) boutonReservation.disabled = false; // Check isReservable again
+                     if (boutonPayerAvance && isPayable) boutonPayerAvance.disabled = false; // Check isPayable again
+                 }
+             });
+        }
+
+        if (isPayable && boutonPayerAvance) {
+            boutonPayerAvance.addEventListener("click", async () => {
+                 if (isNaN(prixNumerique) || prixNumerique <= 0) return;
+                 const confirmationText = `Vous allez être redirigé vers FedaPay pour payer le montant total (${formatCurrency(prixNumerique)}).\n\nIMPORTANT: Sur la page FedaPay, vous devrez entrer MANUELLEMENT :\n- Montant : ${prixNumerique} FCFA\n- Référence/Note : Paiement - ${item.titre.substring(0,30)} (ID:${item.id})\n\nContinuer ?`;
+                 if (!confirm(confirmationText)) return;
+
+                 boutonPayerAvance.disabled = true; boutonPayerAvance.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mise à jour...';
+                 if (boutonReservation) boutonReservation.disabled = true;
+                 if (confirmerReservationButtonActual) confirmerReservationButtonActual.disabled = true;
+
+                 const itemRef = databaseEspaceBenin.ref(`entreprises/${item.entrepriseId}/${item.typeRecherche}/${item.id}`);
+                 try {
+                     // Set status to Payé and record payment date
+                     await itemRef.update({ statut: "Payé", datePaiement: new Date().toISOString() });
+                     // Update status visually
+                     statutSpans.forEach(span => { span.textContent = 'Payé'; span.className = `status ${getStatusClass('Payé')} item-statut`; });
+                     if(boutonReservation) boutonReservation.disabled = true;
+                     if (confirmerReservationButtonActual) confirmerReservationButtonActual.disabled = true;
+                     if(boutonPayerAvance) boutonPayerAvance.disabled = true;
+
+                     const paymentMessageDiv = document.createElement('div');
+                     paymentMessageDiv.style.marginTop = '20px';
+                     paymentMessageDiv.innerHTML = `<hr><p style='color:green; font-weight:bold;'>Statut mis à jour (Payé). Redirection vers FedaPay...</p><p>N'oubliez pas d'entrer le montant (${prixNumerique} FCFA) et la référence : Paiement - ${item.titre.substring(0,30)} (ID:${item.id})</p>`;
+                     modalContentDiv.querySelector('.boutons-container').insertAdjacentElement('afterend', paymentMessageDiv);
+
+                     alert(`Redirection vers FedaPay...\nMontant: ${prixNumerique} FCFA\nRéférence: Paiement - ${item.titre.substring(0,30)} (ID:${item.id})`);
+                     window.location.href = paymentLink; // Redirect after confirmation
+                 } catch (dbErr) {
+                     console.error("Erreur MAJ DB (Paiement):", dbErr); alert("Erreur lors de la mise à jour du statut. Le paiement n'a pas été initié.");
+                     // Re-enable buttons on error
+                     boutonPayerAvance.disabled = false; boutonPayerAvance.innerHTML = `<i class="fas fa-credit-card"></i> ${texteBoutonPayerAvance}`;
+                     if (boutonReservation && isReservable) boutonReservation.disabled = false; // Check isReservable again
+                     if (confirmerReservationButtonActual && isReservable) confirmerReservationButtonActual.disabled = false; // Check isReservable again
+                 }
+            });
+        }
+
+        detailsModalContainer.innerHTML = ''; // Clear previous content before appending
+        detailsModalContainer.appendChild(modalContentDiv);
+        detailsModalContainer.classList.add('visible'); // Make the container visible
+
+    } catch (error) {
+        console.error("Erreur lors de l'affichage des détails:", error);
+        alert(`Une erreur est survenue lors du chargement des détails : ${error.message || 'Erreur inconnue'}`);
+    } finally {
+        toggleLoading(false);
+    }
 }
 
-// Function to display testimonials
+
+// Gestion du menu mobile
+if (menuToggle && mainNav) {
+    menuToggle.addEventListener("click", (e) => { e.stopPropagation(); mainNav.classList.toggle("open"); });
+    mainNav.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => mainNav.classList.remove('open')); });
+    document.addEventListener('click', (event) => { if (mainNav.classList.contains('open') && !mainNav.contains(event.target) && event.target !== menuToggle && !menuToggle.contains(event.target)) mainNav.classList.remove('open'); });
+}
+
+// Fonction pour afficher les témoignages
 async function afficherTemoignages() {
-    const container = document.querySelector(".temoignages-container");
-    if (!container) return;
-    container.innerHTML = "<p class='loading' style='grid-column: 1 / -1; text-align: center;'>Chargement...</p>";
-
+    if (!temoignagesContainer || !databaseEspaceBenin) return;
+    temoignagesContainer.innerHTML = '<p class="loading" style="grid-column: 1/-1;">Chargement...</p>';
     try {
-        const avisSnapshot = await database.ref('avis').orderByChild('date').limitToLast(6).once('value');
+        const avisSnapshot = await databaseEspaceBenin.ref('avis').orderByChild('date').limitToLast(6).once('value');
         const avisData = avisSnapshot.val();
-        container.innerHTML = "";
-
+        temoignagesContainer.innerHTML = "";
         if (avisData) {
-            const avisArray = Object.keys(avisData)
-                                   .map(key => ({ id: key, ...avisData[key] }))
-                                   .sort((a, b) => (new Date(b.date || 0).getTime()) - (new Date(a.date || 0).getTime()));
-
-            if (avisArray.length > 0) {
-                 avisArray.forEach(unAvis => {
-                    const div = document.createElement("div"); div.classList.add("temoignage");
-                    const innerDiv = document.createElement('div');
-                    const quoteText = document.createElement('p');
-                    const texteAvis = String(unAvis.texte || '').trim();
-                    quoteText.textContent = texteAvis ? `"${texteAvis}"` : '"..."';
-                    innerDiv.appendChild(quoteText);
-                    const authorText = document.createElement('p'); authorText.classList.add('temoignage-auteur');
-                    const dateAffichage = unAvis.date ? new Date(unAvis.date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
-                    const nomAuteur = String(unAvis.nom || 'Anonyme').trim();
-                    authorText.innerHTML = `- ${nomAuteur || 'Anonyme'} ${dateAffichage ? `(${dateAffichage})` : ''}`;
-                    innerDiv.appendChild(authorText);
-                    div.appendChild(innerDiv); container.appendChild(div);
+            const sortedKeys = Object.keys(avisData).sort((a, b) => (avisData[b]?.date ? new Date(avisData[b].date).getTime() : 0) - (avisData[a]?.date ? new Date(avisData[a].date).getTime() : 0));
+            if (sortedKeys.length > 0) {
+                 sortedKeys.forEach(id => {
+                    const avis = avisData[id]; const div = document.createElement("div"); div.classList.add("temoignage");
+                    const innerDiv = document.createElement("div"); // Use inner div for padding
+                    const quotePara = document.createElement("p"); quotePara.textContent = `${avis.texte || ''}`; // Remove quotes, use ::before
+                    const authorPara = document.createElement("p"); authorPara.classList.add("temoignage-auteur");
+                    const date = avis.date ? new Date(avis.date).toLocaleDateString('fr-FR', {year:'numeric', month:'short', day:'numeric'}) : '';
+                    authorPara.textContent = `- ${avis.nom || 'Anonyme'} ${date ? '('+date+')' : ''}`;
+                    innerDiv.appendChild(quotePara); innerDiv.appendChild(authorPara); div.appendChild(innerDiv);
+                    temoignagesContainer.appendChild(div);
                 });
-            } else {
-                 container.innerHTML = "<p style='grid-column: 1 / -1; text-align:center;'>Aucun témoignage.</p>";
-            }
-        } else {
-            container.innerHTML = "<p style='grid-column: 1 / -1; text-align:center;'>Aucun témoignage.</p>";
-        }
+            } else { temoignagesContainer.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Aucun témoignage pour le moment.</p>"; }
+        } else { temoignagesContainer.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Aucun témoignage pour le moment.</p>"; }
     } catch (error) {
         console.error("Erreur récupération avis:", error);
-        container.innerHTML = "<p class='loading' style='grid-column: 1 / -1; color: red; text-align:center;'>Erreur chargement.</p>";
+        temoignagesContainer.innerHTML = "<p style='grid-column: 1/-1; color:red; text-align:center;'>Erreur chargement témoignages.</p>";
     }
 }
 
-
-// Listener for adding testimonials
-const formAjoutAvis = document.getElementById("form-ajout-avis");
+// Écouteur pour l'ajout d'avis
 if (formAjoutAvis) {
     formAjoutAvis.addEventListener("submit", async (event) => {
         event.preventDefault();
-        const nomInput = document.getElementById("avis-nom");
-        const emailInput = document.getElementById("avis-email");
-        const texteInput = document.getElementById("avis-texte");
-        const submitButton = formAjoutAvis.querySelector('button[type="submit"]');
-        const nom = nomInput ? nomInput.value.trim() : '';
-        const email = emailInput ? emailInput.value.trim() : '';
-        const texte = texteInput ? texteInput.value.trim() : '';
-
-        if (!nom || !texte) { alert("Nom et témoignage requis."); return; }
-        if (email && !/\S+@\S+\.\S+/.test(email)) { alert("Email invalide."); return; }
-        if (submitButton) { submitButton.disabled = true; submitButton.textContent = "Envoi..."; }
-
+        if (!databaseEspaceBenin) { alert("Erreur de connexion à la base de données."); return; }
+        const nomInput = document.getElementById("avis-nom"); const emailInput = document.getElementById("avis-email"); const texteInput = document.getElementById("avis-texte"); const submitBtn = formAjoutAvis.querySelector('button[type="submit"]');
+        const nom = nomInput?.value.trim() || ''; const email = emailInput?.value.trim() || ''; const texte = texteInput?.value.trim() || '';
+        if (!nom || !texte) { alert("Le nom et le témoignage sont requis."); return; }
+        if (email && !/\S+@\S+\.\S+/.test(email)) { alert("L'adresse email fournie n'est pas valide."); return; }
+        if(submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...'; }
         try {
-            const newAvisRef = database.ref('avis').push();
-            await newAvisRef.set({ nom, email, texte, date: new Date().toISOString() });
+            const ref = databaseEspaceBenin.ref('avis').push();
+            // Add date using Firebase Server Timestamp for consistency
+            await ref.set({
+                nom,
+                email, // Store email even if optional, can be used for verification later if needed
+                texte,
+                date: firebase.database.ServerValue.TIMESTAMP // Use server timestamp
+             });
             formAjoutAvis.reset();
-            alert("Avis ajouté ! Merci.");
-            afficherTemoignages();
+            alert("Avis ajouté avec succès ! Merci pour votre retour.");
+            await afficherTemoignages(); // Refresh testimonials
         } catch (error) {
             console.error("Erreur ajout avis:", error);
-            alert("Erreur lors de l'ajout.");
-        } finally {
-             if (submitButton) { submitButton.disabled = false; submitButton.textContent = "Soumettre l'avis"; }
+            alert("Une erreur est survenue lors de l'ajout de votre avis.");
         }
+        finally { if(submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Soumettre l\'avis'; } }
     });
-} else {
-    console.error("Form #form-ajout-avis not found!");
 }
 
-// Modal setup function
+// Gestion des modales Termes & Confidentialité
 function setupModal(modalId, triggerIds) {
-    const modal = document.getElementById(modalId);
-    const closeButton = modal ? modal.querySelector('.modal-content .close-button') : null;
-    if (!modal || !closeButton) {
-        console.warn(`Modal (${modalId}) or close button not found.`);
-        return;
-    }
+    const modal = document.getElementById(modalId); if (!modal) return;
+    const closeBtn = modal.querySelector('.close-button'); if (!closeBtn) return;
     const openModal = (e) => { e.preventDefault(); modal.style.display = 'block'; };
     const closeModal = () => { modal.style.display = 'none'; };
-    triggerIds.forEach(id => { const trigger = document.getElementById(id); if (trigger) trigger.addEventListener('click', openModal); else console.warn(`Trigger ${id} not found`); });
-    closeButton.addEventListener('click', closeModal);
+    triggerIds.forEach(id => { const trigger = document.getElementById(id); if (trigger) trigger.addEventListener('click', openModal); });
+    closeBtn.addEventListener('click', closeModal);
+    // Close modal when clicking outside the content
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 }
 
+// Fermeture Details Modal en cliquant dehors
+if (detailsModalContainer) {
+    detailsModalContainer.addEventListener('click', (e) => {
+        // Only close if the click is on the container itself, not its children
+        if (e.target === detailsModalContainer) {
+             detailsModalContainer.classList.remove('visible');
+             detailsModalContainer.innerHTML = ''; // Clear content
+        }
+    });
+}
 
-// Dynamic search field display logic
-const typeRechercheSelect = document.getElementById("type-recherche");
-const champsLogementsDiv = document.getElementById("champs-logements");
-const champsBiensDiv = document.getElementById("champs-biens");
+// Gestion affichage champs de recherche dynamiques
 if (typeRechercheSelect && champsLogementsDiv && champsBiensDiv) {
     const handleTypeChange = () => {
-        const selectedValue = typeRechercheSelect.value;
-        champsLogementsDiv.classList.remove('visible'); champsBiensDiv.classList.remove('visible');
-        champsLogementsDiv.style.display = 'none'; champsBiensDiv.style.display = 'none';
-        if (selectedValue === "logements") { champsLogementsDiv.classList.add('visible'); champsLogementsDiv.style.display = 'contents'; }
-        // else if (selectedValue === "biens") { /* Add logic if biens fields exist */ }
+        const val = typeRechercheSelect.value; const isLogements = val === "logements";
+        // Use 'display: contents' for grid items to flow correctly
+        champsLogementsDiv.style.display = isLogements ? 'contents' : 'none';
+        champsLogementsDiv.classList.toggle('visible', isLogements);
+
+        // Check if the biens div has actual content or just whitespace/comments
+        const hasBiensContent = champsBiensDiv.innerHTML.trim() !== '';
+        champsBiensDiv.style.display = (!isLogements && hasBiensContent) ? 'contents' : 'none';
+        champsBiensDiv.classList.toggle('visible', !isLogements && hasBiensContent);
     };
-    handleTypeChange();
+    handleTypeChange(); // Call on load
     typeRechercheSelect.addEventListener("change", handleTypeChange);
-} else {
-     console.warn("Dynamic search field elements not found.");
-}
-
-// Admin area redirect button
-const adminLoginButton = document.getElementById('admin-login-button');
-if (adminLoginButton) {
-    adminLoginButton.addEventListener('click', () => window.location.href = 'admin.html');
-} else {
-     console.error("Admin login button not found!");
 }
 
 
-// --- Section 2: Gemini Chatbot Logic ---
+// Redirection Espace Admin
+if (adminLoginButton) { adminLoginButton.addEventListener('click', () => { window.location.href = 'admin.html'; }); }
 
-const GEMINI_API_KEY = 'AIzaSyDetgN_odqwqvU2AbaHzzijsi0yDRSveDM'; // <-- PUT YOUR KEY HERE (REPLACE THIS)
 
-const CHATBOT_SYSTEM_INSTRUCTION = `
-Tu es l'assistant virtuel officiel d'Espace Benin, une plateforme immobilière en ligne basée au Bénin. Ton rôle principal est d'aider les utilisateurs à naviguer sur le site espacebenin.netlify.app, à comprendre ses fonctionnalités et à trouver les informations qu'ils recherchent concernant la location et l'achat de biens immobiliers (logements) et d'autres biens divers listés par nos partenaires (agences ou particuliers).
+// --- Section 2: SIMPLE Gemini Chatbot Logic ---
+const GEMINI_API_KEY = 'AIzaSyDetgN_odqwqvU2AbaHzzijsi0yDRSveDM'; // Replace with your actual key if needed
+const CHATBOT_SYSTEM_INSTRUCTION = `Tu es "Assistant IA ESPACE BENIN", un assistant virtuel expert en immobilier au Bénin, spécialisé dans les services offerts par la plateforme ESPACE BENIN (https://espace-benin-idriss.web.app). Ta mission est d'aider les utilisateurs à trouver des logements (chambres, appartements, maisons), des biens divers (terrains, boutiques), et à comprendre les services de ESPACE BENIN (location, vente, gestion locative, construction BTP, location de véhicules, hébergement).
+Sois toujours :
+1.  **Professionnel et Courtois** : Utilise un ton aimable et serviable. Commence par "Bonjour ! Comment puis-je vous aider avec ESPACE BENIN aujourd'hui ?" et termine poliment.
+2.  **Informatif et Précis** : Base tes réponses UNIQUEMENT sur les informations typiquement trouvées sur une plateforme immobilière comme ESPACE BENIN et les services listés. Mentionne les types de biens, les villes (ex: Parakou, Cotonou), les quartiers (ex: Zongo, Agla), les budgets possibles en FCFA.
+3.  **Focalisé sur ESPACE BENIN** : Oriente toujours vers l'utilisation de la plateforme. Pour une recherche, suggère d'utiliser la barre de recherche de la page principale en précisant les critères (type de bien, ville, quartier, budget). Pour des détails sur un bien spécifique, explique qu'il faut cliquer sur "Voir les Détails" sur la carte du bien. Pour le contact, indique que l'utilisateur peut utiliser le bouton WhatsApp dans les détails du bien pour parler à l'agence partenaire.
+4.  **Concis et Structuré** : Fournis des réponses claires et directes. Utilise des paragraphes courts ou des listes à puces si nécessaire pour une meilleure lisibilité. Évite le jargon technique excessif.
+5.  **Limité dans tes capacités** : Tu NE PEUX PAS effectuer de recherche dans la base de données en temps réel, ni voir les biens actuellement disponibles, ni connaître les prix exacts ou statuts (disponible, réservé, payé). Tu ne peux pas non plus initier de réservation ou de paiement. Si on te demande une information spécifique (ex: "Trouve-moi un appartement à 50000 FCFA à Zongo"), explique que tu ne peux pas faire la recherche toi-même mais guide l'utilisateur sur COMMENT utiliser les outils du site ("Pour cela, je vous invite à utiliser la barre de recherche sur la page principale en entrant 'Appartement' comme type, 'Parakou' comme ville, 'Zongo' comme quartier et '50000' comme budget maximum."). Si on te demande le statut d'un bien, explique que le statut est visible sur la carte et dans les détails du bien sur le site.
+6.  **Respectueux de la Confidentialité** : Ne demande jamais d'informations personnelles (nom, téléphone, email, etc.). Ne fournis pas d'informations de contact direct autres que celles accessibles publiquement via la plateforme (comme le lien WhatsApp général ou celui dans les détails).
+7.  **Langue** : Réponds principalement en Français.
+NE PAS :
+*   Inventer des biens ou des prix.
+*   Donner des conseils financiers ou juridiques.
+*   Traiter des transactions ou des réservations.
+*   Promettre une disponibilité ou un statut spécifique.
+*   Accéder à des informations externes ou à des URL autres que pour mentionner la plateforme elle-même.
+*   Engager des conversations hors sujet (météo, politique, etc.). Si cela arrive, recentre poliment sur ESPACE BENIN.
 
-**Ta mission est de:**
-1.  **Guider les utilisateurs:** Aide-les à utiliser efficacement la barre de recherche, à comprendre les filtres et à interpréter les résultats.
-2.  **Expliquer les fonctionnalités:** Clarifie le fonctionnement des différentes sections comme "Dernières publications", "Comment ça marche ?", "Services", "Témoignages".
-3.  **Détailler les processus:** Explique comment fonctionnent la réservation et le paiement via les liens FedaPay intégrés dans les détails des annonces. Mentionne que les frais de réservation sont non-remboursables.
-4.  **Fournir des informations contextuelles:** Réponds aux questions sur les types de biens disponibles (logements comme chambres, appartements; biens divers), les localisations (villes, quartiers mentionnés), les statuts des annonces ("Non spécifié", "Réservé", "Payé").
-5.  **Orienter les utilisateurs:** Redirige les utilisateurs vers les sections appropriées du site (Contact, Espace Admin, Termes, Confidentialité) ou les encourage à utiliser les boutons d'action sur les annonces (Voir Détails, WhatsApp).
-
-**Informations Clés sur Espace Benin que tu dois connaître et utiliser:**
-*   **Recherche:** Logements ou Biens Divers; Filtres: Budget (FCFA), Ville, Quartier/Zone; Filtre Type pour Logements (Chambre, Appartement).
-*   **Listings:** Cartes avec image, titre, courte description, prix (FCFA), localisation, statut, agence. Bouton "Voir les Détails" ouvre une modale.
-*   **Fenêtre Détails:** Infos complètes, nom agence. Boutons: "Discuter" (WhatsApp vers agence), "Plus d'Infos", "Réserver" (frais FedaPay NON REMBOURSABLES), "Payer Loyer/Bien" (total via FedaPay).
-*   **Statuts:** "Réservé" (frais payés), "Payé" (total payé, indisponible ~24h).
-*   **FedaPay:** Utilisé pour frais et paiement total via redirection. Tu ne traites aucun paiement.
-*   **Autres Sections:** Publications (carousel + bouton Voir plus), Services, Espace Admin (lien vers admin.html), Témoignages, Contact (WhatsApp, FB, Email, Adresse), Termes/Confidentialité (liens pied de page).
-
-**Ton Style:** Français clair, professionnel, serviable, patient. Utilise listes si utile. Devise: FCFA. Base réponses sur infos du site.
-
-**Tes Limites:** Pas d'accès temps réel (dispo exacte => contacter agence), pas de négociation, pas d'organisation de visite (contacter agence), pas de traitement paiement, pas de conseil juridique/financier, pas d'accès comptes/admin, pas d'infos hors site.
-
-**Exemple:** *User:* "Louer chambre Agla 30000 FCFA ?" *Toi:* "Cliquez 'Voir Détails'. Dans la fenêtre, bouton 'Discuter' (WhatsApp) pour contacter l'agence. Option 'Réserver' peut être là pour payer frais (non remboursables) et avoir priorité."
-
-Sois précis, utile, focalisé sur l'aide à l'utilisation du site Espace Benin !`;
-
-let chatbotGenAI;
-let chatbotModel;
-let currentChatbotConversation = [];
+Exemple de réponse pour une recherche : "Pour trouver une chambre à Parakou dans votre budget, je vous recommande d'utiliser la barre de recherche sur notre site. Entrez 'Chambre' dans le type de logement, 'Parakou' dans la ville, et indiquez votre budget maximum. Vous verrez alors les options correspondantes proposées par nos partenaires."
+Exemple si on demande des détails : "Pour voir plus de détails sur un logement ou un bien qui vous intéresse, cliquez simplement sur le bouton 'Voir les Détails' sur sa carte. Vous y trouverez la description complète, les photos, et les options pour contacter le partenaire."`;
+let chatbotGenAI, chatbotModel, currentChatbotConversation = [];
 const MAX_CHATBOT_HISTORY = 6;
 
 function initializeChatbotGeminiAPI() {
-    if (typeof window.GoogleGenerativeAI === 'undefined') { console.error("SDK Gemini non chargé."); showChatbotNotification("Erreur Assistant (SDK).", "error"); return false; }
-    if (!GEMINI_API_KEY || GEMINI_API_KEY.length < 10) { console.error("Clé API Gemini invalide."); showChatbotNotification("Clé API Assistant invalide.", "error"); const s=document.getElementById('chatbot-send'), i=document.getElementById('chatbot-input'); if(s) s.disabled=true; if(i) i.placeholder="Assistant indisponible (Clé)"; return false; }
+    // Ensure SDK is available (should be set to window.GoogleGenerativeAI by the HTML script)
+    if (typeof window.GoogleGenerativeAI === 'undefined') {
+        console.error("Google Generative AI SDK not loaded or available globally.");
+        showChatbotNotification("Erreur : Assistant IA non disponible (SDK).", "error");
+        return false;
+    }
+    if (!GEMINI_API_KEY || GEMINI_API_KEY === 'VOTRE_CLE_API_GEMINI_ICI') {
+        console.error("Gemini API Key is missing or is a placeholder.");
+        showChatbotNotification("Erreur configuration Assistant IA (Clé API).", "error");
+        return false;
+    }
     try {
         if (!chatbotGenAI || !chatbotModel) {
              chatbotGenAI = new window.GoogleGenerativeAI(GEMINI_API_KEY);
              chatbotModel = chatbotGenAI.getGenerativeModel({ model: "gemini-1.5-flash-latest", systemInstruction: CHATBOT_SYSTEM_INSTRUCTION });
-             console.log("API Gemini initialisée.");
-        } return true;
-    } catch (error) { console.error("Échec init Gemini:", error); showChatbotNotification("Erreur init assistant.", "error"); chatbotGenAI = chatbotModel = null; return false; }
+             console.log("Gemini API for Chatbot initialized.");
+             currentChatbotConversation = [];
+        }
+        return true;
+    } catch (error) {
+        console.error("Failed to initialize Gemini API:", error);
+        showChatbotNotification("Erreur initialisation assistant IA.", "error");
+        chatbotGenAI = null;
+        chatbotModel = null;
+        return false;
+    }
 }
 
 function displayChatbotMessage(sender, text) {
-    const cont = document.getElementById('chatbot-messages'); if (!cont) return null;
-    const el = document.createElement('div'); el.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
-    const node = document.createElement('div'); node.textContent = text; el.appendChild(node);
-    cont.appendChild(el); cont.scrollTop = cont.scrollHeight; return el;
+    const messagesContainer = document.getElementById('chatbot-messages');
+    if (!messagesContainer) return null;
+
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', sender === 'user' ? 'user-message' : 'ai-message');
+
+    const textContentDiv = document.createElement('div');
+    // Basic sanitization (replace with more robust library if needed)
+    const sanitizedText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    textContentDiv.innerHTML = sanitizedText.replace(/\n/g, '<br>'); // Convert newlines after sanitizing
+
+    messageElement.appendChild(textContentDiv);
+    messagesContainer.appendChild(messageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    return messageElement;
 }
+
 
 function showChatbotTypingIndicator() {
-    const cont = document.getElementById('chatbot-messages'); if (!cont) return null;
-    const exist = cont.querySelector('.typing-indicator-message'); if (exist) exist.remove();
-    const ind = document.createElement('div'); ind.classList.add('message', 'ai-message', 'typing-indicator-message');
-    ind.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
-    cont.appendChild(ind); cont.scrollTop = cont.scrollHeight; return ind;
+    const messagesContainer = document.getElementById('chatbot-messages');
+    if (!messagesContainer) return;
+
+    const existingIndicator = messagesContainer.querySelector('.typing-indicator-message');
+    if (existingIndicator) existingIndicator.remove(); // Remove previous if any
+
+    const indicatorElement = document.createElement('div');
+    indicatorElement.classList.add('message', 'ai-message', 'typing-indicator-message');
+    indicatorElement.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+
+    messagesContainer.appendChild(indicatorElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    return indicatorElement; // Return the element so it can be removed/updated
 }
 
-async function animateChatbotText(targetEl, text) {
-    if (!targetEl || !targetEl.classList.contains('typing-indicator-message')) { console.error("Target invalide."); displayChatbotMessage('ai', text); if(targetEl?.parentNode) targetEl.remove(); return; }
-    const content = document.createElement('div'); targetEl.innerHTML = ''; targetEl.appendChild(content); targetEl.classList.remove('typing-indicator-message');
-    let current = ''; const delay = 15;
+async function animateChatbotText(messageElement, fullText) {
+    let contentDiv = messageElement.querySelector('div'); // Target the inner div
+    if (!contentDiv) { // Should not happen if created by showChatbotTypingIndicator
+        console.error("Typing indicator structure error.");
+        messageElement.innerHTML = `<div>${fullText.replace(/\n/g, '<br>')}</div>`; // Fallback
+        return;
+    }
+
+    messageElement.classList.remove('typing-indicator-message'); // Remove class
+    contentDiv.innerHTML = ''; // Clear the dots
+
+    const formattedText = fullText.replace(/\n/g, '<br>');
+    let currentHTML = '';
+    const delay = 15; // Typing speed
+    const messagesContainer = document.getElementById('chatbot-messages');
+
     try {
-         for (let i = 0; i < text.length; i++) {
-            current += text[i]; content.textContent = current;
-            const cont = document.getElementById('chatbot-messages'); if(cont) cont.scrollTop = cont.scrollHeight;
-            await new Promise(r => setTimeout(r, delay));
-         }
-    } catch (e) { console.warn("Anim interrompue:", e); content.textContent = text; }
-    finally { const cont = document.getElementById('chatbot-messages'); if(cont) cont.scrollTop = cont.scrollHeight; }
+        // Simulate typing effect
+        for (let i = 0; i < formattedText.length; i++) {
+            currentHTML += formattedText[i];
+            contentDiv.innerHTML = currentHTML; // Update content progressively
+            // Scroll down smoothly as text appears
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    } catch (error) {
+        console.warn("Chatbot text animation interrupted:", error);
+        contentDiv.innerHTML = formattedText; // Ensure full text is shown if animation fails
+    } finally {
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight; // Final scroll
+        }
+    }
 }
+
 
 async function sendChatbotMessage() {
-    const input = document.getElementById('chatbot-input'), sendBtn = document.getElementById('chatbot-send'), cont = document.getElementById('chatbot-messages');
-    if (!input || !sendBtn || !cont) return;
-    const userInput = input.value.trim(); if (!userInput) return;
-    if (!chatbotGenAI || !chatbotModel) { if (!initializeChatbotGeminiAPI()) return; }
+    const inputElement = document.getElementById('chatbot-input');
+    const sendButton = document.getElementById('chatbot-send');
+    if (!inputElement || !sendButton) return;
 
-    input.value = ''; input.style.height = 'auto'; sendBtn.disabled = true;
-    displayChatbotMessage('user', userInput);
+    const userInput = inputElement.value.trim();
+    if (!userInput) return;
+
+    if (!chatbotGenAI || !chatbotModel) {
+        if (!initializeChatbotGeminiAPI()) return;
+    }
+
+    inputElement.value = '';
+    inputElement.style.height = 'auto'; // Reset height after sending
+    sendButton.disabled = true;
+
+    displayChatbotMessage('user', userInput); // Display user message immediately
     currentChatbotConversation.push({ role: "user", parts: [{ text: userInput }] });
 
-    const loader = showChatbotTypingIndicator();
-    const history = currentChatbotConversation.slice(0, -1).slice(-MAX_CHATBOT_HISTORY * 2);
+    // Show typing indicator while waiting for response
+    const loadingIndicatorElement = showChatbotTypingIndicator();
+
+    // Prepare history for the API call
+    const history = currentChatbotConversation.slice(0, -1) // Exclude the latest user message from history itself
+                                             .slice(-MAX_CHATBOT_HISTORY); // Limit history length
 
     try {
-        const chat = chatbotModel.startChat({ history });
-        const result = await chat.sendMessage(userInput);
+        const chat = chatbotModel.startChat({ history: history });
+        const result = await chat.sendMessage(userInput); // Send the latest message
         const response = await result.response;
-        if (!response || !response.text) { let reason = response?.promptFeedback?.blockReason||'?'; throw new Error(`SAFETY (Blocked: ${reason})`); }
-        const aiText = response.text();
-        currentChatbotConversation.push({ role: "model", parts: [{ text: aiText }] });
-        await animateChatbotText(loader, aiText);
-        const maxLen = (MAX_CHATBOT_HISTORY + 1) * 2; if (currentChatbotConversation.length > maxLen) { currentChatbotConversation = currentChatbotConversation.slice(-maxLen); }
+        const aiResponseText = response.text();
+
+        // Remove typing indicator and animate the actual response in its place
+        if (loadingIndicatorElement) {
+            await animateChatbotText(loadingIndicatorElement, aiResponseText);
+        } else {
+            // Fallback if indicator element wasn't found (shouldn't happen)
+            displayChatbotMessage('ai', aiResponseText);
+        }
+
+        // Add AI response to the conversation history
+        currentChatbotConversation.push({ role: "model", parts: [{ text: aiResponseText }] });
+
+        // Trim conversation history if it exceeds the limit
+        if (currentChatbotConversation.length > MAX_CHATBOT_HISTORY + 2) { // Keep user+model pair
+            currentChatbotConversation = currentChatbotConversation.slice(-(MAX_CHATBOT_HISTORY + 2));
+        }
+
     } catch (error) {
-        console.error("Erreur API Gemini:", error);
-        if (loader?.parentNode === cont) cont.removeChild(loader);
-        let msg = `Erreur Assistant IA.`; const errStr = error.toString();
-        if (errStr.includes('Quota')||errStr.includes('RATE_LIMIT')||errStr.includes('429')) msg="Trop de questions. Patientez svp.";
-        else if (errStr.includes('API key')) msg="Problème config Assistant. Contactez l'admin.";
-        else if (errStr.includes('SAFETY')) msg="Réponse bloquée (sécurité). Reformulez svp.";
-        else if (errStr.includes('fetch')) msg="Erreur connexion Assistant. Vérifiez Internet.";
-        displayChatbotMessage('ai', msg);
-        if (currentChatbotConversation[currentChatbotConversation.length - 1]?.role === 'user') currentChatbotConversation.pop();
-    } finally { sendBtn.disabled = false; input.focus(); }
+        console.error("Error sending message to Gemini:", error);
+        // Remove typing indicator if it's still there on error
+        if (loadingIndicatorElement && loadingIndicatorElement.parentNode) {
+            loadingIndicatorElement.remove();
+        }
+        let errorMessage = `Désolé, une erreur est survenue lors de la communication avec l'assistant. Veuillez réessayer.`;
+        if (error.message?.includes('Quota') || error.message?.includes('RATE_LIMIT') || error.status === 429) {
+             errorMessage = "Trop de questions ont été posées récemment. Veuillez réessayer dans quelques instants.";
+         } else if (error.message?.includes('API key not valid')) {
+             errorMessage = "Erreur de configuration de l'assistant (clé API). Veuillez contacter l'administrateur.";
+         } else if (error.message?.includes('timed out')) {
+             errorMessage = "La connexion avec l'assistant a expiré. Veuillez réessayer.";
+         }
+        displayChatbotMessage('ai', errorMessage); // Display error message to user
+        // Optionally, remove the failed user message from history?
+        // currentChatbotConversation.pop(); // Remove last user message if API call failed
+
+    } finally {
+        sendButton.disabled = false; // Re-enable send button
+        inputElement.focus(); // Keep focus on input
+        // Ensure scroll is at bottom after potential error message
+        const messagesContainer = document.getElementById('chatbot-messages');
+        if (messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 }
 
 function showChatbotNotification(message, type = 'info') {
-    const cont = document.getElementById('chatbot-messages'); if (!cont) return;
-    const notif = document.createElement('div');
-    notif.style.cssText = `text-align: center; font-size: 0.8em; padding: 5px 10px; margin: 5px auto; border-radius: 5px; max-width: 80%; background-color: ${type==='error'?'rgba(255,0,0,0.1)':'rgba(150,150,150,0.1)'}; color: ${type==='error'?'#c00':'#555'};`;
-    notif.textContent = message; cont.appendChild(notif); cont.scrollTop = cont.scrollHeight;
-    setTimeout(() => { if (notif.parentNode === cont) notif.remove(); }, 7000);
+    const messagesContainer = document.getElementById('chatbot-messages');
+    if (!messagesContainer) return;
+
+    const notifElement = document.createElement('div');
+    notifElement.style.cssText = `text-align:center; font-size:0.8em; padding:5px 10px; margin: 5px auto; max-width: 90%; border-radius: 5px; background-color: ${type === 'error' ? '#ffebee' : '#f0f0f0'}; color:${type === 'error' ? '#c62828' : '#555'};`;
+    notifElement.textContent = message;
+    messagesContainer.appendChild(notifElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    setTimeout(() => {
+        if (notifElement.parentNode === messagesContainer) {
+             messagesContainer.removeChild(notifElement);
+        }
+    }, 7000);
 }
 
 
 // --- Section 3: DOMContentLoaded / Initialisation Générale ---
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Real Estate Logic Initializations
-    afficherDernieresPublications();
-    afficherTemoignages();
+    console.log("DOM fully loaded.");
+
+    // Initialisations Espace Benin
+    if (databaseEspaceBenin) {
+        console.log("Loading initial Espace Benin data...");
+        afficherDernieresPublications();
+        afficherTemoignages();
+    } else {
+        console.warn("Database EspaceBenin not available, initial data load skipped.");
+         if (voirPlusButton) voirPlusButton.style.display = 'none';
+    }
     setupModal('privacy-modal', ['show-privacy', 'show-privacy-footer']);
     setupModal('terms-modal', ['show-terms', 'show-terms-footer']);
 
-    // Chatbot UI Initializations & Listeners
-    const chatToggle = document.getElementById('chatbot-toggle');
-    const chatWindow = document.getElementById('chatbot-window');
-    const chatClose = document.getElementById('chatbot-close');
-    const chatSend = document.getElementById('chatbot-send');
-    const chatInput = document.getElementById('chatbot-input');
+    // Listener Formulaire Recherche
+    const formRechercheEl = document.getElementById("form-recherche");
+    if (formRechercheEl) {
+         formRechercheEl.addEventListener("submit", async (event) => {
+             event.preventDefault();
+             if (!databaseEspaceBenin) { alert("Erreur de connexion à la base de données."); return; }
+             const budget = document.getElementById("budget")?.value ? parseInt(document.getElementById("budget").value, 10) : null;
+             const quartier = document.getElementById("quartier")?.value.trim().toLowerCase() || null;
+             const ville = document.getElementById("ville")?.value.trim().toLowerCase() || null;
+             const typeLogement = (document.getElementById("type-recherche")?.value === 'logements' && document.getElementById("type")) ? document.getElementById("type").value.trim().toLowerCase() || null : null;
 
-    if (chatToggle && chatWindow && chatClose && chatSend && chatInput) {
-        chatToggle.addEventListener('click', () => {
-            const isVisible = chatWindow.classList.toggle('visible');
-            if (isVisible) { chatInput.focus(); if (!chatbotGenAI || !chatbotModel) initializeChatbotGeminiAPI(); }
+             if(dernierePublicationSection) dernierePublicationSection.classList.add('hidden');
+             if(voirPlusButton) {
+                   voirPlusButton.innerHTML = '<i class="fas fa-list"></i> Voir toutes les publications';
+                   voirPlusButton.disabled = false;
+             }
+             isAllPublicationsVisible = false;
+
+             if (resultatsRechercheContainer) {
+                  resultatsRechercheContainer.innerHTML = '';
+                  resultatsRechercheContainer.style.display = 'none';
+             }
+
+             toggleLoading(true);
+             try {
+                 const res = await effectuerRecherche(budget, quartier, ville, typeLogement);
+                 afficherResultatsDansLaPage(res); // afficherResultatsDansLaPage now handles sorting
+                 if (resultatsRechercheContainer) {
+                     resultatsRechercheContainer.style.display = 'grid';
+                      const searchSection = document.getElementById('recherche-logement');
+                     if (searchSection) {
+                         // Scroll below the search bar to show results
+                         const searchBarHeight = searchSection.offsetHeight;
+                         const scrollTarget = searchSection.offsetTop + searchBarHeight - 30; // Adjust offset as needed
+                         window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+                      }
+                 }
+             } catch (error) {
+                 console.error("Search failed:", error);
+                 if (resultatsRechercheContainer) {
+                     resultatsRechercheContainer.innerHTML = '<p style="color:red; text-align:center; grid-column: 1 / -1;">Erreur lors de la recherche.</p>';
+                     resultatsRechercheContainer.style.display = 'grid';
+                 }
+             } finally {
+                 toggleLoading(false);
+             }
+         });
+    } else { console.warn("Formulaire #form-recherche non trouvé."); }
+
+    // Listener Bouton Voir/Masquer Publications
+    const voirPlusButtonEl = document.getElementById('voir-plus');
+    if (voirPlusButtonEl && resultatsRechercheContainer && dernierePublicationSection && databaseEspaceBenin) {
+        voirPlusButtonEl.addEventListener('click', async (event) => {
+            event.preventDefault();
+            voirPlusButtonEl.disabled = true;
+
+            if (!isAllPublicationsVisible) { // Action: Voir Toutes
+                console.log("Action: Voir toutes les publications");
+                voirPlusButtonEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement...';
+                dernierePublicationSection.classList.add('hidden');
+                resultatsRechercheContainer.innerHTML = '';
+                resultatsRechercheContainer.style.display = 'none';
+                await afficherTousLesLogementsEtBiens(); // This calls afficherResultatsDansLaPage which sorts
+                voirPlusButtonEl.innerHTML = '<i class="fas fa-eye-slash"></i> Masquer les publications';
+                isAllPublicationsVisible = true;
+                // Scroll to the results section after loading
+                 const resultsSection = document.getElementById('resultats-recherche');
+                 if (resultsSection) {
+                     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                 }
+
+            } else { // Action: Masquer Toutes (revert to recent)
+                console.log("Action: Masquer les publications");
+                voirPlusButtonEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement...';
+                resultatsRechercheContainer.innerHTML = '';
+                resultatsRechercheContainer.style.display = 'none';
+                dernierePublicationSection.classList.remove('hidden');
+                await afficherDernieresPublications(); // Reload recent
+                voirPlusButtonEl.innerHTML = '<i class="fas fa-list"></i> Voir toutes les publications';
+                isAllPublicationsVisible = false;
+                dernierePublicationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            voirPlusButtonEl.disabled = false;
         });
-        chatClose.addEventListener('click', () => chatWindow.classList.remove('visible'));
-        chatSend.addEventListener('click', sendChatbotMessage);
-        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatbotMessage(); }});
-        chatInput.addEventListener('input', () => { chatInput.style.height='auto'; const maxH=100; chatInput.style.height = `${Math.min(chatInput.scrollHeight, maxH)}px`; });
+        console.log("Toggle listener added to 'Voir/Masquer Toutes Publications' button.");
     } else {
-        console.error("Éléments UI Chatbot manquants !");
-        if (chatToggle) chatToggle.style.display = 'none';
+        console.warn("Required elements for 'Voir/Masquer' button not found or DB not initialized.");
+        if (voirPlusButtonEl) voirPlusButtonEl.style.display = 'none';
     }
-});
 
-// --- END OF SCRIPT ---
+    // Initialisations Chatbot Flottant
+    const chatbotToggleEl = document.getElementById('chatbot-toggle');
+    const chatbotWindowEl = document.getElementById('chatbot-window');
+    const chatbotCloseEl = document.getElementById('chatbot-close');
+    const chatbotSendEl = document.getElementById('chatbot-send');
+    const chatbotInputEl = document.getElementById('chatbot-input');
+    const chatbotMessagesContainerEl = document.getElementById('chatbot-messages');
+
+    if (chatbotToggleEl && chatbotWindowEl && chatbotCloseEl && chatbotSendEl && chatbotInputEl && chatbotMessagesContainerEl) {
+        chatbotToggleEl.addEventListener('click', () => {
+             const isVisible = chatbotWindowEl.classList.toggle('visible');
+             if (isVisible) {
+                  chatbotInputEl.focus();
+                  // Initialize API only when opened for the first time or if previously failed
+                  if (!chatbotModel) {
+                       initializeChatbotGeminiAPI();
+                  }
+             }
+         });
+        chatbotCloseEl.addEventListener('click', () => { chatbotWindowEl.classList.remove('visible'); });
+        chatbotSendEl.addEventListener('click', sendChatbotMessage);
+        chatbotInputEl.addEventListener('keypress', (e) => {
+             if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault(); // Prevent newline on Enter
+                  sendChatbotMessage();
+             }
+         });
+        // Auto-resize textarea
+        chatbotInputEl.addEventListener('input', () => {
+             chatbotInputEl.style.height = 'auto'; // Reset height
+             const maxH = 100; // Max height in px
+             chatbotInputEl.style.height = Math.min(chatbotInputEl.scrollHeight, maxH) + 'px';
+         });
+        console.log("Chatbot UI listeners attached.");
+     } else {
+         console.error("Chatbot UI elements missing! Chatbot disabled.");
+         if (chatbotToggleEl) chatbotToggleEl.style.display = 'none';
+    }
+
+}); // End DOMContentLoaded
