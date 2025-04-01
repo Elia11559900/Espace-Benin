@@ -543,7 +543,6 @@ async function afficherFenetreDetails(item) {
                  entrepriseWhatsapp = '';
              }
          }
-         // ---> FIN NOUVEAU <---
 
 
         let prixNumerique = NaN;
@@ -612,7 +611,7 @@ async function afficherFenetreDetails(item) {
         reservationInfoDiv.innerHTML = `<hr>
                 <h4>Conditions de Réservation ${fraisReservation !== null ? `(Frais: ${formatCurrency(fraisReservation)})` : '(Frais non applicables)'}</h4>
                 ${fraisReservation !== null ? `
-                    <p>Frais de réservation uniques (non remboursables) basés sur le prix:</p>
+                    <p>La réservation peut se fait selon les critères basés sur le prix:</p>
                     <ul>
                         <li>Prix <= 5.000 FCFA: <strong>2.000 FCFA</strong></li>
                         <li>Prix 5.001 - 10.000 FCFA: <strong>3.000 FCFA</strong></li>
@@ -621,6 +620,9 @@ async function afficherFenetreDetails(item) {
                         <li>Prix 25.001 - 50.000 FCFA: <strong>15.000 FCFA</strong></li>
                         <li>Prix > 50.000 FCFA: <strong>25.000 FCFA</strong></li>
                     </ul>
+                    <p>Les frais de réservation son restitué après location effectif du local dans un délai de huit (08) jours.</p>
+                    <p>Si vous décidez de ne plus louer la chambre ou le local, ou aucune local, vous perdre vos frais de réservation</p>
+                    <p>Vous pouvez changer de local et bénéficier de la restitution des frais de Réservation toujours en respactant le délai de huit (08) jours.</p>
                     <p>Ces frais vous donnent une priorité pour une durée limitée. Confirmer vous redirigera vers la page de paiement sécurisée FedaPay.</p>
                     <button class="button-success confirmer-reservation" ${isReservable ? '' : 'disabled'}><i class="fas fa-check-circle"></i> Confirmer et Payer Frais</button>
                 ` : `<p>La réservation directe avec frais n'est pas disponible pour cet article (prix non défini ou statut incompatible: ${currentStatut}).</p>`}`;
