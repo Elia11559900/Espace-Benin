@@ -1,5 +1,3 @@
-// --- Section 1: ESPACE BENIN Real Estate Logic (Firebase, Search, Modals, etc.) ---
-
 // Configuration de Firebase (ESPACE BENIN)
 const firebaseConfigEspaceBenin = {
     apiKey: "AIzaSyAwHqU_XLmDz9VbsxVGN3wbru3-hLDiyNI", // Clé de ESPACE BENIN
@@ -81,9 +79,6 @@ async function effectuerRecherche(budget, quartier, ville, typeLogement) {
 
         const fetchPromises = Object.keys(entreprisesData).map(async (entrepriseKey) => {
             const entrepriseNom = entreprisesData[entrepriseKey]?.nom || 'Nom Inconnu';
-            // ---> NOUVEAU: Store whatsapp number for later use in cards if needed, though modal is better <---
-            const entrepriseWhatsappNum = entreprisesData[entrepriseKey]?.whatsapp || ''; // Store it here
-            // ---> FIN NOUVEAU <---
             const itemsRef = databaseEspaceBenin.ref(`entreprises/${entrepriseKey}/${typeRechercheSelectionne}`);
             const itemsSnapshot = await itemsRef.once('value');
             const itemsData = itemsSnapshot.val();
@@ -127,9 +122,6 @@ async function effectuerRecherche(budget, quartier, ville, typeLogement) {
                             id: itemKey,
                             entrepriseId: entrepriseKey,
                             entrepriseNom,
-                            // ---> NOUVEAU: Pass whatsapp number to item data if needed here <---
-                            // entrepriseWhatsapp: entrepriseWhatsappNum, // Optional: pass for direct card usage (not recommended)
-                            // ---> FIN NOUVEAU <---
                             typeRecherche: typeRechercheSelectionne,
                             statut: item.statut || "Libre", // Default to Libre if missing
                             datePublicationTimestamp: datePub
@@ -186,7 +178,9 @@ function creerDivBien(bien) {
     const divBien = document.createElement("div");
     divBien.classList.add("bien");
     const statusClass = getStatusClass(bien.statut || 'Libre'); // Default to Libre
-    const imageUrl = bien.image || 'img/placeholder.png';
+
+    // Handle multiple images: Use the first image for the card
+    const imageUrl = (bien.images && bien.images.length > 0) ? bien.images[0] : (bien.image || 'img/placeholder.png');
     const descCourte = bien.description ? bien.description.substring(0, 80) + (bien.description.length > 80 ? '...' : '') : 'Pas de description.';
 
     divBien.innerHTML = `
@@ -219,7 +213,9 @@ function creerDivLogement(logement) {
     const divLogement = document.createElement("div");
     divLogement.classList.add("logement");
     const statusClass = getStatusClass(logement.statut || 'Libre'); // Default to Libre
-    const imageUrl = logement.image || 'img/placeholder.png';
+
+    // Handle multiple images: Use the first image for the card
+    const imageUrl = (logement.images && logement.images.length > 0) ? logement.images[0] : (logement.image || 'img/placeholder.png');
     const descCourte = logement.description ? logement.description.substring(0, 80) + (logement.description.length > 80 ? '...' : '') : 'Pas de description.';
 
     divLogement.innerHTML = `
@@ -517,7 +513,7 @@ async function afficherFenetreDetails(item) {
     toggleLoading(true);
 
     try {
-        // ---> NOUVEAU: Fetch entreprise data to get WhatsApp number <---
+        // ---> Fetch entreprise data to get WhatsApp number <---
         const entrepriseRef = databaseEspaceBenin.ref(`entreprises/${item.entrepriseId}`);
         const entrepriseSnapshot = await entrepriseRef.once('value');
         const entrepriseData = entrepriseSnapshot.val();
@@ -525,7 +521,7 @@ async function afficherFenetreDetails(item) {
             throw new Error(`Entreprise ${item.entrepriseId} non trouvée.`);
         }
 
-        // ---> NOUVEAU: Get and format WhatsApp number <---
+        // ---> Get and format WhatsApp number <---
         let entrepriseWhatsapp = entrepriseData.whatsapp || ''; // Use 'whatsapp' field from admin profile
 
         if (entrepriseWhatsapp) {
@@ -543,7 +539,6 @@ async function afficherFenetreDetails(item) {
                  entrepriseWhatsapp = '';
              }
          }
-
 
         let prixNumerique = NaN;
         if (item.prix != null) {
@@ -572,10 +567,25 @@ async function afficherFenetreDetails(item) {
         const modalContentDiv = document.createElement('div');
         modalContentDiv.classList.add('fenetre-details');
 
+         // Handle multiple images display
+         let imagesHTML = '';
+         if (item.images && item.images.length > 0) {
+             imagesHTML = `<img src="${item.images[0]}" alt="${item.titre || 'Image'}" onerror="this.src='img/placeholder.png';">`;
+             if (item.images.length > 1) {
+                 imagesHTML += '<div class="thumbnails">';
+                 item.images.forEach((imgUrl, index) => {
+                     imagesHTML += `<img src="${imgUrl}" alt="Thumbnail ${index + 1}" class="thumbnail-img" data-full="${imgUrl}" onerror="this.style.display='none';">`;
+                 });
+                 imagesHTML += '</div>';
+             }
+         } else if (item.image) { // Fallback for single image
+             imagesHTML = `<img src="${item.image}" alt="${item.titre || 'Image'}" onerror="this.src='img/placeholder.png';">`;
+         }
+
         modalContentDiv.innerHTML = `
             <button class="modal-close-button" title="Fermer">×</button>
             <h3>${item.titre || 'Détails'}</h3>
-            ${item.image ? `<img src="${item.image}" alt="${item.titre || 'Image'}" onerror="this.src='img/placeholder.png';">` : ''}
+            <div class="main-image-container">${imagesHTML}</div>
             <p>${item.description || 'Aucune description.'}</p><hr>
             <p><span class="detail-label">Prix:</span> <span class="detail-price">${formatCurrency(prixNumerique)}</span></p>
             <p><span class="detail-label">Entreprise:</span> ${item.entrepriseNom || 'N/A'}</p>
@@ -640,7 +650,7 @@ async function afficherFenetreDetails(item) {
 
         closeButton.addEventListener('click', () => { detailsModalContainer.classList.remove('visible'); detailsModalContainer.innerHTML = ''; });
 
-        // ---> NOUVEAU: Event Listener for WhatsApp Button <---
+        // ---> Event Listener for WhatsApp Button <---
         if (boutonDiscussion && entrepriseWhatsapp && !boutonDiscussion.disabled) {
              boutonDiscussion.addEventListener("click", () => {
                  const msg = encodeURIComponent(`Bonjour ${item.entrepriseNom || ''}, je suis intéressé par "${item.titre || 'votre bien'}" (${formatCurrency(prixNumerique)}) vu sur ESPACE BENIN.`);
@@ -648,7 +658,6 @@ async function afficherFenetreDetails(item) {
                  window.open(whatsappLink, '_blank', 'noopener,noreferrer');
             });
         }
-        // ---> FIN NOUVEAU <---
 
         boutonInfos.addEventListener("click", () => {
             infosLogementDiv.style.display = infosLogementDiv.style.display === "none" ? "block" : "none";
@@ -734,6 +743,20 @@ async function afficherFenetreDetails(item) {
         detailsModalContainer.innerHTML = ''; // Clear previous content before appending
         detailsModalContainer.appendChild(modalContentDiv);
         detailsModalContainer.classList.add('visible'); // Make the container visible
+
+        // Add thumbnail click listener (if thumbnails exist)
+        const mainImage = modalContentDiv.querySelector('.main-image-container > img');
+        const thumbnails = modalContentDiv.querySelectorAll('.thumbnail-img');
+        if (mainImage && thumbnails.length > 0) {
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', (e) => {
+                    mainImage.src = e.target.dataset.full;
+                     // Optional: Add active state to thumbnail
+                     thumbnails.forEach(t => t.classList.remove('active'));
+                     e.target.classList.add('active');
+                });
+            });
+        }
 
     } catch (error) {
         console.error("Erreur lors de l'affichage des détails:", error);

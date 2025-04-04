@@ -134,7 +134,11 @@
                   <div><label for="proprietaire">Propriétaire :</label><input type="text" id="proprietaire" name="proprietaire" required></div>
                   <div><label for="quartier">Quartier :</label><input type="text" id="quartier" name="quartier" required></div>
                  <div><label for="ville">Ville :</label><input type="text" id="ville" name="ville" required></div>
-                  <div><label for="image">Image :</label><input type="file" id="image" name="image" accept="image/*" required></div>
+                  <div>
+                      <label for="image">Images (sélection multiple possible) :</label>
+                      <!-- MODIFIED: Added 'multiple' attribute -->
+                      <input type="file" id="image" name="image" accept="image/*" required multiple>
+                  </div>
                    <div>
                           <label for="statut">Statut :</label>
                           <select id="statut" name="statut" required>
@@ -146,6 +150,8 @@
                   <button type="submit">Ajouter</button>
               </form>
               <button id="afficher-logements-btn">Afficher les logements</button>
+              <!-- Display uploaded image filenames/count (optional preview) -->
+              <div id="logement-image-preview" style="margin-top:10px; font-size:0.9em;"></div>
           </div>
 
          <!-- Liste des logements -->
@@ -192,7 +198,7 @@
                           <th>Propriétaire</th>
                           <th>Quartier</th>
                           <th>Ville</th>
-                          <th>Image</th>
+                          <th>Image</th> <!-- Header remains singular but content will show multiple if available -->
                           <th>Statut</th>
                           <th>Actions</th>
                       </tr>
@@ -245,10 +251,16 @@
                   <div><label for="prixBien">Prix (FCFA) :</label><input type="number" id="prixBien" name="prixBien" min="0" required></div>
                   <div><label for="proprietaireBien">Propriétaire :</label><input type="text" id="proprietaireBien" name="proprietaireBien" required></div>
                    <div><label for="villeBien">Ville :</label><input type="text" id="villeBien" name="villeBien" required></div>
-                  <div><label for="imageBien">Image :</label><input type="file" id="imageBien" name="imageBien" accept="image/*" required></div>
+                  <div>
+                      <label for="imageBien">Images (sélection multiple possible) :</label>
+                      <!-- MODIFIED: Added 'multiple' attribute -->
+                      <input type="file" id="imageBien" name="imageBien" accept="image/*" required multiple>
+                  </div>
                   <button type="submit">Ajouter</button>
               </form>
               <button id="afficher-biens-btn">Afficher les biens</button>
+               <!-- Display uploaded image filenames/count (optional preview) -->
+               <div id="bien-image-preview" style="margin-top:10px; font-size:0.9em;"></div>
           </div>
 
           <!-- Liste des biens -->
@@ -257,7 +269,7 @@
               <button class="export-btn" data-table="liste-biens" data-format="xlsx">Exporter en Excel</button> <!-- Data-table ID corrected -->
               <button class="export-btn" data-table="liste-biens" data-format="pdf">Exporter en PDF</button> <!-- Data-table ID corrected -->
               <table>
-                  <thead><tr><th>ID</th><th>Titre</th><th>Description</th><th>Etat</th><th>Prix</th><th>Propriétaire</th><th>Ville</th><th>Image</th><th>Actions</th></tr></thead>
+                  <thead><tr><th>ID</th><th>Titre</th><th>Description</th><th>Etat</th><th>Prix</th><th>Propriétaire</th><th>Ville</th><th>Image</th><th>Actions</th></tr></thead> <!-- Header remains singular -->
                   <tbody id="tbody-biens"></tbody>
               </table>
           </div>
@@ -302,7 +314,7 @@
                           <th>Montant (FCFA)</th>
                           <th>Contact Paiement</th> <!-- NOUVEAU HEADER -->
                           <th>Situation</th>
-                          <th>Statut</th>
+                          <th>Statut</th> <!-- This status will now update based on Super Admin actions -->
                       </tr>
                   </thead>
                   <tbody id="tbody-demandes-paiement"></tbody>
@@ -322,8 +334,8 @@
                       <input type="email" id="profil-email" readonly>
                   </div>
                   <div>
-                      <label for="profil-contact">Contact :</label>
-                      <input type="text" id="profil-contact" required>
+                      <label for="profil-contact">Contact Principal / WhatsApp :</label> <!-- Label updated for clarity -->
+                      <input type="text" id="profil-contact" required placeholder="Entrez votre contact principal (utilisé pour WhatsApp)"> <!-- Placeholder added -->
                   </div>
                   <button type="submit">Sauvegarder les modifications</button>
               </form>
@@ -341,7 +353,7 @@
                   En tant qu'administrateur de ESPACE BENIN : Service Immobilier, vous êtes responsable de la gestion des biens, des locataires et des demandes de paiement. Vous devez vous assurer que toutes les informations que vous entrez sont exactes et à jour.
               </p>
                <p>
-                   Vous vous engagez à respecter la confidentialité des données des utilisateurs et à ne pas utiliser ces données à des fins autres que celles prévues par la plateforme.
+                   Vous vous engagez à respecter la confidentialité des données des utilisateurs et à ne pas utiliser ces données à des fins autres que celles prévues par la plateforme. Le non-respect de ces conditions ou des politiques d'ESPACE BENIN peut entraîner la désactivation de votre compte administrateur sans préavis.
                 </p>
           </div>
       </div>
@@ -373,6 +385,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
     <!-- Link to admin-specific script -->
-    <script src="scripts.js"></script>
+    <script src="scripts.js"></script> <!-- MODIFIED: Changed script name -->
 </body>
 </html>

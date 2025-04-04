@@ -186,6 +186,13 @@ td img {
     border-radius: 4px; /* Rounded images */
     max-width: 50px; /* Limit image width in table */
     height: auto;
+    cursor: pointer; /* Add cursor for clickable images */
+}
+td .image-count { /* Style for image count span */
+    font-size: 0.8em;
+    color: grey;
+    display: block; /* Place count below image */
+    margin-top: 2px;
 }
 
 /* Action Buttons in Table */
@@ -241,6 +248,8 @@ footer {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     font-size: 16px;
     font-weight: 500;
+    min-width: 250px; /* Ensure minimum width */
+    text-align: center;
 }
 
 .notification.success { background-color: #28a745; } /* Green */
@@ -347,11 +356,11 @@ footer {
 
 /* Statut Specific Styles */
 .statut-libre { color: #28a745; font-weight: 600; } /* Green */
-.statut-réservé { color: #ffc107; font-weight: 600; } /* Yellow */
-.statut-occupé { color: #dc3545; font-weight: 600; } /* Red */
+.statut-réservé, .statut-reserve { color: #ffc107; font-weight: 600; } /* Yellow */
+.statut-occupé, .statut-occupe { color: #dc3545; font-weight: 600; } /* Red */
 .statut-paiement-en-attente { color: #ffc107; font-weight: 600; }
-.statut-paiement-payé { color: #28a745; font-weight: 600; }
-.statut-paiement-refusé { color: #dc3545; font-weight: 600; }
+.statut-paiement-payé, .statut-paiement-paye { color: #28a745; font-weight: 600; } /* Handle paye/payé */
+.statut-paiement-refusé, .statut-paiement-refuse { color: #dc3545; font-weight: 600; } /* Handle refuse/refusé */
 
 
 /* Profile Form Specific Styles */
@@ -434,10 +443,13 @@ footer {
         margin: 10px auto;
         padding: 15px;
         border-radius: 0; /* Full width on mobile */
+        box-shadow: none; /* Remove shadow on mobile */
     }
 
     .form-container {
         padding: 15px;
+        border: none; /* Remove border on mobile */
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Add subtle shadow to forms */
     }
 
     /* Stack menu buttons vertically */
@@ -451,6 +463,11 @@ footer {
         margin: 0; /* Remove horizontal margins */
     }
 
+    table {
+        border-radius: 0; /* Remove border radius for table on mobile */
+        box-shadow: none; /* Remove table shadow */
+        border: 1px solid #e0e0e0; /* Add a light border around the table */
+    }
     table, thead, tbody, th, td, tr {
         display: block; /* Force table elements to stack */
     }
@@ -463,22 +480,34 @@ footer {
 
     tr {
         margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        border: none; /* Remove individual row border */
+        border-bottom: 2px solid #004aad; /* Add bottom border for separation */
+        border-radius: 0;
+        box-shadow: none;
+        padding-bottom: 10px; /* Add padding below each stacked row */
     }
+     tr:last-child {
+         border-bottom: none; /* No border for the very last row */
+         margin-bottom: 0;
+         padding-bottom: 0;
+     }
+
 
     td {
         border: none;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px dashed #eee; /* Use dashed line for separation within a row */
         position: relative;
         padding-left: 50%; /* Space for the label */
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-right: 10px; /* Padding on the right */
         text-align: right; /* Align content to the right */
         white-space: normal; /* Allow wrapping */
-        min-height: 30px; /* Ensure td has some height */
+        min-height: 40px; /* Ensure td has some height */
         display: flex; /* Use flexbox for better alignment */
         align-items: center; /* Vertically center content */
         justify-content: flex-end; /* Align content to the right */
+        box-sizing: border-box;
     }
 
     td::before {
@@ -496,19 +525,33 @@ footer {
         color: #555;
         top: 50%;
         transform: translateY(-50%); /* Vertically center label */
+        font-size: 0.9em; /* Slightly smaller label */
     }
-    /* Add data-label attribute in JS for this to work */
-    /* Example JS to add data-label: is added below */
 
     td:last-child {
-        border-bottom: 0;
+        border-bottom: 0; /* No dashed line for the last cell in a row */
     }
 
      /* Specific adjustments for image and action buttons */
      td img {
          max-width: 40px; /* Smaller images on mobile */
          margin-left: auto; /* Push image to right */
+         margin-right: 0; /* Ensure no extra margin */
      }
+     td .image-count {
+          margin-left: auto; /* Align count to the right as well */
+          margin-right: 0;
+          text-align: right;
+     }
+      /* Adjust padding for image cell to avoid overlap */
+      td:has(img) {
+           padding-top: 10px;
+           padding-bottom: 10px;
+      }
+      td:has(img)::before {
+           top: 10px; /* Adjust label position for image cell */
+           transform: none;
+      }
 
      .action-buttons {
         text-align: right; /* Align buttons right on mobile */
@@ -521,8 +564,13 @@ footer {
      .action-buttons button {
          margin: 2px;
      }
-     td:has(.action-buttons)::before { /* For the actions cell */
-        /* Keep label for actions */
+     td:has(.action-buttons) {
+          min-height: 45px; /* Ensure enough height for buttons */
+     }
+     td:has(.action-buttons)::before {
+         /* Keep label for actions, adjust position slightly if needed */
+         top: 50%;
+         transform: translateY(-50%);
      }
 
 
@@ -536,6 +584,7 @@ footer {
 
     .header-content {
         margin-bottom: 20px;
+        padding-bottom: 15px;
     }
     .logo-container {
         flex-direction: column; /* Stack logo and title */
@@ -544,10 +593,35 @@ footer {
     #logo { max-width: 80px; }
     .header-content h1 { font-size: 1.5rem; }
     #header-text { font-size: 1rem; }
+    #header-image { max-height: 180px; }
 
     .modal-content {
         width: 90%;
         padding: 20px;
         margin: 10% auto;
     }
+
+    /* Adjust stats */
+    .statistiques {
+         flex-direction: column; /* Stack stats */
+         gap: 8px;
+         padding: 10px;
+    }
+     .statistiques div {
+        flex-grow: 0; /* Don't grow */
+        width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+        display: flex;
+        justify-content: space-between; /* Label on left, value on right */
+        padding: 8px 12px;
+     }
+      .statistiques div span:first-child {
+          display: inline; /* Display label inline */
+          margin-bottom: 0;
+      }
+      .statistiques div span:last-child {
+         font-size: 1.2rem;
+     }
+
 }
