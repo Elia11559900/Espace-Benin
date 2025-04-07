@@ -317,29 +317,52 @@ nav a.active { color: var(--secondary-color); font-weight: 600; background: none
 }
 
 
-/* --- Section Accueil --- */
+/* --- Section Accueil (CORRECTED) --- */
 #accueil {
     position: relative; color: white; text-align: center; overflow: hidden;
     margin-bottom: 0; min-height: 55vh; /* Adjusted height */
     display: flex; align-items: center; justify-content: center;
 }
 #accueil .accueil-container { padding: 0; position: static; width: 100%; z-index: 2; background: none; box-shadow: none; }
- #accueil::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 20, 40, 0.65); z-index: 1; } /* Slightly darker */
 
-.image-accueil { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(50%) contrast(1.1); z-index: 0; }
+/* Removed the blue overlay background */
+ #accueil::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: transparent; /* No overlay color */
+    z-index: 1;
+ }
+
+.image-accueil {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(100%) contrast(1.1); /* Keep original image brightness/contrast */
+    z-index: 0;
+}
 .accueil-text {
     position: relative; z-index: 2; width: 90%; max-width: 700px; /* Adjusted max-width */
     padding: 25px 30px; /* Adjusted padding */
-    background-color: rgba(0, 0, 0, 0.45); /* Adjusted transparency */
+    background-color: rgba(0, 0, 0, 0.20);
     border-radius: 10px; /* Adjusted radius */
-    margin: 40px auto; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    margin: 40px auto;
+    /* Added text shadow for better readability */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    /* Optional: Add a very subtle dark background behind the text only */
+    /* background-color: rgba(0, 0, 0, 0.2); */
+    box-shadow: none; /* Removed box-shadow */
 }
 .accueil-text h2 {
     font-size: clamp(2em, 6vw, 2.6em); /* Responsive title */
-    margin-bottom: 15px; color: white; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    margin-bottom: 15px; color: white; /* Text remains white */
     font-weight: 700; border: none; padding: 0;
+    /* Removed individual text-shadow, handled by parent */
 }
-.accueil-text p { font-size: clamp(1em, 2.5vw, 1.1em); color: #f0f0f0; line-height: 1.7; }
+.accueil-text p {
+    font-size: clamp(1em, 2.5vw, 1.1em); color: #f0f0f0; /* Slightly off-white */
+    line-height: 1.7;
+    /* Text shadow handled by parent */
+}
+
 
 /* --- Section Recherche --- */
 #recherche-logement {
