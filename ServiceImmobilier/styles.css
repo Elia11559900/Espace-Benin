@@ -326,10 +326,11 @@ nav a.active { color: var(--secondary-color); font-weight: 600; background: none
 #accueil .accueil-container { padding: 0; position: static; width: 100%; z-index: 2; background: none; box-shadow: none; }
  #accueil::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 20, 40, 0.65); z-index: 1; } /* Slightly darker */
 
-.image-accueil { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(100%) contrast(1.1); z-index: 0; }
+.image-accueil { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(50%) contrast(1.1); z-index: 0; }
 .accueil-text {
     position: relative; z-index: 2; width: 90%; max-width: 700px; /* Adjusted max-width */
     padding: 25px 30px; /* Adjusted padding */
+    background-color: rgba(0, 0, 0, 0.45); /* Adjusted transparency */
     border-radius: 10px; /* Adjusted radius */
     margin: 40px auto; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
