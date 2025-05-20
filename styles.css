@@ -210,6 +210,35 @@ body[data-theme='dark'] .button-whatsapp:hover {
      color: white;
 }
 
+/* MODIFIED: Specific style for the WhatsApp button in the 'aide-recherche' section */
+#aide-recherche .button-whatsapp {
+    background-color: var(--secondary-color); /* Match .button-primary background */
+    color: var(--primary-darker); /* Match .button-primary text color */
+    /* Keep other base button styles like padding, border-radius, etc. */
+    /* Override hover state to match .button-primary hover */
+}
+#aide-recherche .button-whatsapp:hover {
+    background-color: var(--accent-color); /* Match .button-primary hover background */
+    /* Keep other base button hover styles like transform, box-shadow */
+}
+/* Ensure dark mode styles also match .button-primary in dark mode */
+body[data-theme='dark'] #aide-recherche .button-whatsapp {
+     background-color: var(--secondary-color); /* Match dark mode .button-primary */
+     color: var(--primary-darker); /* Match dark mode .button-primary */
+}
+body[data-theme='dark'] #aide-recherche .button-whatsapp:hover {
+     background-color: var(--accent-color); /* Match dark mode .button-primary hover */
+     /* Keep dark mode base button hover styles */
+}
+#aide-recherche .button-whatsapp:disabled {
+    background-color: #ccc; /* Match base disabled */
+    color: #888; /* Match base disabled */
+}
+body[data-theme='dark'] #aide-recherche .button-whatsapp:disabled {
+    background-color: #555; /* Match dark mode disabled */
+    color: #aaa; /* Match dark mode disabled */
+}
+
 
 /* Forms */
 input[type="text"], input[type="number"], input[type="email"], textarea, select {

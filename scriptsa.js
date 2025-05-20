@@ -366,9 +366,12 @@ if (forgotPasswordForm && auth) {
         if (!email) {
             afficherNotification("Veuillez entrer votre adresse email.", "error", "forgot-notification"); return;
         }
-        const submitButton = forgotPasswordForm.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.textContent = "Envoi en cours...";
+        const submitButton = forgotPasswordForm.querySelector("button[type='submit']");
+        if (submitButton) {
+             submitButton.disabled = true;
+             submitButton.textContent = "Envoi en cours...";
+        }
+
 
         auth.sendPasswordResetEmail(email)
             .then(() => {
@@ -384,8 +387,10 @@ if (forgotPasswordForm && auth) {
                 afficherNotification(message, "error", "forgot-notification");
             })
             .finally(() => {
-                submitButton.disabled = false;
-                submitButton.textContent = "Envoyer l'email de réinitialisation";
+                if (submitButton) {
+                     submitButton.disabled = false;
+                     submitButton.textContent = "Envoyer l'email de réinitialisation";
+                }
             });
     });
 }
@@ -518,7 +523,7 @@ async function ajouterOuModifierLogement(event) {
     const ville = document.getElementById("ville").value;       // Get value from select
     const statut = document.getElementById("statut").value;
     const imageInput = document.getElementById("image");
-    const imageFiles = imageInput.files; // FileList
+    const imageFiles = imageInput ? imageInput.files : null; // FileList
 
     // --- JS Validation (Keep for essential fields even if HTML 'required' removed) ---
     if (!titre) { afficherNotification("Le titre est requis.", "error"); boutonSubmit.disabled = false; boutonSubmit.textContent = editingLogementId ? "Modifier" : "Ajouter"; return; }
@@ -535,7 +540,7 @@ async function ajouterOuModifierLogement(event) {
 
     try {
         let uploadedImageUrls = [];
-        if (imageFiles.length > 0) {
+        if (imageFiles && imageFiles.length > 0) {
              afficherNotification(`Upload de ${imageFiles.length} image(s)...`, "info");
              uploadedImageUrls = await uploadMultipleImages(imageFiles, 'logements'); // Use new function
              if (uploadedImageUrls.length !== imageFiles.length) {
@@ -558,8 +563,8 @@ async function ajouterOuModifierLogement(event) {
              // Mise à jour
              const logementRef = database.ref(`${refPath}/${editingLogementId}`);
              // Get old image URLs to potentially delete later if replaced
-             const oldSnapshot = await logementRef.child('images').once('value');
-             const oldImageUrls = oldSnapshot.val() || [];
+             const oldImagesSnapshot = await logementRef.child('images').once('value');
+             const oldImageUrlsArray = oldImagesSnapshot.val() || [];
 
               // Get old single image URL (fallback, handle deprecated field)
               const oldSingleSnapshot = await logementRef.child('image').once('value');
@@ -570,14 +575,14 @@ async function ajouterOuModifierLogement(event) {
                  finalImageUrls = uploadedImageUrls; // Use new images
                  console.log("Logement MAJ: Utilisation nouvelles images:", finalImageUrls);
                  // Schedule deletion of old images (both array and single) after DB update
-                 const imagesToDelete = [...oldImageUrls];
+                 const imagesToDelete = [...(Array.isArray(oldImageUrlsArray) ? oldImageUrlsArray : [])]; // Ensure array
                  if(oldSingleImageUrl) imagesToDelete.push(oldSingleImageUrl);
                  if(imagesToDelete.length > 0) {
                      setTimeout(() => deleteImagesFromStorage(imagesToDelete), 5000); // Delay deletion slightly
                  }
              } else {
                  // Keep existing images if no new ones uploaded
-                 finalImageUrls = oldImageUrls;
+                 finalImageUrls = oldImageUrlsArray;
                  // If 'images' was empty but 'image' existed, use the old single image
                  if((!finalImageUrls || finalImageUrls.length === 0) && oldSingleImageUrl){
                      finalImageUrls = [oldSingleImageUrl];
@@ -594,7 +599,7 @@ async function ajouterOuModifierLogement(event) {
         } else {
             // Ajout
              // KEEP THIS CHECK: Even if HTML required is off, a new listing needs at least one image to be useful
-             if (imageFiles.length === 0) {
+             if (!imageFiles || imageFiles.length === 0) {
                  afficherNotification("Veuillez sélectionner au moins une image pour un nouveau logement.", "error");
                  boutonSubmit.disabled = false;
                  boutonSubmit.textContent = "Ajouter";
@@ -618,12 +623,14 @@ async function ajouterOuModifierLogement(event) {
         await actionPromise;
 
         formLogement.reset();
-        imageInput.value = ''; // Clear file input
+        if (imageInput) imageInput.value = ''; // Clear file input
         if (logementImagePreview) logementImagePreview.innerHTML = '';
         editingLogementId = null;
         boutonSubmit.textContent = "Ajouter";
          // Re-populate quartier select for the current (or default) ville
-        populateQuartiersSelect(villeLogementSelect.value, quartierLogementSelect);
+        if (villeLogementSelect && quartierLogementSelect) {
+             populateQuartiersSelect(villeLogementSelect.value, quartierLogementSelect);
+         }
 
 
     } catch (error) {
@@ -684,14 +691,14 @@ function editerLogement(id) {
 
 
             const imageInput = document.getElementById("image");
-            imageInput.value = '';
+            if(imageInput) imageInput.value = '';
             // imageInput.required = false; // Removed, as required HTML attribute is removed
 
             // MODIFIED: Display existing image count in preview
              displayImagePreview('image', 'logement-image-preview');
 
             const boutonSubmit = formLogement.querySelector("button[type='submit']");
-            boutonSubmit.textContent = "Modifier";
+            if(boutonSubmit) boutonSubmit.textContent = "Modifier";
             masquerToutContenuPrincipal();
             formLogement.style.display = "block";
             listeLogements.style.display = "block"; // Keep list visible when editing
@@ -705,7 +712,9 @@ function editerLogement(id) {
             // if (imageInput) imageInput.required = true; // Removed
             if (logementImagePreview) logementImagePreview.innerHTML = '';
              // Reset quartier select
-            populateQuartiersSelect(villeLogementSelect.value, quartierLogementSelect);
+            if (villeLogementSelect && quartierLogementSelect) {
+                 populateQuartiersSelect(villeLogementSelect.value, quartierLogementSelect);
+            }
         }
     }, (error) => {
          console.error("Erreur Firebase lors du chargement pour édition:", error);
@@ -715,7 +724,9 @@ function editerLogement(id) {
          // if (imageInput) imageInput.required = true; // Removed
          if (logementImagePreview) logementImagePreview.innerHTML = '';
          // Reset quartier select
-         populateQuartiersSelect(villeLogementSelect.value, quartierLogementSelect);
+         if (villeLogementSelect && quartierLogementSelect) {
+              populateQuartiersSelect(villeLogementSelect.value, quartierLogementSelect);
+         }
     });
 }
 
@@ -988,7 +999,9 @@ function editerLocataire(id) {
             document.getElementById("facebook").value = locataire.facebook || '';
             document.getElementById("contactLocataire").value = locataire.contact || '';
 
-            formLocataire.querySelector("button[type='submit']").textContent = "Modifier";
+            const boutonSubmit = formLocataire.querySelector("button[type='submit']");
+            if(boutonSubmit) boutonSubmit.textContent = "Modifier";
+
             masquerToutContenuPrincipal();
             formLocataire.style.display = "block";
             listeLocataires.style.display = "block"; // Keep list visible when editing
@@ -1104,7 +1117,7 @@ async function ajouterOuModifierBien(event) {
     const proprietaire = document.getElementById("proprietaireBien").value.trim();
     const ville = document.getElementById("villeBien").value; // Get value from select
     const imageInput = document.getElementById("imageBien");
-    const imageFiles = imageInput.files;
+    const imageFiles = imageInput ? imageInput.files : null;
 
     // --- JS Validation (Keep for essential fields even if HTML 'required' removed) ---
     if (!titre) { afficherNotification("Le titre est requis.", "error"); boutonSubmit.disabled = false; boutonSubmit.textContent = editingBienId ? "Modifier" : "Ajouter"; return; }
@@ -1118,7 +1131,7 @@ async function ajouterOuModifierBien(event) {
 
     try {
         let uploadedImageUrls = [];
-        if (imageFiles.length > 0) {
+        if (imageFiles && imageFiles.length > 0) {
             afficherNotification(`Upload de ${imageFiles.length} image(s)...`, "info");
             uploadedImageUrls = await uploadMultipleImages(imageFiles, 'biens'); // Use new function
              if (uploadedImageUrls.length !== imageFiles.length) {
@@ -1139,8 +1152,8 @@ async function ajouterOuModifierBien(event) {
 
         if (editingBienId) {
              const bienRef = database.ref(`${refPath}/${editingBienId}`);
-             const oldSnapshot = await bienRef.child('images').once('value');
-             const oldImageUrls = oldSnapshot.val() || [];
+             const oldImagesSnapshot = await bienRef.child('images').once('value');
+             const oldImageUrlsArray = oldImagesSnapshot.val() || [];
              const oldSingleSnapshot = await bienRef.child('image').once('value');
              const oldSingleImageUrl = oldSingleSnapshot.val();
 
@@ -1148,13 +1161,13 @@ async function ajouterOuModifierBien(event) {
              if (uploadedImageUrls.length > 0) {
                  finalImageUrls = uploadedImageUrls;
                  console.log("Bien MAJ: Utilisation nouvelles images:", finalImageUrls);
-                 const imagesToDelete = [...(Array.isArray(oldImageUrls) ? oldImageUrls : [])]; // Ensure array
+                 const imagesToDelete = [...(Array.isArray(oldImageUrlsArray) ? oldImageUrlsArray : [])]; // Ensure array
                  if(oldSingleImageUrl && !imagesToDelete.includes(oldSingleImageUrl)) imagesToDelete.push(oldSingleImageUrl); // Avoid duplicates
                   if(imagesToDelete.length > 0) {
                      setTimeout(() => deleteImagesFromStorage(imagesToDelete), 5000);
                  }
              } else {
-                 finalImageUrls = oldImageUrls;
+                 finalImageUrls = oldImageUrlsArray;
                  if((!finalImageUrls || finalImageUrls.length === 0) && oldSingleImageUrl){
                      finalImageUrls = [oldSingleImageUrl];
                  }
@@ -1167,7 +1180,7 @@ async function ajouterOuModifierBien(event) {
             afficherNotification("Bien modifié !", "success");
         } else {
             // KEEP THIS CHECK: A new listing needs at least one image to be useful
-             if (imageFiles.length === 0) {
+             if (!imageFiles || imageFiles.length === 0) {
                  afficherNotification("Veuillez sélectionner au moins une image pour un nouveau bien.", "error");
                  boutonSubmit.disabled = false;
                  boutonSubmit.textContent = "Ajouter";
@@ -1190,7 +1203,7 @@ async function ajouterOuModifierBien(event) {
 
         await actionPromise;
         formBien.reset();
-        imageInput.value = '';
+        if(imageInput) imageInput.value = '';
         if (bienImagePreview) bienImagePreview.innerHTML = '';
         editingBienId = null;
         boutonSubmit.textContent = "Ajouter";
@@ -1221,13 +1234,15 @@ function editerBien(id) {
             document.getElementById("villeBien").value = bien.ville || ''; // Set the Ville select
 
             const imageInput = document.getElementById("imageBien");
-            imageInput.value = '';
+            if (imageInput) imageInput.value = '';
             // imageInput.required = false; // Removed
 
             // MODIFIED: Display existing image count in preview
             displayImagePreview('imageBien', 'bien-image-preview');
 
-            formBien.querySelector("button[type='submit']").textContent = "Modifier";
+            const boutonSubmit = formBien.querySelector("button[type='submit']");
+             if(boutonSubmit) boutonSubmit.textContent = "Modifier";
+
             masquerToutContenuPrincipal();
             formBien.style.display = "block";
             listeBiens.style.display = "block"; // Keep list visible when editing
@@ -1430,13 +1445,15 @@ function ajouterDemandePaiement(event) {
     boutonSubmit.disabled = true;
     boutonSubmit.textContent = "Envoi...";
 
-    const etablissement = document.getElementById("demande-paiement-etablissement").value;
+    const etablissementInput = document.getElementById("demande-paiement-etablissement");
+    const etablissement = etablissementInput ? etablissementInput.value : '';
+
     const montantInput = document.getElementById("demande-paiement-montant");
     const montant = montantInput.value ? parseInt(montantInput.value) : 0;
     const contactPaiementInput = document.getElementById("demande-paiement-contact");
-    const contactPaiement = contactPaiementInput.value.trim();
+    const contactPaiement = contactPaiementInput ? contactPaiementInput.value.trim() : '';
     const situationInput = document.getElementById("demande-paiement-situation");
-    const situation = situationInput.value.trim();
+    const situation = situationInput ? situationInput.value.trim() : '';
     const date = firebase.database.ServerValue.TIMESTAMP;
     const statut = "En attente";
 
@@ -1475,9 +1492,9 @@ function ajouterDemandePaiement(event) {
     })
     .then(() => {
         afficherNotification("Demande de paiement soumise !", "success");
-         montantInput.value = '';
-         contactPaiementInput.value = '';
-         situationInput.value = '';
+         if(montantInput) montantInput.value = '';
+         if(contactPaiementInput) contactPaiementInput.value = '';
+         if(situationInput) situationInput.value = '';
     })
     .catch((error) => {
         console.error("Erreur soumission demande:", error);
@@ -1517,7 +1534,7 @@ function afficherDemandesPaiement() {
         demandesArray.forEach((demande) => {
             const tr = document.createElement("tr");
             const dateLisible = demande.date ? new Date(demande.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short'}) : 'N/A';
-            const statutClass = (demande.statut || 'en-attente').toLowerCase()
+            const statutClass = (demande.statut || 'en attente').toLowerCase()
                                   .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                                   .replace(/\s+/g, '-');
 
@@ -1577,7 +1594,7 @@ function afficherProfilAdmin() {
 // MODIFIED: Updated JS validation
 function mettreAJourProfilAdmin(event) {
     event.preventDefault();
-    if (!currentUser || !formProfil) return;
+    if (!currentUser || !formProfil || !profilEntrepriseNameInput || !profilContactInput) return;
 
     const boutonSubmit = formProfil.querySelector("button[type='submit']");
     boutonSubmit.disabled = true;
@@ -1794,8 +1811,7 @@ function exportToExcel(tableId) {
         const date = new Date();
         const dateStr = date.toISOString().split('T')[0];
         const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(/:/g, '');
-        const filename = `${tableId.replace('liste-', '')}_export_${dateStr}_${timeStr}.xlsx`;
-
+        const filename = `${tableId.replace('liste-', '').replace(/-/g, '_')}_export_${dateStr}_${timeStr}.xlsx`; // Changed dash to underscore
 
         XLSX.writeFile(wb, filename);
         afficherNotification("Exportation Excel terminée.", "success");
@@ -1838,35 +1854,65 @@ function exportToPDF(tableId) {
 
          head[0].forEach((header, index) => {
              const headerLength = header.length;
-             const maxBodyLength = Math.max(...body.map(row => (row[index] ? row[index].toString().length : 0)));
+              // Try to find the corresponding column index in the *original* data structure before skipping columns
+             const originalIndex = getTableData(tableId)[0].indexOf(header); // This is not reliable after skipping...
+
+             // A more robust approach: map based on the header text itself.
+             // Find the index of this header in the *full* original header list (before skipping)
+             const originalHeaderIndex = document.getElementById(tableId)?.querySelector('table thead tr')?.querySelectorAll('th') ?
+                                        Array.from(document.getElementById(tableId).querySelector('table thead tr').querySelectorAll('th')).findIndex(th => th.innerText.trim() === header) : -1;
+
+             let maxBodyLength = 0;
+             if (originalHeaderIndex !== -1) {
+                 maxBodyLength = Math.max(...body.map(row => {
+                      // Need to map the *exported* row index back to the *original* column index
+                      // This is tricky with dynamic skipping... let's simplify: estimate max length from *exported* data columns.
+                      // Assume for now that the order is preserved *among* the non-skipped columns.
+                      // Find the index of this header *within the exported headers*.
+                      const exportedHeaderIndex = head[0].indexOf(header);
+                      if (exportedHeaderIndex !== -1) {
+                         return Math.max(...body.map(row => (row[exportedHeaderIndex] ? row[exportedHeaderIndex].toString().length : 0)));
+                      }
+                      return 0; // Should not happen if header is in head[0]
+                 }));
+             } else {
+                  // Fallback if somehow header wasn't found (shouldn't happen with getTableData logic)
+                  maxBodyLength = Math.max(...body.map(row => row[index] ? row[index].toString().length : 0));
+             }
+
+
              const maxLength = Math.max(headerLength, maxBodyLength);
 
              // Simple proportional width based on content length, with min/max caps
-             let width = (maxLength / totalHeaderLength) * totalTableWidth;
+             let width = (maxLength / totalHeaderLength) * totalTableWidth; // This is a rough estimate
              width = Math.max(width, 15); // Minimum width
              width = Math.min(width, 60); // Maximum width
 
              columnStyles[header] = { cellWidth: width };
 
-             // Specific width adjustment for ID column
+             // Specific width adjustment for known columns
              if (header.toLowerCase().includes('id')) {
                 columnStyles[header] = { cellWidth: 20 };
              }
-              // Specific width adjustment for Montant column
-             if (header.toLowerCase().includes('montant')) {
+              if (header.toLowerCase().includes('montant')) {
                  columnStyles[header] = { cellWidth: 30 };
              }
-              // Specific width adjustment for Date column
-             if (header.toLowerCase().includes('date')) {
+              if (header.toLowerCase().includes('date')) {
                  columnStyles[header] = { cellWidth: 30 };
              }
+             if (header.toLowerCase().includes('statut')) { // Add specific width for Statut
+                 columnStyles[header] = { cellWidth: 25 };
+             }
+              if (header.toLowerCase().includes('contact')) { // Add specific width for Contact (Locataires/Demandes)
+                 columnStyles[header] = { cellWidth: 35 };
+             }
+
          });
 
 
         doc.autoTable({
             head: head,
             body: body,
-            columns: columns, // Use columns definition for mapping
             startY: 25, // Start below the title
             theme: 'grid',
             styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak', halign: 'left' },
@@ -1886,7 +1932,7 @@ function exportToPDF(tableId) {
         const date = new Date();
         const dateStr = date.toISOString().split('T')[0];
         const timeStr = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(/:/g, '');
-        const filename = `${tableId.replace('liste-', '')}_export_${dateStr}_${timeStr}.pdf`;
+        const filename = `${tableId.replace('liste-', '').replace(/-/g, '_')}_export_${dateStr}_${timeStr}.pdf`; // Changed dash to underscore
 
         doc.save(filename);
         afficherNotification("Exportation PDF terminée.", "success");
