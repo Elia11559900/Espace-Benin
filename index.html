@@ -4,31 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESPACE BENIN : Service Immobilier</title>
-    <link rel="stylesheet" href="styles.css">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <!-- Favicon -->
     <link rel="icon" href="img/logo.png" type="image/png">
-    <!-- Firebase SDK -->
+
+    <!-- Firebase SDK (Compat versions for Realtime Database) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-database-compat.js"></script>
 
+    <!-- Google Generative AI SDK -->
+    <script type="module">
+        // Note: Ensure this path is correct relative to your deployment or use the CDN version
+        import { GoogleGenerativeAI } from "https://cdn.jsdelivr.net/npm/@google/generative-ai/+esm";
+        // Make it globally available if needed by older parts of the script
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+        // Initialization will be handled in the main script block below
+    </script>
+
+     <!-- jsPDF (Optional) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PizZip (Optional) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
+    <!-- FileSaver.js (Optional) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- Mammoth (Optional) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- Shepherd.js (Optional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
+     <!-- FedaPay (Optional - Direct redirect used now) -->
+    <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+    <!-- Axios (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Link to External CSS File -->
+    <link rel="stylesheet" href="styles.css"> <!-- MODIFIED: Changed stylesheet name -->
+
 </head>
-<body>
+<!-- Add data-theme attribute for potential dark mode toggle -->
+<body data-theme="light">
     <header>
         <div class="container header-container">
             <div class="logo">
-                <img src="img/logo.png" alt="TVP Entreprise Logo">
+                <!-- Make sure logo path is correct -->
+                <img src="img/logo.png" alt="ESPACE BENIN Logo">
             </div>
             <button id="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-             <nav>
-               <ul id="menu" class="hidden">
+             <!-- Nav structure controlled by JS -->
+             <nav id="main-nav">
+               <ul id="menu">
                     <li><a href="#accueil">Accueil</a></li>
                     <li><a href="#recherche-logement">Rechercher</a></li>
-                    <li><a href="#derniere-publication">Dernières publications</a></li>
+                    <li><a href="#derniere-publication">Publications</a></li>
+                    <li><a href="#aide-recherche">Besoin d'aide ?</a></li> <!-- NEW LINK -->
                     <li><a href="#services">Services</a></li>
-                    <li><a href="#apropos">À propos</a></li>
+                    <li><a href="#comment-fonctionne">Fonctionnement</a></li>
+                    <li><a href="#espace-administrateurs">Admin</a></li>
+                    <li><a href="#temoignages">Témoignages</a></li>
+                    <li><a href="#apropos">Pourquoi Nous ?</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
@@ -37,137 +75,218 @@
 
     <main>
         <section id="accueil">
+            <img src="img/immo.jpeg" alt="Image de bienvenue" class="image-accueil">
             <div class="container accueil-container">
                 <div class="accueil-text">
-                    <h2>Bienvenue chez ESPACE BENIN : Service Immobilier</h2>
-                    <p>Votre partenaire sûr de gestion immobilière au Bénin</p>
-                    <p>ESPACE BENIN : Service Immobilier ; Votre entreprise qui vous facilite l'accès aux services immobiliers au Bénin.</p>
-                    <p>Avec une gamme de services optimisés, ESPACE BENIN : Service Immobilier est toujours à proximité de vos besoins.</p>
+                    <h2>Bienvenue chez ESPACE BENIN</h2>
+                    <p>Votre partenaire de confiance pour la gestion immobilière au Bénin.</p>
+                    <p>Trouvez, louez ou vendez facilement vos biens immobiliers avec nous.</p>
                 </div>
-                <img src="img/immo.jpeg" alt="Image de bienvenue" class="image-accueil">
             </div>
         </section>
 
         <section id="recherche-logement">
             <div class="container recherche-container">
-                <h2>Que recherchez-vous chez ESPACE BENIN : Service Immobilier ?</h2>
+                <h2><i class="fas fa-search"></i> Que recherchez-vous ?</h2>
+                <p>Utilisez notre recherche avancée pour trouver le bien parfait.</p>
+
+                 <!-- AI Suggestion Box -->
+                 <div class="ai-suggestion">
+                     <i class="fas fa-lightbulb"></i>
+                     <span>Besoin d'aide ? Demandez à notre assistant IA ! (Bouton flottant en bas à droite)</span>
+                 </div>
+
                 <!-- Choix du type de recherche -->
                 <div class="choix-recherche">
-                    <label for="type-recherche">Rechercher :</label>
+                    <label for="type-recherche">Je recherche :</label>
                     <select id="type-recherche">
                         <option value="logements">Logements</option>
-                        <option value="biens">Biens</option>
+                        <option value="biens">Biens Divers</option>
                     </select>
                 </div>
 
-                <!-- Formulaire de recherche (sera modifié dynamiquement) -->
+                <!-- Formulaire de recherche -->
                 <form id="form-recherche">
                    <div id="champs-communs">
-                        <label for="budget">Insérez votre Budget :</label>
-                        <input type="number" id="budget" name="budget" min="0">
+                         <div>
+                             <label for="budget"><i class="fas fa-dollar-sign"></i> Budget Max (FCFA) :</label>
+                             <input type="number" id="budget" name="budget" min="0" placeholder="Ex: 50000">
+                         </div>
+                         <div>
+                             <label for="ville"><i class="fas fa-city"></i> Ville :</label>
+                              <select id="ville" name="ville">
+                                <option value="">-- Toutes Villes --</option>
+                                <option value="Parakou">Parakou</option>
+                                <option value="Cotonou">Cotonou</option>
+                                <option value="Bohicon">Bohicon</option>
+                                <option value="Abomey Calavi">Abomey Calavi</option>
+                                <option value="Porto Novo">Porto Novo</option>
+                                <option value="Kandi">Kandi</option>
+                                <option value="Natitingou">Natitingou</option>
+                                <option value="Malanville">Malanville</option>
+                                <option value="Autre / Non spécifié">Autre / Non spécifié</option>
+                            </select>
+                         </div>
+                          <div>
+                              <label for="quartier"><i class="fas fa-map-marker-alt"></i> Quartier / Zone :</label>
+                               <select id="quartier" name="quartier">
+                                   <option value="">-- Tous Quartiers --</option>
+                               </select>
+                          </div>
+                     </div>
 
-                        <label for="quartier">Choisissez la zone de recherche :</label>
-                        <input type="text" id="quartier" name="quartier">
+                     <div id="champs-logements" class="visible"> <!-- Initially visible -->
+                          <label for="type"><i class="fas fa-home"></i> Type de logement :</label>
+                           <select id="type" name="type">
+                              <option value="">-- Tous Types --</option>
+                              <option value="Chambre Ordinaire">Chambre Ordinaire</option>
+                              <option value="Chambre Sanitaire">Chambre Sanitaire</option>
+                              <option value="Chambre Semi Sanitaire">Chambre Semi Sanitaire</option>
+                              <option value="Chambre Hôtel">Chambre Hôtel</option>
+                              <option value="Motel">Motel</option>
+                              <option value="Appartement">Appartement</option>
+                              <option value="Boutique">Boutique</option>
+                              <option value="Villa">Villa</option>
+                              <option value="Magasin">Magasin</option>
+                              <option value="Autre">Autre</option>
+                          </select>
+                     </div>
 
-                        <label for="ville">Ville :</label>
-                        <input type="text" id="ville" name="ville">
-                    </div>
+                      <div id="champs-biens">
+                         <!-- Champs spécifiques aux biens (if any) -->
+                     </div>
 
-                    <div id="champs-logements" style="display: block;"> <!-- Initialement visible -->
-                        <label for="type">Type de logement :</label>
-                        <input type="text" id="type" name="type">
-                    </div>
-
-                    <!-- Les champs pour les biens seront ajoutés/supprimés dynamiquement -->
-                     <div id="champs-biens" style="display: none;">
-                        <!--  champs spécifiques aux biens -->
-                    </div>
-
-                    <button type="submit">Rechercher</button>
+                    <button type="submit" class="button-primary"><i class="fas fa-search"></i> Lancer la Recherche</button>
                 </form>
             </div>
-            <div id="resultats-recherche" style="display:none;"></div>
-             <!-- Indicateur de chargement (initialement caché) -->
-            <div id="loading-indicator" class="loading" style="display: none;">Chargement...</div>
+            <!-- Indicateur de chargement -->
+            <div id="loading-indicator" class="loading" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Chargement des résultats...</div>
+            <!-- Zone d'affichage des résultats -->
+            <div id="resultats-recherche" class="container" style="display:none;">
+                <!-- Results injected here -->
+            </div>
         </section>
 
         <section id="derniere-publication">
-            <div class="container">
-                <h2>Dernières publications</h2>
-                <div id="derniers-logements"></div>
-                <button id="voir-plus">Voir plus</button>
-            </div>
+             <div class="container">
+                 <h2><i class="fas fa-bullhorn"></i> Dernières publications</h2>
+                 <!-- MODIFIED: Added carousel container -->
+                 <div id="derniers-logements">
+                      <p class="loading">Chargement des publications...</p>
+                 </div>
+                 <button id="voir-plus" class="button-secondary"><i class="fas fa-list"></i> Voir toutes les publications</button>
+             </div>
         </section>
+
+        <!-- NEW SECTION: Je n'ai pas trouvé mes convenances -->
+        <section id="aide-recherche">
+             <div class="container">
+                 <h2><i class="fas fa-question-circle"></i> Je n'ai pas trouvé mes convenances</h2>
+                 <p>Nos outils de recherche vous aident à trouver rapidement le bien idéal, mais si vous avez des besoins très spécifiques ou si vous ne trouvez pas ce que vous cherchez, n'hésitez pas à nous contacter directement.</p>
+                 <p>Notre équipe est là pour vous aider à explorer d'autres options ou à rechercher activement des biens qui correspondent précisément à vos critères.</p>
+                 <div class="text-center">
+                    <a href="https://wa.me/+2290151092429?text=Bonjour%2C%20je%20n%27ai%20pas%20trouv%C3%A9%20ce%20que%20je%20cherche%20sur%20ESPACE%20BENIN.%20Puis-je%20avoir%20de%20l%27aide%3F" class="button button-whatsapp" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-whatsapp"></i> Contactez-nous sur WhatsApp
+                    </a>
+                 </div>
+             </div>
+        </section>
+        <!-- END NEW SECTION -->
+
 
         <section id="services">
             <div class="container">
-                <h2>Nos services</h2>
+                <h2><i class="fas fa-concierge-bell"></i> Nos services</h2>
                 <ul>
-                    <li>Location de Maison, Hôtel, Motel, Appartement</li>
-                    <li>Location de biens</li>
-                    <li>Location de véhicules</li>
-                    <li>Vente de parcelles</li>
-                    <li>Constructions - Travaux BTP</li>
+                    <li>Location de Maisons, Appartements, Chambres</li>
+                    <li>Vente et Location de Biens Divers (Magasins, etc.)</li>
+                    <li>Gestion Locative et Immobilière</li>
+                    <li>Location de Véhicules</li>
+                    <li>Vente de Parcelles et Terrains</li>
+                    <li>Construction et Travaux BTP</li>
+                     <li>Hébergement (Hôtel, Motel, Salle de Conférence)</li>
                 </ul>
             </div>
         </section>
 
-        <!--  Section "Comment ça marche ?" -->
         <section id="comment-fonctionne">
             <div class="container">
-              <h2>Comment ça marche ?</h2>
-                <div class="comment-ca-marche-item">
-                    <i class="fas fa-wallet"></i>
-                     <h4>Insérer votre budget</h4>
-                     <p>Plus besoin de se déplacer pour rechercher une maison à louer. Insérer juste votre budget et lancer une recherche.</p>
-                 </div>
-                 <div class="comment-ca-marche-item">
-                    <i class="fas fa-search-location"></i>
-                     <h4>Choisir votre zone de recherche</h4>
-                     <p>Il vous suffit d'entrer la zone où vous désirez trouver votre logement.</p>
-                 </div>
-                 <div class="comment-ca-marche-item">
-                    <i class="fas fa-calendar-check"></i>
-                     <h4>Faire une réservation</h4>
-                     <p>Vous pouvez réserver immédiatement en cliquant sur le bouton RESERVER.</p>
-                 </div>
-                 <div class="comment-ca-marche-item">
-                    <i class="fas fa-money-check-alt"></i>
-                     <h4>Payez votre Loyer</h4>
-                     <p>Vous pouvez aussi payer le loyer en un seul clique et obtenir une quittance en ligne immédiatement après paiement.</p>
-                 </div>
+                <h2><i class="fas fa-question-circle"></i> Comment ça marche ?</h2>
+                <div class="comment-ca-marche-grid">
+                    <div class="comment-ca-marche-item">
+                        <i class="fas fa-search-dollar"></i>
+                        <h4>1. Définissez vos critères</h4>
+                        <p>Indiquez votre budget, la ville, le quartier et le type de bien recherché.</p>
+                    </div>
+                    <div class="comment-ca-marche-item">
+                        <i class="fas fa-list-alt"></i>
+                        <h4>2. Parcourez les offres</h4>
+                        <p>Consultez les résultats correspondants avec photos et descriptions détaillées.</p>
+                    </div>
+                    <div class="comment-ca-marche-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <h4>3. Réservez ou contactez</h4>
+                        <p>Réservez en ligne (si disponible) ou contactez directement l'agence via WhatsApp.</p>
+                    </div>
+                    <div class="comment-ca-marche-item">
+                        <i class="fas fa-handshake"></i>
+                        <h4>4. Finalisez la transaction</h4>
+                        <p>Organisez une visite et finalisez la location ou l'achat en toute sécurité.</p>
+                    </div>
+               </div>
             </div>
         </section>
 
-        <!-- Section Témoignages (Déplacée ici) -->
+        <section id="espace-administrateurs">
+            <div class="container">
+                <h2><i class="fas fa-user-shield"></i> Espace Partenaires & Propriétaires</h2>
+                <p>Ajoutez et gérez facilement vos biens immobiliers sur notre plateforme.</p>
+                <p>Que vous soyez une agence ou un particulier, rejoignez notre réseau pour augmenter votre visibilité.</p>
+                <button id="admin-login-button" class="button-primary"><i class="fas fa-sign-in-alt"></i> Accéder à l'Espace Admin</button>
+            </div>
+        </section>
+
        <section id="temoignages">
             <div class="container">
-                <h2>Témoignages</h2>
+                <h2><i class="fas fa-comments"></i> Témoignages Clients</h2>
                 <div class="temoignages-container">
-                    <!-- Les témoignages existants seront remplacés par ceux de Firebase -->
+                    <p class="loading">Chargement des témoignages...</p>
                 </div>
-
-                 <!-- Formulaire d'ajout de commentaire -->
                 <div id="ajout-avis">
-                    <h3>Ajouter un Commentaire</h3>
+                    <h3><i class="fas fa-pencil-alt"></i> Laissez votre avis</h3>
                     <form id="form-ajout-avis">
                         <div class="input-group">
-                            <input type="text" id="avis-nom" placeholder="Votre nom" required>
+                            <input type="text" id="avis-nom" placeholder="Votre nom *"> <!-- Removed required -->
                             <input type="email" id="avis-email" placeholder="Votre email (facultatif)">
                         </div>
-                        <textarea id="avis-texte" placeholder="Votre avis" required></textarea>
-                        <button type="submit">Soumettre</button>
+                        <textarea id="avis-texte" placeholder="Votre témoignage *" rows="4"></textarea> <!-- Removed required -->
+                        <button type="submit" class="button-primary"><i class="fas fa-paper-plane"></i> Soumettre l'avis</button>
                     </form>
                 </div>
             </div>
         </section>
-        <!-- Fin de la section Témoignages -->
 
         <section id="apropos">
-            <div class="container">
-                <h2>Pourquoi choisir ESPACE BENIN : Service Immobilier</h2>
-                <p>ESPACE BENIN : Service Immobilier s'occupe de la gestion de tous vos biens, maisons et offre une assistance virtuelle pour améliorer votre vie.</p>
-                <p>Elle vous facilite la recherche de chambres ordinaires, motels, salles de conférence, appartements en un clic et vous permet d'économiser votre temps.</p>
+             <div class="container">
+                <h2><i class="fas fa-heart"></i> Pourquoi choisir ESPACE BENIN ?</h2>
+                <!-- MODIFIED: Content updated to grid structure -->
+                 <div class="pourquoi-nous-grid">
+                     <div class="pourquoi-nous-grid-item">
+                         <i class="fas fa-user"></i>
+                         <h4>Particulier</h4>
+                         <p>Vous êtes à la recherche d'un terrain résidentiel, ou d'un appartement de toute catégorie selon votre budget ? Trouvez-le en moins de 5 minutes sur notre plateforme.</p>
+                     </div>
+                     <div class="pourquoi-nous-grid-item">
+                         <i class="fas fa-building"></i>
+                         <h4>Entreprise</h4>
+                         <p>Vous recherchez un bien meuble, immeuble, une salle de conférence ou événementielle, des magasins à louer ou à acheter ? Notre plateforme vous fait gagner du temps.</p>
+                     </div>
+                     <div class="pourquoi-nous-grid-item">
+                         <i class="fas fa-handshake"></i>
+                         <h4>Démarcheur/Agent Immobilier</h4>
+                         <p>Profitez d'une solution fiable pour suivre vos publications, gérer votre portefeuille et obtenir des bilans automatiques, avec paiement facilité pour vos biens immobiliers.</p>
+                     </div>
+                 </div>
             </div>
         </section>
     </main>
@@ -175,105 +294,160 @@
     <footer>
          <div class="container footer-content">
             <section id="contact">
-                <h2>Contactez-nous</h2>
-                <p>Pour toute question, contactez-nous via :</p>
+                <h2><i class="fas fa-headset"></i> Contactez-nous</h2>
+                <p>Besoin d'aide ou d'informations ?</p>
                 <ul>
-                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/+22951092429">WhatsApp</a></li>
-                    <li><i class="fab fa-facebook"></i> <a href="https://www.facebook.com/fidapay">Facebook</a></li>
-                    <li><i class="fas fa-envelope"></i> <a href="mailto:65604738a@gmail.com">Email</a></li>
+                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me//+2290151092429" target="_blank" rel="noopener noreferrer">WhatsApp (+229 0151092429)</a></li>
+                    <li><i class="fab fa-facebook"></i> <a href="https://www.facebook.com/profile.php?id=61574750068166" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:espacebenin@gmail.com">espacebenin@gmail.com</a></li>
+                    <li><i class="fas fa-map-marker-alt"></i> <span>Banikanni, Parakou - Bénin</span></li>
                 </ul>
-                <p>Sise : Banikanni, Parakou - Bénin</p>
             </section>
-            <!-- AJOUT: Liens Termes et Conditions, Politique de Confidentialité -->
+            <section>
+                <h2><i class="fas fa-link"></i> Liens Rapides</h2>
+                 <ul>
+                     <li><a href="#accueil">Accueil</a></li>
+                     <li><a href="#recherche-logement">Recherche</a></li>
+                     <li><a href="#services">Services</a></li>
+                     <li><a href="#" id="show-terms-footer">Termes</a> / <a href="#" id="show-privacy-footer">Confidentialité</a></li>
+                 </ul>
+            </section>
+             <section>
+                 <h2><i class="fas fa-newspaper"></i> Newsletter</h2>
+                 <p>Recevez nos dernières offres :</p>
+                 <form id="newsletter-form">
+                     <input type="email" placeholder="Votre email" required> <!-- Keep required for newsletter -->
+                     <button type="submit" class="button-primary">S'inscrire</button>
+                 </form>
+             </section>
+
             <div class="legal-links">
                 <a href="#" id="show-terms">Termes et Conditions</a> |
                 <a href="#" id="show-privacy">Politique de Confidentialité</a>
+                <!-- MODIFIED: Added new copyright info -->
+                <p class="copyright">
+                    <span>© 2025 ESPACE BENIN - Plateforme de gestion immobilière.</span><br>
+                    <span>Tout droit réserver | Mention Légale</span><br>
+                    <span>Editeur du site | Hébergement du Site</span>
+                </p>
             </div>
-            <p>© 2025 Plateforme de gestion immobilière</p>
         </div>
     </footer>
-    <!-- Fenêtre modale pour la politique de confidentialité -->
+
+    <!-- Modals for Privacy and Terms -->
     <div id="privacy-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">×</span>
-            <h2>POLITIQUE DE CONFIDENTIALITÉ</h2>
-
-            <h3>1. Politique de Confidentialité</h3>
-            <h4>1.1 Collecte des Informations</h4>
-            <p>Nous collectons certaines informations lorsque vous utilisez notre site, notamment :</p>
+            <span class="close-button" title="Fermer">×</span>
+            <h2><i class="fas fa-user-secret"></i> POLITIQUE DE CONFIDENTIALITÉ</h2>
+            <h3>1. Collecte des Informations</h3>
+             <p>Nous collectons des informations lorsque vous utilisez notre site, notamment :</p>
             <ul>
-                <li>Votre nom, numéro de téléphone et adresse e-mail lorsque vous vous inscrivez ou effectuez une réservation.</li>
-                <li>Des données sur votre navigation pour améliorer votre expérience.</li>
-                <li>Les informations sur les biens immobiliers que vous consultez ou publiez.</li>
+                <li>Informations fournies lors de la recherche (budget, ville, quartier, type).</li>
+                <li>Données de contact (nom, email, téléphone) si vous soumettez un avis ou utilisez certaines fonctionnalités.</li>
+                <li>Données de navigation (cookies) pour améliorer l'expérience utilisateur et analyser le trafic.</li>
+                 <li>Informations fournies par les administrateurs/partenaires lors de l'ajout de biens (y compris nom, contact, WhatsApp le cas échéant).</li>
+                 <li>Informations nécessaires au traitement des réservations et paiements via FedaPay (bien que nous ne stockions pas les détails complets de la carte).</li>
             </ul>
-
-            <h4>1.2 Utilisation des Données</h4>
-            <p>Nous utilisons vos données pour :</p>
+            <h3>2. Utilisation des Données</h3>
+            <p>Vos données sont utilisées pour :</p>
             <ul>
-                <li>Faciliter la mise en relation entre propriétaires et locataires.</li>
-                <li>Vous informer des offres et services disponibles.</li>
-                <li>Améliorer notre site et nos services.</li>
+                <li>Afficher les résultats de recherche pertinents.</li>
+                <li>Faciliter la mise en relation avec les agences/propriétaires (via WhatsApp, email).</li>
+                 <li>Gérer le processus de réservation et de paiement des frais ou avances.</li>
+                 <li>Afficher les témoignages (nom et email si fourni).</li>
+                <li>Améliorer notre plateforme et nos services.</li>
+                <li>Communiquer avec vous (si vous vous inscrivez à la newsletter ou pour des confirmations).</li>
+                <li>Gérer l'espace administrateur.</li>
             </ul>
-            <p>Nous ne vendons ni ne partageons vos données avec des tiers sans votre accord, sauf en cas d'obligation légale.</p>
-
-             <h4>1.3 Sécurité et Conservation des Données</h4>
-                <p>Nous mettons en place des mesures pour protéger vos données, mais nous vous recommandons d'être prudent lorsque vous partagez vos informations en ligne.</p>
-                <p>Vos données sont conservées uniquement le temps nécessaire à la gestion du service, puis supprimées en toute sécurité.</p>
-
-            <h4>1.4 Vos Droits</h4>
-              <p>Vous avez le droit de :</p>
+             <p>Nous ne vendons ni ne partageons vos informations personnelles avec des tiers à des fins commerciales sans votre consentement explicite, sauf si requis par la loi ou nécessaire pour la fourniture du service (ex: FedaPay pour le paiement, affichage du contact partenaire).</p>
+             <h3>3. Sécurité et Conservation</h3>
+                <p>Nous utilisons Firebase pour stocker les données, qui offre des mesures de sécurité robustes. Les transactions de paiement sont gérées par FedaPay, une plateforme sécurisée.</p>
+                <p>Vos données sont conservées aussi longtemps que nécessaire pour fournir les services ou conformément aux obligations légales.</p>
+            <h3>4. Vos Droits</h3>
+              <p>You have the right to:</p>
                 <ul>
-                    <li>Accéder à vos informations personnelles.</li>
-                    <li>Demander la modification ou suppression de vos données.</li>
-                    <li>Vous opposer à leur utilisation à des fins commerciales.</li>
+                    <li>Access the information we hold about you (primarily testimonials, profile information if applicable).</li>
+                    <li>Request the correction or deletion of your testimonials.</li>
+                    <li>Manage your cookie preferences through your browser settings.</li>
+                    <li>Dispute a transaction or request payment information through the contact channels.</li>
                 </ul>
-
-            <h4>1.5 Cookies et Technologies de Suivi</h4>
-               <p>Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez les désactiver dans les paramètres de votre navigateur.</p>
+            <h3>5. Cookies</h3>
+               <p>We use essential cookies for the site's operation, as well as (anonymized) analytical cookies to understand site usage. You can manage your cookie preferences in your browser settings.</p>
+            <h3>6. Contact</h3>
+             <p>For any questions regarding this policy, contact us via the information provided in the site's Contact section.</p>
         </div>
     </div>
 
-    <!-- Fenêtre modale pour les termes et conditions -->
     <div id="terms-modal" class="modal">
         <div class="modal-content">
-            <span class="close-button">×</span>
-             <h2>CONDITIONS D'UTILISATION</h2>
-               <h4>1.6 Contact</h4>
-                <p>Pour toute question sur vos données personnelles, contactez-nous :</p>
+            <span class="close-button" title="Fermer">×</span>
+             <h2><i class="fas fa-file-contract"></i> CONDITIONS D'UTILISATION</h2>
+             <h3>1. Acceptation des Conditions</h3>
+                <p>By using the ESPACE BENIN site, you agree to comply with these Terms of Use.</p>
+             <h3>2. Description du Service</h3>
+                <p>ESPACE BENIN is an online platform aimed at facilitating the search and connection for the rental and sale of real estate and various properties in Benin. We aggregate offers from different partner agencies and individuals.</p>
+             <h3>3. Utilisation du Site</h3>
+                <ul>
+                    <li>The information provided on the site (descriptions, prices, availabilities, contacts) is published by our partners and is under their responsibility. ESPACE BENIN strives to keep the information up-to-date but cannot guarantee its absolute accuracy.</li>
+                    <li>You use the site to search for properties and contact partners through the means provided (WhatsApp, etc.).</li>
+                    <li>Any transaction (rental, purchase, reservation, payment) is made directly between you and the relevant partner, or via the FedaPay payment platform for reservation/advance payment fees when offered. ESPACE BENIN is not a party to the final rental/sale agreements and cannot be held responsible for any disputes related to these agreements.</li>
+                     <li>Reservation or rent/advance payments made via the provided FedaPay links directly involve the user and the final recipient of the payment (agency/owner via FedaPay). FedaPay's terms also apply.</li>
+                     <li>Reservation fees, once paid via FedaPay, are generally non-refundable (unless specific conditions are mentioned by the partner or Espace Benin) and give you a limited-time priority for the property concerned.</li>
+                     <li>You can change properties and benefit from the refund of reservation fees, always respecting the eight (08) day period.</li>
+                     <li>If you choose not to rent *any* property through ESPACE BENIN within the stipulated period (e.g., 8 days after reservation), you will lose your reservation fees.</li> <!-- Clarified condition -->
+                     <li>You agree not to use the site for illegal purposes or purposes prohibited by these terms.</li>
+                </ul>
+             <h3>4. Espace Administrateur/Partenaire</h3>
                  <ul>
-                    <li>Téléphone / WhatsApp : +229 0151092429</li>
-                    <li>Email : 65604738a@gmail.com</li>
-                </ul>
-
-                <h4>2. Conditions d'Utilisation</h4>
-
-                <h4>2.1 Objet du Site</h4>
-                <p>ESPACE BENIN : Service Immobilier est une plateforme pour la recherche et la mise en relation autour des biens immobiliers au Bénin.</p>
-
-                <h4>2.2 Accès et Inscription</h4>
+                    <li>Access to the administration area is reserved for authorized partners.</li>
+                    <li>Partners are responsible for the accuracy and legality of the information they publish (including their contact information).</li>
+                     <li>Partners must ensure that properties marked as "Paid" or "Reserved" are indeed so and keep the statuses updated in the administration interface.</li>
+                 </ul>
+             <h3>5. Témoignages</h3>
+                 <ul>
+                     <li>By submitting a testimonial, you grant ESPACE BENIN the non-exclusive right to publish it on the site and potentially on other promotional materials.</li>
+                     <li>You warrant that your testimonial is truthful and does not violate any third-party rights.</li>
+                 </ul>
+             <h3>6. Limitation de Responsabilité</h3>
                 <ul>
-                    <li>L'utilisation du site est gratuite, mais certaines fonctionnalités peuvent nécessiter un abonnement.</li>
-                    <li>Vous devez fournir des informations exactes lors de l'inscription.</li>
+                    <li>ESPACE BENIN acts as a technical intermediary and cannot be held responsible for the quality of the properties, the outcome of final transactions, or the actions of users or partners.</li>
+                    <li>We are not responsible for payment failures or issues related to the FedaPay platform, although we facilitate the integration.</li>
+                    <li>We do not guarantee uninterrupted or error-free access to the site.</li>
                 </ul>
-
-                <h4>2.3 Responsabilités des Utilisateurs</h4>
-                <ul>
-                    <li>Les annonces publiées doivent être véridiques et respecter la loi.</li>
-                    <li>Tout contenu frauduleux ou inapproprié sera supprimé.</li>
-                    <li>Les transactions entre utilisateurs se font sous leur propre responsabilité.</li>
-                </ul>
-
-                <h4>2.4 Limitation de Responsabilité</h4>
-                <ul>
-                    <li>ESPACE BENIN ne garantit pas la véracité des annonces publiées par les utilisateurs.</li>
-                    <li>Nous ne sommes pas responsables des litiges entre propriétaires et locataires.</li>
-                </ul>
-
-                <h4>2.5 Modifications des Conditions</h4>
-                <p>Nous pouvons modifier ces conditions à tout moment. Les utilisateurs seront informés des changements importants.</p>
+             <h3>7. Propriété Intellectuelle</h3>
+                 <p>The site's content (texts, images provided by Espace Benin, logo, design) is the property of ESPACE BENIN or its licensors and is protected by intellectual property laws. Images of properties belong to the partners who publish them.</p>
+             <h3>8. Modifications des Conditions</h3>
+                <p>We reserve the right to modify these conditions at any time. Modifications will take effect upon their publication on the site. Your continued use of the site after modification constitutes acceptance of the new conditions.</p>
+              <h3>9. Droit Applicable</h3>
+                 <p>These conditions are governed by Beninese law. Any dispute will be submitted to the competent courts of Benin.</p>
         </div>
     </div>
 
-    <script src="script.js"></script>
+     <!-- Container for dynamically added details modal -->
+    <div id="details-modal-container">
+        <!-- The details modal will be injected here by JS -->
+    </div>
+
+     <!-- Chatbot Flottant Elements -->
+     <div id="chatbot-toggle">
+         <i class="fas fa-comment-dots"></i>
+     </div>
+     <div id="chatbot-window" class="chatbot-window">
+         <div class="chatbot-header">
+             <h4>Assistant IA</h4>
+             <button id="chatbot-close">×</button>
+         </div>
+         <div id="chatbot-messages">
+             <div class="message ai-message"><div>Bonjour ! Comment puis-je vous aider avec ESPACE BENIN aujourd'hui ?</div></div>
+         </div>
+         <div class="chatbot-input-area">
+             <textarea id="chatbot-input" placeholder="Posez votre question..." rows="1"></textarea>
+             <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+         </div>
+     </div>
+
+    <!-- Link to External JavaScript File (Place at the end) -->
+    <script src="script.js"></script> <!-- MODIFIED: Changed script name -->
+
 </body>
 </html>

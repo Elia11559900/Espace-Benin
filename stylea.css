@@ -1,0 +1,627 @@
+/* Global Styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    margin: 0;
+    background-color: #f0f2f5; /* Slightly softer background */
+    color: #1c1e21; /* Darker text for better contrast */
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1500px;
+    margin: 20px auto;
+    padding: 25px;
+    background-color: #ffffff; /* Pure white background */
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Headings */
+h1, h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #004aad; /* Keep brand blue */
+    font-weight: 600; /* Slightly bolder */
+}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; margin-top: 30px; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px; }
+
+/* Forms */
+.form-container {
+    border: 1px solid #ccd0d5; /* Lighter border */
+    padding: 25px;
+    margin-bottom: 30px;
+    background-color: #f8f9fa; /* Very light grey */
+    border-radius: 8px;
+}
+
+form div {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500; /* Medium weight */
+    color: #4b4f56; /* Slightly lighter label color */
+}
+
+/* Make checkbox label clickable */
+label input[type="checkbox"] {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+label[for="terms-checkbox"] a, /* Specific styling for links in terms label */
+#login-section p a, /* Style links in login section */
+#signup-section p a, /* Style links in signup section */
+#forgot-password-section p a /* Style links in forgot password section */
+{
+    color: #004aad;
+    text-decoration: none;
+}
+label[for="terms-checkbox"] a:hover,
+#login-section p a:hover,
+#signup-section p a:hover,
+#forgot-password-section p a:hover
+{
+    text-decoration: underline;
+}
+
+
+input[type="text"],
+input[type="number"],
+input[type="url"],
+input[type="email"],
+input[type="password"],
+input[type="file"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccd0d5;
+    box-sizing: border-box;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #004aad;
+    box-shadow: 0 0 0 2px rgba(0, 74, 173, 0.2); /* Subtle focus ring */
+    outline: none;
+}
+
+input[type="file"] {
+    padding: 8px 12px; /* Adjust padding for file input */
+    background-color: #f0f2f5;
+}
+input[readonly] {
+    background-color: #e9ecef; /* Indicate readonly */
+    cursor: not-allowed;
+}
+
+
+textarea {
+    min-height: 80px; /* Minimum height for text areas */
+    resize: vertical; /* Allow vertical resize */
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px; /* Slightly smaller padding */
+    background-color: #004aad;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px; /* Add space below buttons */
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: inline-block; /* Ensure buttons align nicely */
+    vertical-align: middle;
+}
+
+button:hover {
+    background-color: #003d8f; /* Darker blue on hover */
+}
+button:active {
+    transform: scale(0.98); /* Slight press effect */
+}
+
+button:disabled {
+    background-color: #a0b3c7;
+    cursor: not-allowed;
+}
+
+/* Export buttons */
+.export-btn {
+    margin-right: 10px;
+    background-color: #6c757d; /* Grey for export */
+    font-size: 14px;
+    padding: 8px 15px;
+}
+.export-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden; /* For rounded corners */
+}
+
+th, td {
+    text-align: left;
+    padding: 12px 15px; /* More padding */
+    border-bottom: 1px solid #e0e0e0; /* Lighter border */
+    vertical-align: middle; /* Align content vertically */
+}
+
+th {
+    background-color: #f8f9fa; /* Light grey header */
+    font-weight: 600;
+    color: #333;
+    font-size: 14px; /* Slightly smaller header text */
+    text-transform: uppercase; /* Uppercase headers */
+    letter-spacing: 0.5px;
+}
+
+tr:last-child td {
+    border-bottom: none; /* Remove border on last row */
+}
+tr:hover {
+    background-color: #f0f2f5; /* Row hover effect */
+}
+
+td img {
+    display: block; /* Prevent extra space below images */
+    border-radius: 4px; /* Rounded images */
+    max-width: 50px; /* Limit image width in table */
+    height: auto;
+    cursor: pointer; /* Add cursor for clickable images */
+}
+td .image-count { /* Style for image count span */
+    font-size: 0.8em;
+    color: grey;
+    display: block; /* Place count below image */
+    margin-top: 2px;
+}
+
+/* Action Buttons in Table */
+.action-buttons {
+    white-space: nowrap; /* Prevent buttons wrapping */
+    text-align: center; /* Center buttons */
+}
+
+.action-buttons button {
+    margin: 0 4px;
+    padding: 6px 8px; /* Smaller buttons */
+    background-color: transparent; /* Transparent background */
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #6c757d; /* Default grey color */
+    transition: background-color 0.2s ease, color 0.2s ease;
+    line-height: 1; /* Ensure icon vertical alignment */
+}
+.action-buttons button svg {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+}
+
+/* Specific button colors */
+.action-buttons button[title="Éditer"]:hover { background-color: #e6f2ff; color: #0056b3; } /* Light Blue */
+.action-buttons button[title="Supprimer"]:hover { background-color: #fdeaea; color: #dc3545; } /* Light Red */
+.action-buttons button[title="Changer Statut"]:hover { background-color: #e6f8f0; color: #28a745; } /* Light Green */
+
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 15px;
+    background-color: #004aad;
+    border-radius: 0 0 10px 10px; /* Round bottom corners */
+    font-weight: 500;
+    color: white;
+    font-size: 14px;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 6px;
+    color: white;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 16px;
+    font-weight: 500;
+    min-width: 250px; /* Ensure minimum width */
+    text-align: center;
+}
+
+.notification.success { background-color: #28a745; } /* Green */
+.notification.error { background-color: #dc3545; } /* Red */
+.notification.warning { background-color: #ffc107; color: #333; } /* Yellow */
+.notification.info { background-color: #17a2b8; } /* Teal */
+
+
+/* Header Content */
+.header-content {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    gap: 15px; /* Space between logo and title */
+}
+
+#logo {
+    max-width: 100px; /* Adjusted size */
+    height: auto;
+}
+
+.header-content h1 {
+    margin: 0; /* Reset margin */
+    border-bottom: none; /* Remove default border */
+    padding-bottom: 0;
+    font-size: 1.8rem; /* Adjusted size */
+}
+
+#header-image {
+    max-width: 100%; /* Make image responsive */
+    max-height: 250px; /* Limit height */
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    object-fit: cover; /* Cover the area nicely */
+}
+
+#header-text {
+    font-size: 1.15rem; /* Slightly larger welcome text */
+    color: #4b4f56;
+    margin-bottom: 0;
+}
+#entreprise-name { font-weight: 600; color: #004aad; }
+.not-bold { font-weight: normal; }
+
+/* Menu */
+.menu {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    /* border-bottom: 1px solid #e0e0e0; */
+}
+.menu button {
+    margin: 5px 8px; /* Spacing around menu buttons */
+}
+
+/* Statistiques */
+.statistiques {
+    margin-bottom: 25px;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    display: flex; /* Use flexbox for layout */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 15px; /* Space between stat items */
+}
+.statistiques h3 {
+    width: 100%; /* Make title span full width */
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: #004aad;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.statistiques div {
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    flex-grow: 1; /* Allow items to grow */
+    text-align: center;
+}
+.statistiques div span:first-child {
+    font-weight: 500;
+    color: #555;
+    display: block; /* Label on top */
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+.statistiques div span:last-child {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #004aad;
+}
+
+/* Statut Specific Styles */
+.statut-libre { color: #28a745; font-weight: 600; } /* Green */
+.statut-réservé, .statut-reserve { color: #ffc107; font-weight: 600; } /* Yellow */
+.statut-occupé, .statut-occupe { color: #dc3545; font-weight: 600; } /* Red */
+.statut-paiement-en-attente { color: #ffc107; font-weight: 600; }
+.statut-paiement-payé, .statut-paiement-paye { color: #28a745; font-weight: 600; } /* Handle paye/payé */
+.statut-paiement-refusé, .statut-paiement-refuse { color: #dc3545; font-weight: 600; } /* Handle refuse/refusé */
+
+
+/* Profile Form Specific Styles */
+#form-profil small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001; /* Above notification */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 700px; /* Max width for modal */
+    border-radius: 8px;
+    position: relative; /* For close button positioning */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.modal-content h2 {
+    margin-top: 0;
+    color: #004aad;
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Media Queries */
+@media (max-width: 992px) {
+    .container {
+        max-width: 95%;
+        padding: 20px;
+    }
+    .statistiques {
+        gap: 10px;
+    }
+    .statistiques div {
+        padding: 8px 12px;
+    }
+     .statistiques div span:last-child {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
+
+    .container {
+        margin: 10px auto;
+        padding: 15px;
+        border-radius: 0; /* Full width on mobile */
+        box-shadow: none; /* Remove shadow on mobile */
+    }
+
+    .form-container {
+        padding: 15px;
+        border: none; /* Remove border on mobile */
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* Add subtle shadow to forms */
+    }
+
+    /* Stack menu buttons vertically */
+    .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Space between stacked buttons */
+    }
+    .menu button {
+        width: 100%; /* Full width buttons */
+        margin: 0; /* Remove horizontal margins */
+    }
+
+    table {
+        border-radius: 0; /* Remove border radius for table on mobile */
+        box-shadow: none; /* Remove table shadow */
+        border: 1px solid #e0e0e0; /* Add a light border around the table */
+    }
+    table, thead, tbody, th, td, tr {
+        display: block; /* Force table elements to stack */
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px; /* Hide headers visually but keep accessible */
+    }
+
+    tr {
+        margin-bottom: 15px;
+        border: none; /* Remove individual row border */
+        border-bottom: 2px solid #004aad; /* Add bottom border for separation */
+        border-radius: 0;
+        box-shadow: none;
+        padding-bottom: 10px; /* Add padding below each stacked row */
+    }
+     tr:last-child {
+         border-bottom: none; /* No border for the very last row */
+         margin-bottom: 0;
+         padding-bottom: 0;
+     }
+
+
+    td {
+        border: none;
+        border-bottom: 1px dashed #eee; /* Use dashed line for separation within a row */
+        position: relative;
+        padding-left: 50%; /* Space for the label */
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-right: 10px; /* Padding on the right */
+        text-align: right; /* Align content to the right */
+        white-space: normal; /* Allow wrapping */
+        min-height: 40px; /* Ensure td has some height */
+        display: flex; /* Use flexbox for better alignment */
+        align-items: center; /* Vertically center content */
+        justify-content: flex-end; /* Align content to the right */
+        box-sizing: border-box;
+    }
+
+    td::before {
+        /* Use data-label for pseudo-element content */
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: calc(50% - 20px); /* Adjust width considering padding */
+        padding-right: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left; /* Align label to the left */
+        font-weight: bold;
+        color: #555;
+        top: 50%;
+        transform: translateY(-50%); /* Vertically center label */
+        font-size: 0.9em; /* Slightly smaller label */
+    }
+
+    td:last-child {
+        border-bottom: 0; /* No dashed line for the last cell in a row */
+    }
+
+     /* Specific adjustments for image and action buttons */
+     td img {
+         max-width: 40px; /* Smaller images on mobile */
+         margin-left: auto; /* Push image to right */
+         margin-right: 0; /* Ensure no extra margin */
+     }
+     td .image-count {
+          margin-left: auto; /* Align count to the right as well */
+          margin-right: 0;
+          text-align: right;
+     }
+      /* Adjust padding for image cell to avoid overlap */
+      td:has(img) {
+           padding-top: 10px;
+           padding-bottom: 10px;
+      }
+      td:has(img)::before {
+           top: 10px; /* Adjust label position for image cell */
+           transform: none;
+      }
+
+     .action-buttons {
+        text-align: right; /* Align buttons right on mobile */
+        padding-left: 0; /* Remove default padding */
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap; /* Allow buttons to wrap if needed */
+        width: 100%; /* Ensure it takes full space available */
+    }
+     .action-buttons button {
+         margin: 2px;
+     }
+     td:has(.action-buttons) {
+          min-height: 45px; /* Ensure enough height for buttons */
+     }
+     td:has(.action-buttons)::before {
+         /* Keep label for actions, adjust position slightly if needed */
+         top: 50%;
+         transform: translateY(-50%);
+     }
+
+
+     /* Make export buttons full width */
+     .export-btn {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+        text-align: center;
+     }
+
+    .header-content {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+    .logo-container {
+        flex-direction: column; /* Stack logo and title */
+        gap: 10px;
+    }
+    #logo { max-width: 80px; }
+    .header-content h1 { font-size: 1.5rem; }
+    #header-text { font-size: 1rem; }
+    #header-image { max-height: 180px; }
+
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+        margin: 10% auto;
+    }
+
+    /* Adjust stats */
+    .statistiques {
+         flex-direction: column; /* Stack stats */
+         gap: 8px;
+         padding: 10px;
+    }
+     .statistiques div {
+        flex-grow: 0; /* Don't grow */
+        width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+        display: flex;
+        justify-content: space-between; /* Label on left, value on right */
+        padding: 8px 12px;
+     }
+      .statistiques div span:first-child {
+          display: inline; /* Display label inline */
+          margin-bottom: 0;
+      }
+      .statistiques div span:last-child {
+         font-size: 1.2rem;
+     }
+
+}

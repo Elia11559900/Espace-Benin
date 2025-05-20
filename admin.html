@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - ESPACE BENIN : Service Immobilier</title>
+    <!-- Link ONLY to the admin-specific stylesheet -->
+    <link rel="stylesheet" href="stylea.css">
+    <link rel="icon" href="img/logo.png" type="image/x-icon">  <!-- Favicon:  Utilise logo.png -->
+    <!-- Removed link to public styles.css to prevent conflicts -->
+</head>
+<body>
+    <div class="container">
+
+        <!-- Section de Connexion (visible par défaut) -->
+        <div id="login-section">
+            <h1>Connexion</h1>
+            <form id="login-form">
+                <div>
+                    <label for="login-email">Email :</label>
+                    <input type="email" id="login-email" required> <!-- Keep required for authentication -->
+                </div>
+                <div>
+                    <label for="login-password">Mot de passe :</label>
+                    <input type="password" id="login-password" required> <!-- Keep required for authentication -->
+                </div>
+                <button type="submit">Se connecter</button>
+            </form>
+            <p><a href="#" id="show-forgot-password">Mot de passe oublié ?</a></p>
+            <p>Pas encore de compte ? <a href="#" id="show-signup">Inscrivez-vous</a></p>
+            <div id="notification" class="notification"></div>
+        </div>
+
+        <!-- Section d'Inscription -->
+        <div id="signup-section" style="display: none;">
+            <h1>Inscription</h1>
+            <form id="signup-form">
+                <div>
+                    <label for="entrepriseName">Nom de l'entreprise :</label>
+                    <input type="text" id="entrepriseName" required> <!-- Keep required for signup -->
+                </div>
+                <div>
+                    <label for="signup-email">Email :</label>
+                    <input type="email" id="signup-email" required> <!-- Keep required for signup -->
+                </div>
+                <div>
+                    <label for="contact">Contact :</label>
+                    <input type="text" id="contact" required> <!-- Keep required for signup -->
+                </div>
+                <div>
+                    <label for="signup-password">Mot de passe :</label>
+                    <input type="password" id="signup-password" required> <!-- Keep required for signup -->
+                </div>
+                <div>
+                    <label for="confirmPassword">Confirmer le mot de passe :</label>
+                    <input type="password" id="confirmPassword" required> <!-- Keep required for signup -->
+                </div>
+                <!-- Case à cocher Termes et Conditions -->
+                <div>
+                   <label>
+                        <input type="checkbox" id="terms-checkbox" required> <!-- Keep required for signup -->
+                        J'accepte les <a href="#" id="show-admin-terms">termes et conditions d'utilisation</a> et la <a href="#" id="show-admin-privacy">politique de confidentialité</a>
+                    </label>
+                </div>
+                <button type="submit">S'inscrire</button>
+            </form>
+            <p>Déjà un compte ? <a href="#" id="show-login">Connectez-vous</a></p>
+            <div id="signup-notification" class="notification"></div>
+        </div>
+
+        <!-- Section Mot de Passe Oublié -->
+        <div id="forgot-password-section" style="display: none;">
+            <h1>Réinitialiser le mot de passe</h1>
+            <form id="forgot-password-form">
+                <p>Entrez votre adresse email. Nous vous enverrons un lien pour réinitialiser votre mot de passe.</p>
+                <div>
+                    <label for="forgot-email">Email :</label>
+                    <input type="email" id="forgot-email" required> <!-- Keep required for password reset -->
+                </div>
+                <button type="submit">Envoyer l'email de réinitialisation</button>
+            </form>
+            <p><a href="#" id="back-to-login">Retour à la connexion</a></p>
+            <div id="forgot-notification" class="notification"></div>
+        </div>
+
+
+      <!-- Section Contenu Principal (visible après connexion) -->
+      <div id="main-content-section" style="display: none;">
+          <div class="header-content">
+              <div class="logo-container">
+                  <img src="img/logo.png" alt="Logo Entreprise" id="logo"> <!-- Logo -->
+                  <h1>ESPACE BENIN : Service Immobilier</h1>
+              </div>
+              <img src="img/Accueil.jpeg" alt="Image d'accueil" id="header-image">
+              <p id="header-text">Bienvenue dans l'interface d'administration de <span class="not-bold">ESPACE BENIN - Service Immobilier</span> : <span id="entreprise-name"></span></p>
+          </div>
+
+          <!-- Menu -->
+          <div class="menu">
+              <button id="afficher-form-logement-btn">Logements</button>
+              <button id="afficher-form-locataire-btn">Locataires</button>
+              <button id="afficher-form-bien-btn">Biens</button>
+              <button id="afficher-demandes-paiement-btn">Demandes de paiement</button>
+              <button id="afficher-profil-btn">Profil</button>
+              <button id="logout-btn">Déconnexion</button>
+          </div>
+
+          <!-- Formulaire d'ajout de logement -->
+          <div class="form-container" id="form-logement" style="display: none;">
+              <form id="form-ajout-logement">
+                  <h2>Enregistre ton Logement</h2>
+                  <div><label for="titre">Titre :</label><input type="text" id="titre" name="titre"></div> <!-- Removed required -->
+                  <div><label for="type">Type de Logement :</label>
+                      <select id="type" name="type"> <!-- Removed required -->
+                          <option value="">-- Sélectionnez un type --</option> <!-- Added default option -->
+                          <option value="Chambre Ordinaire">Chambre Ordinaire</option>
+                          <option value="Chambre Sanitaire">Chambre Sanitaire</option>
+                          <option value="Chambre Semi Sanitaire">Chambre Semi Sanitaire</option>
+                          <option value="Chambre Hôtel">Chambre Hôtel</option>
+                          <option value="Motel">Motel</option>
+                          <option value="Appartement">Appartement</option>
+                          <option value="Boutique">Boutique</option>
+                          <option value="Villa">Villa</option>
+                          <option value="Magasin">Magasin</option>
+                          <option value="Autre">Autre</option>
+                      </select>
+                  </div>
+                  <div><label for="description">Description :</label><textarea id="description" name="description"></textarea></div> <!-- Removed required -->
+                  <div><label for="etat">Etat du Logement :</label>
+                      <select id="etat" name="etat"> <!-- Removed required -->
+                           <option value="">-- Sélectionnez un état --</option> <!-- Added default option -->
+                          <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
+                          <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
+                      </select>
+                  </div>
+                  <div><label for="prix">Prix (FCFA) :</label><input type="number" id="prix" name="prix" min="0"></div> <!-- Removed required -->
+                  <div><label for="demarcheur">Démarcheur du Logement :</label>
+                      <select id="demarcheur" name="demarcheur"> <!-- Removed required -->
+                           <option value="">-- Sélectionnez --</option> <!-- Added default option -->
+                          <option value="Oui">Oui</option><option value="Non">Non</option><option value="Autre">Autre</option>
+                      </select>
+                  </div>
+                  <div><label for="proprietaire">Propriétaire :</label><input type="text" id="proprietaire" name="proprietaire"></div> <!-- Removed required -->
+                  <div><label for="ville">Ville :</label>
+                       <select id="ville" name="ville"> <!-- Removed required -->
+                            <option value="">-- Sélectionnez une ville --</option>
+                            <option value="Parakou">Parakou</option>
+                            <option value="Cotonou">Cotonou</option>
+                            <option value="Bohicon">Bohicon</option>
+                            <option value="Abomey Calavi">Abomey Calavi</option>
+                            <option value="Porto Novo">Porto Novo</option>
+                            <option value="Kandi">Kandi</option>
+                            <option value="Natitingou">Natitingou</option>
+                            <option value="Malanville">Malanville</option>
+                            <option value="Autre / Non spécifié">Autre / Non spécifié</option>
+                        </select>
+                   </div>
+                  <div><label for="quartier">Quartier :</label>
+                       <select id="quartier" name="quartier"> <!-- Removed required -->
+                            <option value="">-- Sélectionnez une ville d'abord --</option>
+                       </select>
+                  </div>
+                  <div>
+                      <label for="image">Images (sélection multiple possible) :</label>
+                      <!-- MODIFIED: Added 'multiple' attribute -->
+                      <input type="file" id="image" name="image" accept="image/*" multiple> <!-- Removed required -->
+                  </div>
+                   <div>
+                          <label for="statut">Statut :</label>
+                          <select id="statut" name="statut"> <!-- Removed required -->
+                              <option value="">-- Sélectionnez un statut --</option> <!-- Added default option -->
+                              <option value="Libre">Libre</option>
+                              <option value="Réservé">Réservé</option>
+                              <option value="Occupé">Occupé</option>
+                          </select>
+                   </div>
+                  <button type="submit">Ajouter</button>
+              </form>
+              <button id="afficher-logements-btn">Afficher les logements</button>
+              <!-- Display uploaded image filenames/count (optional preview) -->
+              <div id="logement-image-preview" style="margin-top:10px; font-size:0.9em;"></div>
+          </div>
+
+         <!-- Liste des logements -->
+          <div id="liste-logements" style="display: none;">
+              <h2>Liste des logements</h2>
+              <button class="export-btn" data-table="liste-logements" data-format="xlsx">Exporter en Excel</button> <!-- Data-table ID corrected -->
+              <button class="export-btn" data-table="liste-logements" data-format="pdf">Exporter en PDF</button> <!-- Data-table ID corrected -->
+
+              <!-- Statistiques des logements -->
+              <div class="statistiques">
+                  <h3>Statistiques des logements</h3>
+                  <div>
+                      <span>Libres:</span>
+                      <span id="stat-logements-libres">0</span>
+                  </div>
+                  <div>
+                      <span>Réservés:</span>
+                      <span id="stat-logements-reserves">0</span>
+                  </div>
+                  <div>
+                      <span>Occupés:</span>
+                      <span id="stat-logements-occupes">0</span>
+                  </div>
+                   <div>
+                      <span>Total (Mensuel):</span>
+                      <span id="stat-logements-total-mensuel">0</span>
+                  </div>
+                   <div>
+                      <span>Total (Annuel):</span>
+                      <span id="stat-logements-total-annuel">0</span>
+                  </div>
+              </div>
+
+              <table>
+                  <thead>
+                      <tr>
+                          <th>ID</th>
+                          <th>Titre</th>
+                          <th>Type</th>
+                          <th>Description</th>
+                          <th>Etat</th>
+                          <th>Prix</th>
+                          <th>Démarcheur</th>
+                          <th>Propriétaire</th>
+                          <th>Quartier</th>
+                          <th>Ville</th>
+                          <th>Image</th> <!-- Header remains singular but content will show multiple if available -->
+                          <th>Statut</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody id="tbody-logements"></tbody>
+              </table>
+          </div>
+
+          <div style="height: 50px;"></div>
+
+          <!-- Formulaire d'ajout de locataire -->
+          <div class="form-container" id="form-locataire" style="display: none;">
+              <form id="form-ajout-locataire">
+                  <h2>Enregistre le Locataire</h2>
+                  <div><label for="nom">Nom :</label><input type="text" id="nom" name="nom"></div> <!-- Removed required -->
+                  <div><label for="prenoms">Prénoms :</label><input type="text" id="prenoms" name="prenoms"></div> <!-- Removed required -->
+                  <div><label for="adresse">Adresse :</label><input type="text" id="adresse" name="adresse"></div> <!-- Removed required -->
+                  <div><label for="email">Email :</label><input type="email" id="email" name="email"></div> <!-- Removed required -->
+                  <div><label for="facebook">Facebook :</label><input type="text" id="facebook" name="facebook" ></div> <!-- Champ non requis -->
+                  <div><label for="contactLocataire">Contact :</label><input type="text" id="contactLocataire" name="contactLocataire"></div> <!-- Removed required -->
+                  <button type="submit">Ajouter</button>
+              </form>
+              <button id="afficher-locataires-btn">Afficher les locataires</button>
+          </div>
+
+          <!-- Liste des locataires -->
+          <div id="liste-locataires" style="display: none;">
+              <h2>Liste des locataires</h2>
+              <button class="export-btn" data-table="liste-locataires" data-format="xlsx">Exporter en Excel</button> <!-- Data-table ID corrected -->
+              <button class="export-btn" data-table="liste-locataires" data-format="pdf">Exporter en PDF</button> <!-- Data-table ID corrected -->
+              <table>
+                  <thead><tr><th>ID</th><th>Nom</th><th>Prénoms</th><th>Adresse</th><th>Email</th><th>Facebook</th><th>Contact</th><th>Actions</th></tr></thead>
+                  <tbody id="tbody-locataires"></tbody>
+              </table>
+          </div>
+
+          <!-- Formulaire d'ajout de bien -->
+          <div class="form-container" id="form-bien" style="display: none;">
+              <form id="form-ajout-bien">
+                  <h2>Enregistre ton Bien</h2>
+                  <div><label for="titreBien">Titre :</label><input type="text" id="titreBien" name="titreBien"></div> <!-- Removed required -->
+                  <div><label for="descriptionBien">Description :</label><textarea id="descriptionBien" name="descriptionBien"></textarea></div> <!-- Removed required -->
+                  <div>
+                      <label for="etatBien">Etat du Bien :</label>
+                      <select id="etatBien" name="etatBien"> <!-- Removed required -->
+                           <option value="">-- Sélectionnez un état --</option> <!-- Added default option -->
+                          <option value="Passable">Passable</option><option value="Satisfaisant">Satisfaisant</option>
+                          <option value="Propre">Propre</option><option value="Très propre">Très propre</option><option value="Autre">Autre</option>
+                      </select>
+                  </div>
+                  <div><label for="prixBien">Prix (FCFA) :</label><input type="number" id="prixBien" name="prixBien" min="0"></div> <!-- Removed required -->
+                  <div><label for="proprietaireBien">Propriétaire :</label><input type="text" id="proprietaireBien" name="proprietaireBien"></div> <!-- Removed required -->
+                   <div><label for="villeBien">Ville :</label>
+                       <select id="villeBien" name="villeBien"> <!-- Removed required -->
+                           <option value="">-- Sélectionnez une ville --</option>
+                           <option value="Parakou">Parakou</option>
+                           <option value="Cotonou">Cotonou</option>
+                           <option value="Bohicon">Bohicon</option>
+                           <option value="Abomey Calavi">Abomey Calavi</option>
+                           <option value="Porto Novo">Porto Novo</option>
+                           <option value="Kandi">Kandi</option>
+                           <option value="Natitingou">Natitingou</option>
+                           <option value="Malanville">Malanville</option>
+                           <option value="Autre / Non spécifié">Autre / Non spécifié</option>
+                       </select>
+                  </div>
+                  <div>
+                      <label for="imageBien">Images (sélection multiple possible) :</label>
+                      <!-- MODIFIED: Added 'multiple' attribute -->
+                      <input type="file" id="imageBien" name="imageBien" accept="image/*" multiple> <!-- Removed required -->
+                  </div>
+                  <button type="submit">Ajouter</button>
+              </form>
+              <button id="afficher-biens-btn">Afficher les biens</button>
+               <!-- Display uploaded image filenames/count (optional preview) -->
+               <div id="bien-image-preview" style="margin-top:10px; font-size:0.9em;"></div>
+          </div>
+
+          <!-- Liste des biens -->
+          <div id="liste-biens" style="display: none;">
+              <h2>Liste des biens</h2>
+              <button class="export-btn" data-table="liste-biens" data-format="xlsx">Exporter en Excel</button> <!-- Data-table ID corrected -->
+              <button class="export-btn" data-table="liste-biens" data-format="pdf">Exporter en PDF</button> <!-- Data-table ID corrected -->
+              <table>
+                  <thead><tr><th>ID</th><th>Titre</th><th>Description</th><th>Etat</th><th>Prix</th><th>Propriétaire</th><th>Ville</th><th>Image</th><th>Actions</th></tr></thead> <!-- Header remains singular -->
+                  <tbody id="tbody-biens"></tbody>
+              </table>
+          </div>
+
+         <!-- Formulaire de demande de paiement -->
+          <div class="form-container" id="form-demande-paiement" style="display: none;">
+              <form id="form-ajout-demande-paiement">
+                  <h2>Demande de Paiement</h2>
+                  <div>
+                      <label for="demande-paiement-etablissement">Établissement :</label>
+                      <input type="text" id="demande-paiement-etablissement" name="demande-paiement-etablissement" readonly>
+                      <!-- readonly pour empêcher la modification manuelle -->
+                  </div>
+                  <div>
+                      <label for="demande-paiement-montant">Montant (FCFA) :</label>
+                      <input type="number" id="demande-paiement-montant" name="demande-paiement-montant" min="0"> <!-- Removed required -->
+                  </div>
+                  <div>
+                      <label for="demande-paiement-contact">Contact pour Paiement :</label> <!-- NOUVEAU CHAMP -->
+                      <input type="text" id="demande-paiement-contact" name="demande-paiement-contact" placeholder="Ex: +229XXXXXXXX"> <!-- Removed required -->
+                  </div>
+                  <div>
+                      <label for="demande-paiement-situation">Situation (Motif) :</label>
+                      <input type="text" id="demande-paiement-situation" name="demande-paiement-situation"> <!-- Removed required -->
+                  </div>
+                  <button type="submit">Soumettre la Demande</button>
+              </form>
+          </div>
+
+          <!-- Liste des demandes de paiement -->
+          <div id="liste-demandes-paiement" style="display: none;">
+              <h2>Demandes de Paiement</h2>
+               <!-- Export buttons added -->
+              <button class="export-btn" data-table="liste-demandes-paiement" data-format="xlsx">Exporter en Excel</button>
+              <button class="export-btn" data-table="liste-demandes-paiement" data-format="pdf">Exporter en PDF</button>
+              <table>
+                  <thead>
+                      <tr>
+                          <th>ID</th>
+                          <th>Date</th>
+                          <th>Établissement</th>
+                          <th>Montant (FCFA)</th>
+                          <th>Contact Paiement</th> <!-- NOUVEAU HEADER -->
+                          <th>Situation</th>
+                          <th>Statut</th> <!-- This status will now update based on Super Admin actions -->
+                      </tr>
+                  </thead>
+                  <tbody id="tbody-demandes-paiement"></tbody>
+              </table>
+          </div>
+
+          <!-- Section Profil Administrateur -->
+          <div id="profil-section" class="form-container" style="display: none;">
+              <h2>Mon Profil Administrateur</h2>
+              <form id="profil-form">
+                  <div>
+                      <label for="profil-entrepriseName">Nom de l'entreprise :</label>
+                      <input type="text" id="profil-entrepriseName"> <!-- Removed required -->
+                  </div>
+                  <div>
+                      <label for="profil-email">Email (non modifiable ici) :</label>
+                      <input type="email" id="profil-email" readonly>
+                  </div>
+                  <div>
+                      <label for="profil-contact">Contact Principal / WhatsApp :</label> <!-- Label updated for clarity -->
+                      <input type="text" id="profil-contact" placeholder="Entrez votre contact principal (utilisé pour WhatsApp)"> <!-- Removed required -->
+                  </div>
+                  <button type="submit">Sauvegarder les modifications</button>
+              </form>
+              <div id="profil-notification" class="notification"></div>
+          </div>
+
+      </div>  <!-- Fin de main-content-section -->
+
+      <!-- Modales pour les termes et la confidentialité (admin) -->
+      <div id="admin-terms-modal" class="modal">
+          <div class="modal-content">
+              <span class="close-button">×</span>
+              <h2>Conditions d'Utilisation (Administrateurs)</h2>
+              <p>
+                  En tant qu'administrateur de ESPACE BENIN : Service Immobilier, vous êtes responsable de la gestion des biens, des locataires et des demandes de paiement. Vous devez vous assurer que toutes les informations que vous entrez sont exactes et à jour.
+              </p>
+               <p>
+                   Vous vous engagez à respecter la confidentialité des données des utilisateurs et à ne pas utiliser ces données à des fins autres que celles prévues par la plateforme. Le non-respect de ces conditions ou des politiques d'ESPACE BENIN peut entraîner la désactivation de votre compte administrateur sans préavis.
+                </p>
+          </div>
+      </div>
+
+      <div id="admin-privacy-modal" class="modal">
+          <div class="modal-content">
+              <span class="close-button">×</span>
+              <h2>Politique de Confidentialité (Administrateurs)</h2>
+               <p>
+                      ESPACE BENIN : Service Immobilier s'engage à protéger la confidentialité des données de ses administrateurs. Les informations que vous fournissez lors de votre inscription et de votre utilisation de la plateforme sont utilisées uniquement pour la gestion de votre compte et l'amélioration de nos services.
+               </p>
+               <p>
+                      Nous ne partageons pas vos données personnelles avec des tiers sans votre consentement explicite, sauf si cela est requis par la loi.
+               </p>
+          </div>
+      </div>
+
+      <footer>
+          <p>ESPACE BENIN - Service Immobilier : L'Assurance du résultat</p>
+      </footer>
+    </div> <!-- Fin container -->
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Link to admin-specific script -->
+    <script src="scriptsa.js"></script> <!-- MODIFIED: Changed script name -->
+</body>
+</html>
