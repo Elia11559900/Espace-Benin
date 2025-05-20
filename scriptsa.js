@@ -324,7 +324,7 @@ if (loginForm) {
          if (!email || !password) {
              afficherNotification("Veuillez entrer l'email et le mot de passe.", "error", "notification"); return;
          }
-        auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+        auth.setPersistence(firebase.auth.Auth.Persistence.NONE) // MODIFIED FOR NO SESSION PERSISTENCE
             .then(() => auth.signInWithEmailAndPassword(email, password))
             .then((userCredential) => {
                 console.log("Tentative de connexion réussie pour:", userCredential.user.email);
@@ -349,7 +349,7 @@ if (logoutBtn) {
         auth.signOut()
             .then(() => {
                  console.log("Déconnexion réussie");
-                 currentUser = null;
+                 currentUser = null; // onAuthStateChanged will handle UI update
             })
             .catch((error) => {
                 console.error("Erreur lors de la déconnexion:", error);
@@ -1486,15 +1486,34 @@ function ajouterDemandePaiement(event) {
 
 
     const nouvelleDemandeRef = database.ref(`entreprises/${currentUser.uid}/demandesPaiement`).push();
-    nouvelleDemandeRef.set({
+    const demandeData = { // Defined for potential use in email notification
         date, etablissement, montant, contactPaiement, situation, statut,
         demandeurId: currentUser.uid
-    })
+    };
+    nouvelleDemandeRef.set(demandeData)
     .then(() => {
         afficherNotification("Demande de paiement soumise !", "success");
          if(montantInput) montantInput.value = '';
          if(contactPaiementInput) contactPaiementInput.value = '';
          if(situationInput) situationInput.value = '';
+
+        // START OF MODIFICATION: Comment for email notification
+        // TODO: Implement backend email notification to the main project administrator.
+        // This would typically involve a Firebase Cloud Function triggered on new data in 'demandesPaiement'.
+        // Example data to send:
+        // const emailSubject = `Nouvelle demande de paiement de ${etablissement}`;
+        // const emailBody = `
+        //   Une nouvelle demande de paiement a été soumise :
+        //   Établissement: ${etablissement}
+        //   Montant: ${montant} FCFA
+        //   Contact Paiement: ${contactPaiement}
+        //   Situation: ${situation}
+        //   Date: ${new Date(firebase.database.ServerValue.TIMESTAMP).toLocaleString('fr-FR')} // Note: This timestamp is a placeholder.
+        //                                                                              // In a Cloud Function, you'd get the actual timestamp from the event.
+        //   ID Demandeur: ${currentUser.uid}
+        // `;
+        // console.log("SIMULATE SENDING EMAIL:", emailSubject, emailBody);
+        // END OF MODIFICATION
     })
     .catch((error) => {
         console.error("Erreur soumission demande:", error);
@@ -1977,8 +1996,18 @@ window.addEventListener('click', (event) => { if (event.target.classList.contain
 
 // --- INITIALISATION ---
 document.addEventListener('DOMContentLoaded', () => {
+    // The auth.onAuthStateChanged listener will handle showing the login screen
+    // if currentUser is null, which will be the case with Persistence.NONE on page load.
+    // So, the explicit call to showLogin() here if !auth.currentUser might be redundant
+    // but is harmless and ensures the login UI is shown as quickly as possible.
     if (!auth.currentUser) {
        showLogin();
     }
-    // Removed logic setting image required attribute on DOMContentLoaded
+
+    const voirSitePublicBtn = document.getElementById('voir-site-public-btn');
+    if (voirSitePublicBtn) {
+        voirSitePublicBtn.addEventListener('click', () => {
+            window.open('index.html', '_blank'); // Ouvre index.html dans un nouvel onglet
+        });
+    }
 });

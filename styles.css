@@ -209,7 +209,6 @@ body[data-theme='dark'] .button-whatsapp:hover {
      background-color: var(--whatsapp-darker);
      color: white;
 }
-
 /* MODIFIED: Specific style for the WhatsApp button in the 'aide-recherche' section */
 #aide-recherche .button-whatsapp {
     background-color: var(--secondary-color); /* Match .button-primary background */

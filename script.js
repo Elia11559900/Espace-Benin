@@ -68,6 +68,14 @@ const quartierSelect = document.getElementById('quartier'); // Reference to the 
 // --- State Variable ---
 let isAllPublicationsVisible = false; // Tracks if all publications are currently shown
 
+// START OF MODIFICATION: Helper function to normalize status from DB
+const normalizeDbStatus = (statusStr) => {
+    if (!statusStr) return '';
+    // Converts to lowercase and replaces accented 'é' with 'e'
+    return statusStr.toLowerCase().trim().replace(/[éèê]/g, 'e');
+};
+// END OF MODIFICATION
+
 // --- Utility Functions ---
 function toggleLoading(show) { if (loadingIndicator) loadingIndicator.style.display = show ? "flex" : "none"; }
 function formatCurrency(amount) { if (amount == null || isNaN(Number(amount))) return "Prix non spécifié"; const num = Number(amount); return num.toLocaleString('fr-FR') + " FCFA"; }
@@ -100,15 +108,10 @@ function populateQuartiersSelect(villeValue, quartierSelectElement, defaultOptio
 // --- Core Functionality (Espace Benin) ---
 
 // Fonction de recherche générique
-// The existing logic correctly filters based on *any* criteria provided (non-null/empty)
-// If a criterion input is empty, the corresponding match check (e.g., budget === null) will be true, effectively ignoring that criterion.
-// This matches the user's request for flexible search ("seulement par Budget, ou par Ville, ou par quatier ou par Type de logement").
 async function effectuerRecherche(budget, quartier, ville, typeLogement) {
     toggleLoading(true);
     const resultats = {};
-    const maintenant = Date.now();
     const typeRechercheSelectionne = typeRechercheSelect ? typeRechercheSelect.value : 'logements';
-    const VINGT_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
     if (!databaseEspaceBenin) {
          console.error("DB EspaceBenin non init.");
@@ -133,22 +136,13 @@ async function effectuerRecherche(budget, quartier, ville, typeLogement) {
                     const item = itemsData[itemKey];
                     if (typeof item !== 'object' || item === null) continue;
 
-                    let isPaidAndUnavailable = false;
-                    if (item.statut === "Payé" && item.datePaiement) {
-                        try {
-                            const dp = new Date(item.datePaiement).getTime();
-                            // Mark as unavailable only if paid WITHIN the last 24 hours
-                            if (!isNaN(dp) && (maintenant - dp < VINGT_FOUR_HOURS_MS)) {
-                                isPaidAndUnavailable = true;
-                            }
-                        } catch(e){ /* Ignore date parsing errors */ }
+                    // START OF MODIFICATION: Filter out "Payé" (paye) and "Occupé" (occupe) items
+                    const normalizedStatus = normalizeDbStatus(item.statut);
+                    if (normalizedStatus === "paye" || normalizedStatus === "occupe") {
+                         continue; // Skip if paid or occupied
                     }
-                    // Also consider "Occupé" as unavailable for new searches
-                    if (isPaidAndUnavailable || item.statut === "Occupé") {
-                         continue; // Skip if paid recently or occupied
-                    }
+                    // END OF MODIFICATION
 
-                    // Check if the item matches ALL provided (non-null/empty) criteria
                     const itemPrixNum = item.prix != null ? parseFloat(String(item.prix).replace(/[^0-9.,]+/g, "").replace(',', '.')) : null;
                     const budgetMatch = budget === null || (itemPrixNum !== null && !isNaN(itemPrixNum) && itemPrixNum <= budget);
                     const quartierMatch = quartier === null || !quartier || (typeof item.quartier === 'string' && item.quartier.toLowerCase().includes(quartier.toLowerCase()));
@@ -168,7 +162,7 @@ async function effectuerRecherche(budget, quartier, ville, typeLogement) {
                             entrepriseId: entrepriseKey,
                             entrepriseNom,
                             typeRecherche: typeRechercheSelectionne,
-                            statut: item.statut || "Libre", // Default to Libre if missing
+                            statut: item.statut || "Libre",
                             datePublicationTimestamp: datePub
                         };
                     }
@@ -297,12 +291,10 @@ async function afficherDernieresPublications() {
          return;
      }
 
-    dernierePublicationSection.classList.remove('hidden'); // Ensure CSS hidden class is removed
+    dernierePublicationSection.classList.remove('hidden');
 
     derniersLogementsContainer.innerHTML = '<p class="loading" style="text-align:center;">Chargement des publications...é</p>';
     let allItems = [];
-    const maintenant = Date.now();
-    const VINGT_FOUR_HOURS_MS = 86400000; // 24 hours in milliseconds
 
     try {
         const entreprisesSnapshot = await databaseEspaceBenin.ref('entreprises').once('value');
@@ -320,13 +312,11 @@ async function afficherDernieresPublications() {
             }
         }
 
-        // Fetch latest items based on datePublication (requires indexing in Firebase for efficiency)
-        // Fetch more than needed for recency, then slice
         const itemPromises = Object.keys(entreprisesData).flatMap(key =>
              ['logements', 'biens'].map(async type => ({
                  key, type, data: (await databaseEspaceBenin.ref(`entreprises/${key}/${type}`)
-                                      .orderByChild('datePublication') // Order by date
-                                      .limitToLast(20) // Fetch up to 20 recent from each category/partner
+                                      .orderByChild('datePublication')
+                                      .limitToLast(20)
                                       .once('value')
                                  ).val()
              }))
@@ -341,16 +331,10 @@ async function afficherDernieresPublications() {
                     const item = data[itemKey];
                     if (typeof item !== 'object' || item === null) continue;
 
-                    let paidRecently = false;
-                    if (item.statut === "Payé" && item.datePaiement) {
-                         try {
-                             const dp = new Date(item.datePaiement).getTime();
-                             if (!isNaN(dp) && (maintenant - dp < VINGT_FOUR_HOURS_MS)) { paidRecently = true; }
-                         } catch(e){ /* ignore date parsing errors */ }
-                    }
-
-                    // Skip if paid recently OR occupied
-                    if (!paidRecently && item.statut !== "Occupé") {
+                    // START OF MODIFICATION: Filter out "Payé" (paye) and "Occupé" (occupe) items
+                    const normalizedStatus = normalizeDbStatus(item.statut);
+                    if (normalizedStatus !== "paye" && normalizedStatus !== "occupe") {
+                    // END OF MODIFICATION
                         let datePub = 0;
                         try { if (item.datePublication) { datePub = new Date(item.datePublication).getTime(); if (isNaN(datePub)) datePub = 0; } } catch(e){ datePub = 0;}
                         allItems.push({ ...item, entrepriseId: key, entrepriseNom: nom, id: itemKey, statut: item.statut || "Libre", typeRecherche: type, datePublicationTimestamp: datePub });
@@ -359,19 +343,18 @@ async function afficherDernieresPublications() {
             }
         });
 
-        allItems.sort((a, b) => (b.datePublicationTimestamp || 0) - (a.datePublicationTimestamp || 0)); // Sort all collected items by date
-        const MAX_ITEMS_CAROUSEL = 12; // Max items for the carousel display
-        const recent = allItems.slice(0, MAX_ITEMS_CAROUSEL); // Take the most recent ones
+        allItems.sort((a, b) => (b.datePublicationTimestamp || 0) - (a.datePublicationTimestamp || 0));
+        const MAX_ITEMS_CAROUSEL = 12;
+        const recent = allItems.slice(0, MAX_ITEMS_CAROUSEL);
 
-        // MODIFIED: Create or find the carousel div
         let carousel = derniersLogementsContainer.querySelector('.logement-carousel');
         if (!carousel) {
             carousel = document.createElement("div");
             carousel.classList.add("logement-carousel");
-            derniersLogementsContainer.innerHTML = ''; // Clear loading message
+            derniersLogementsContainer.innerHTML = '';
             derniersLogementsContainer.appendChild(carousel);
         } else {
-             carousel.innerHTML = ''; // Clear existing items in the carousel if it exists
+             carousel.innerHTML = '';
         }
 
 
@@ -380,11 +363,11 @@ async function afficherDernieresPublications() {
                 const div = item.typeRecherche === 'logements' ? creerDivLogement(item) : creerDivBien(item);
                 if (div) carousel.appendChild(div);
             });
-            setupCarousel(carousel); // Setup carousel on the new/cleared element
-             if (voirPlusButton) voirPlusButton.style.display = 'block'; // Show button if there are items
+            setupCarousel(carousel);
+             if (voirPlusButton) voirPlusButton.style.display = 'block';
         } else {
             derniersLogementsContainer.innerHTML = "<p style='text-align:center;'>Aucune publication récente.</p>";
-            if (voirPlusButton) voirPlusButton.style.display = 'none'; // Hide button if no items
+            if (voirPlusButton) voirPlusButton.style.display = 'none';
         }
 
     } catch (error) {
@@ -516,35 +499,33 @@ async function afficherTousLesLogementsEtBiens() {
         return;
     }
     toggleLoading(true);
-    resultatsRechercheContainer.innerHTML = ''; // Clear previous results
-    resultatsRechercheContainer.style.display = 'none'; // Hide initially
+    resultatsRechercheContainer.innerHTML = '';
+    resultatsRechercheContainer.style.display = 'none';
 
     if (!databaseEspaceBenin) {
          console.error("DB EspaceBenin non init.");
          resultatsRechercheContainer.innerHTML = "<p style='grid-column: 1 / -1; text-align: center; color: red;'>Erreur de connexion.</p>";
-         resultatsRechercheContainer.style.display = 'grid'; // Show error
+         resultatsRechercheContainer.style.display = 'grid';
          toggleLoading(false);
          return;
      }
 
     const resultats = {};
-    const maintenant = Date.now();
-    const VINGT_FOUR_HOURS_MS = 86400000;
 
     try {
         const entreprisesSnapshot = await databaseEspaceBenin.ref('entreprises').once('value');
         const entreprisesData = entreprisesSnapshot.val();
         if (!entreprisesData) {
-            afficherResultatsDansLaPage({}); // Show "no results" message
+            afficherResultatsDansLaPage({});
             return;
         }
 
         const fetchPromises = Object.keys(entreprisesData).map(async (key) => {
              const nom = entreprisesData[key]?.nom || 'Entreprise Inconnue';
-             const types = ['logements', 'biens']; // Fetch both types
+             const types = ['logements', 'biens'];
              for (const type of types) {
                  const itemsRef = databaseEspaceBenin.ref(`entreprises/${key}/${type}`);
-                 const itemsSnapshot = await itemsRef.once('value'); // Fetch all items of this type
+                 const itemsSnapshot = await itemsRef.once('value');
                  const itemsData = itemsSnapshot.val();
                  if (!itemsData) continue;
 
@@ -553,13 +534,10 @@ async function afficherTousLesLogementsEtBiens() {
                          const item = itemsData[itemKey];
                          if (typeof item !== 'object' || item === null) continue;
 
-                         let paidRecently = false;
-                         if (item.statut === "Payé" && item.datePaiement) {
-                             try { const dp = new Date(item.datePaiement).getTime(); if (!isNaN(dp) && (maintenant - dp < VINGT_FOUR_HOURS_MS)) paidRecently = true; } catch(e){}
-                         }
-
-                         // Skip if paid recently OR occupied
-                         if (!paidRecently && item.statut !== "Occupé") {
+                        // START OF MODIFICATION: Filter out "Payé" (paye) and "Occupé" (occupe) items
+                        const normalizedStatus = normalizeDbStatus(item.statut);
+                        if (normalizedStatus !== "paye" && normalizedStatus !== "occupe") {
+                        // END OF MODIFICATION
                              let datePub = 0;
                              try { if(item.datePublication) { datePub = new Date(item.datePublication).getTime(); if(isNaN(datePub)) datePub = 0; } } catch(e){ datePub = 0;}
                              resultats[itemKey + '_' + type] = { ...item, id: itemKey, entrepriseId: key, entrepriseNom: nom, typeRecherche: type, statut: item.statut || "Libre", datePublicationTimestamp: datePub };
@@ -570,14 +548,12 @@ async function afficherTousLesLogementsEtBiens() {
         });
 
         await Promise.all(fetchPromises);
-
-        // Pass the unsorted map directly, sorting happens in afficherResultatsDansLaPage
         afficherResultatsDansLaPage(resultats);
 
     } catch (error) {
         console.error("Erreur lors de l'affichage de tous les éléments:", error);
         alert("Une erreur est survenue lors du chargement de tous les biens. Veuillez réessayer.");
-        afficherResultatsDansLaPage({}); // Show empty results on error
+        afficherResultatsDansLaPage({});
     } finally {
         toggleLoading(false);
     }
@@ -801,7 +777,7 @@ async function afficherFenetreDetails(item) {
                      console.error("Erreur MAJ DB (Réservation):", dbErr);
                      alert("Erreur lors de la mise à jour du statut. Veuillez réessayer. Le paiement n'a pas été initié.");
                      // Re-enable buttons on error if the initial state allowed it
-                     confirmerReservationButtonActual.disabled = false; confirmerReservationButtonButtonActual.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer et Payer Frais';
+                     confirmerReservationButtonActual.disabled = false; confirmerReservationButtonActual.innerHTML = '<i class="fas fa-check-circle"></i> Confirmer et Payer Frais'; // Corrected typo
                      if (boutonReservation && isReservable) boutonReservation.disabled = false; // Check isReservable again based on initial state
                      if (boutonPayerAvance && isPayable) boutonPayerAvance.disabled = false; // Check isPayable again based on initial state
                  }
@@ -831,7 +807,7 @@ async function afficherFenetreDetails(item) {
 
                      // Disable all transaction buttons after payment
                      if(boutonReservation) boutonReservation.disabled = true;
-                     if (confirmerReservationButtonActual) confirmerReservationButtonActual.disabled = true; // Corrected variable name
+                     if (confirmerReservationButtonActual) confirmerReservationButtonActual.disabled = true; 
                      if(boutonPayerAvance) boutonPayerAvance.disabled = true;
 
                      const paymentMessageDiv = document.createElement('div');
@@ -846,8 +822,8 @@ async function afficherFenetreDetails(item) {
                      console.error("Erreur MAJ DB (Paiement):", dbErr); alert("Erreur lors de la mise à jour du statut. Veuillez réessayer. Le paiement n'a pas été initié.");
                      // Re-enable buttons on error if the initial state allowed it
                      boutonPayerAvance.disabled = false; boutonPayerAvance.innerHTML = `<i class="fas fa-credit-card"></i> ${texteBoutonPayerAvance}`;
-                      if (boutonReservation && isReservable) boutonReservation.disabled = false; // Check isReservable again based on initial state
-                     if (confirmerReservationButtonActual && isReservable) confirmerReservationButtonActual.disabled = false; // Check isReservable again based on initial state
+                      if (boutonReservation && isReservable) boutonReservation.disabled = false;
+                     if (confirmerReservationButtonActual && isReservable) confirmerReservationButtonActual.disabled = false;
                  }
             });
         }
